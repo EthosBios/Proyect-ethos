@@ -106,9 +106,14 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
     capitulo = message.content[0].text.strip()
 
     MIN_WORDS = 3200
-    if len(capitulo.split()) < MIN_WORDS:
+    MAX_ATTEMPTS = 3
+    attempt = 1
+
+    while len(capitulo.split()) < MIN_WORDS and attempt < MAX_ATTEMPTS:
+        attempt += 1
+        words = len(capitulo.split())
         refuerzo = (
-            f"\n\nATENCIÓN: el capítulo que generaste tiene {len(capitulo.split())} palabras, "
+            f"\n\nATENCIÓN: el capítulo que generaste tiene {words} palabras, "
             f"por debajo del mínimo de {MIN_WORDS}. "
             "Reescribilo completo, expandiendo cada etapa de vida con más detalle narrativo, "
             "más anécdotas concretas de la transcripción, más color sensorial. "
@@ -120,9 +125,17 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
             max_tokens=7000,
             system=_SYSTEM,
             messages=[{"role": "user", "content": prompt + refuerzo}],
-            label=f"claude/capitulo/{nombre}/retry",
+            label=f"claude/capitulo/{nombre}/retry{attempt}",
         )
         capitulo = message.content[0].text.strip()
+
+    words_final = len(capitulo.split())
+    if words_final < MIN_WORDS:
+        print(
+            f"[chapter_agent] AVISO: capítulo de {nombre} quedó con {words_final} palabras "
+            f"tras {attempt} intentos (mínimo {MIN_WORDS}). Aceptado igual.",
+            flush=True,
+        )
 
     sheets.save_chapter(nombre, capitulo)
     return capitulo
