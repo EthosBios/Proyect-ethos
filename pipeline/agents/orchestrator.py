@@ -216,6 +216,17 @@ def run(
             result.errores.append(f"voice_agent: {e}")
             return result
 
+    # ── Refrescar _fs_integrantes tras voice_agent ────────────────────────────
+    # voice_agent guarda perfil_voz + transcripcion_completa en Firestore.
+    # Si empezamos desde voice, el dict en memoria estaba vacío para esos campos.
+    if start_idx <= 1 and familia_id and _fs_integrantes:
+        try:
+            from pipeline.utils import firestore as fs_mod
+            _fs_integrantes = fs_mod.get_integrantes_para_pipeline(familia_id)
+            logger.info("[orchestrator] familia=%s _fs_integrantes refrescados post-voice", familia_id)
+        except Exception as _e:
+            logger.warning("[orchestrator] familia=%s no se pudo refrescar _fs_integrantes: %s", familia_id, _e)
+
     # ── Cargar capítulos de job anterior (from_job_id) ───────────────────────
     if from_job_id and not result.chapters:
         try:
