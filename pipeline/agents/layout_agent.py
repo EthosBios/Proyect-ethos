@@ -353,7 +353,6 @@ def _texto_a_bloques(
 def _foto_local(nombre: str, fotos: dict[str, str]) -> Optional[dict]:
     path = fotos.get(nombre)
     if path and os.path.exists(path):
-        slug = re.sub(r"[^a-zA-Z0-9_]", "", nombre.lower())
         return {
             "tipo": "foto",
             "img": f"file://{path}",
@@ -361,13 +360,7 @@ def _foto_local(nombre: str, fotos: dict[str, str]) -> Optional[dict]:
             "caption": nombre.lower(),
             "rot": -2.2,
         }
-    return {
-        "tipo": "foto",
-        "img": None,
-        "alt_ph": nombre.lower(),
-        "caption": nombre.lower(),
-        "rot": -2.2,
-    }
+    return None
 
 
 # ── Render principal ──────────────────────────────────────────────────────────

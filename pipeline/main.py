@@ -974,11 +974,32 @@ async def token_respuesta(
         os.unlink(tmp_path)
 
     fs.save_respuesta(familia_id, integrante_id, pregunta, gs_url)
-    fs.update_integrante_estado(familia_id, integrante_id, "en_progreso")
     respuestas_guardadas = fs.get_respuestas(familia_id, integrante_id)
     pct = round(len([r for r in respuestas_guardadas if r.get("audio_url")]) / 16 * 100)
     fs.update_porcentaje_avance(familia_id, integrante_id, pct)
+    if pct >= 100:
+        fs.update_integrante_estado(familia_id, integrante_id, "completo")
+        _check_y_trigger(familia_id)
+    else:
+        fs.update_integrante_estado(familia_id, integrante_id, "en_progreso")
     return {"ok": True}
+
+
+@app.patch("/token/{token}/nombre")
+def token_update_nombre(token: str, nombre: str):
+    """Permite al integrante corregir su nombre antes de grabar."""
+    from pipeline.utils import firestore as fs
+    match = fs.get_integrante_by_token(token)
+    if match is None:
+        raise HTTPException(status_code=404, detail="Token inválido o no encontrado")
+    familia_id, integrante_id, _ = match
+    nombre_clean = nombre.strip()
+    if not nombre_clean or len(nombre_clean) > 100:
+        raise HTTPException(status_code=400, detail="Nombre inválido")
+    fs._db().collection("familias").document(familia_id) \
+        .collection("integrantes").document(integrante_id) \
+        .update({"nombre": nombre_clean})
+    return {"ok": True, "nombre": nombre_clean}
 
 
 @app.post("/token/{token}/consentimiento")

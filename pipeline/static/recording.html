@@ -616,6 +616,82 @@ header .logo {
   cursor: pointer;
 }
 
+/* ── Confirmación de nombre ── */
+.nombre-confirm {
+  margin: 20px 0 0;
+  padding: 18px 20px;
+  background: #fdf6f0;
+  border: 1.5px solid var(--accent-light);
+  border-radius: 12px;
+  text-align: center;
+}
+.nombre-confirm-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.nombre-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--text);
+  margin: 0 0 14px;
+}
+.nombre-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+.nombre-checkbox-label input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.btn-editar-nombre {
+  display: block;
+  margin: 10px auto 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.nombre-edit-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.nombre-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Playfair Display', serif;
+  color: var(--text);
+  background: white;
+}
+.btn-guardar-nombre {
+  padding: 10px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 /* ── Responsive tweaks ── */
 @media (max-width: 480px) {
   .welcome-card { padding: 36px 22px 30px; }
@@ -639,6 +715,22 @@ header .logo {
   <div class="container">
     <div class="welcome-card">
       <p id="saludo" class="saludo">Cargando…</p>
+
+      <!-- Confirmación de nombre -->
+      <div id="nombre-confirm" class="nombre-confirm hidden">
+        <p class="nombre-confirm-label">Tu nombre en el libro</p>
+        <p class="nombre-display" id="nombre-display"></p>
+        <label class="nombre-checkbox-label">
+          <input type="checkbox" id="nombre-ok-checkbox" onchange="onNombreCheckChange()">
+          <span>Sí, así se escribe mi nombre</span>
+        </label>
+        <button class="btn-editar-nombre" id="btn-editar-nombre" onclick="toggleEditNombre()">Cambiar</button>
+        <div id="nombre-edit-section" class="nombre-edit-row hidden">
+          <input type="text" id="nombre-input" class="nombre-input" maxlength="100" placeholder="Escribí tu nombre">
+          <button class="btn-guardar-nombre" onclick="guardarNombre()">Guardar</button>
+        </div>
+      </div>
+
       <p class="welcome-subtitle">
         Preparamos 16 preguntas para ayudarte a contar tu historia.
         Podés tomarte el tiempo que necesites — no hay apuro.
@@ -805,11 +897,54 @@ async function init() {
     document.getElementById('saludo').textContent = `Hola, ${nombreFamiliar}.`;
     document.title = `Ethos Bios — ${nombreFamiliar}`;
     document.getElementById('gracias-nombre').textContent = `¡Gracias, ${nombreFamiliar}!`;
-    document.getElementById('btn-empezar').disabled = false;
+    // Mostrar confirmación de nombre; btn-empezar queda disabled hasta confirmar
+    _mostrarConfirmNombre(nombreFamiliar);
   } catch {
     document.getElementById('saludo').textContent = 'Este link no es válido.';
     // btn-empezar stays disabled
   }
+}
+
+// ── Confirmación de nombre ──
+function _mostrarConfirmNombre(nombre) {
+  document.getElementById('nombre-display').textContent = nombre;
+  document.getElementById('nombre-input').value = nombre;
+  document.getElementById('nombre-confirm').classList.remove('hidden');
+}
+
+function onNombreCheckChange() {
+  const checked = document.getElementById('nombre-ok-checkbox').checked;
+  document.getElementById('btn-empezar').disabled = !checked;
+  document.getElementById('btn-editar-nombre').style.display = checked ? 'none' : 'block';
+  if (checked) {
+    document.getElementById('nombre-edit-section').classList.add('hidden');
+  }
+}
+
+function toggleEditNombre() {
+  document.getElementById('nombre-edit-section').classList.toggle('hidden');
+  const input = document.getElementById('nombre-input');
+  if (!document.getElementById('nombre-edit-section').classList.contains('hidden')) {
+    input.focus();
+    input.select();
+  }
+}
+
+async function guardarNombre() {
+  const nuevo = document.getElementById('nombre-input').value.trim();
+  if (!nuevo) return;
+  try {
+    await fetch(`${API_BASE}/token/${TOKEN}/nombre?nombre=${encodeURIComponent(nuevo)}`, {
+      method: 'PATCH',
+    });
+  } catch (_) {}
+  nombreFamiliar = nuevo;
+  document.getElementById('nombre-display').textContent = nuevo;
+  document.getElementById('saludo').textContent = `Hola, ${nuevo}.`;
+  document.getElementById('gracias-nombre').textContent = `¡Gracias, ${nuevo}!`;
+  document.getElementById('nombre-edit-section').classList.add('hidden');
+  document.getElementById('nombre-ok-checkbox').checked = true;
+  onNombreCheckChange();
 }
 
 // ── Foto opcional ──
