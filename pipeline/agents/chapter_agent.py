@@ -97,13 +97,33 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
     message = call_with_retry(
         client.messages.create,
         model=MODEL,
-        max_tokens=5000,
+        max_tokens=7000,
         system=_SYSTEM,
         messages=[{"role": "user", "content": prompt}],
         label=f"claude/capitulo/{nombre}",
     )
 
     capitulo = message.content[0].text.strip()
+
+    MIN_WORDS = 3200
+    if len(capitulo.split()) < MIN_WORDS:
+        refuerzo = (
+            f"\n\nATENCIÓN: el capítulo que generaste tiene {len(capitulo.split())} palabras, "
+            f"por debajo del mínimo de {MIN_WORDS}. "
+            "Reescribilo completo, expandiendo cada etapa de vida con más detalle narrativo, "
+            "más anécdotas concretas de la transcripción, más color sensorial. "
+            "NO resumas — desarrollá. El resultado DEBE tener entre 3.200 y 3.800 palabras."
+        )
+        message = call_with_retry(
+            client.messages.create,
+            model=MODEL,
+            max_tokens=7000,
+            system=_SYSTEM,
+            messages=[{"role": "user", "content": prompt + refuerzo}],
+            label=f"claude/capitulo/{nombre}/retry",
+        )
+        capitulo = message.content[0].text.strip()
+
     sheets.save_chapter(nombre, capitulo)
     return capitulo
 

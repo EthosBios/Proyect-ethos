@@ -167,6 +167,7 @@ def run(
                 "fecha_fallec": p.get("fecha_fallec", ""),
                 "vive": p.get("vive", True),
                 "es_menor": p.get("es_menor", False),
+                "foto_url": p.get("foto_url", ""),
                 "familia_ctx": sheets.build_family_context(p["nombre"], integrantes, relaciones),
             }
             for p in _fs_integrantes
@@ -337,6 +338,19 @@ def run(
             )
             result._manuscript = result.editor
 
+            if familia_id and result.editor:
+                try:
+                    from pipeline.utils import firestore as fs_mod
+                    import json as _json
+                    _db_ref = fs_mod._db().collection("familias").document(familia_id)
+                    _db_ref.update({
+                        "manuscrito_prologo": result.editor.prologo,
+                        "manuscrito_epilogo": result.editor.epilogo,
+                        "manuscrito_transiciones": _json.dumps(result.editor.transiciones),
+                    })
+                except Exception as _e:
+                    logger.warning("[orchestrator] familia=%s no se pudo guardar editorial en Firestore: %s", familia_id, _e)
+
         except Exception as e:
             result.errores.append(f"editor_agent: {e}")
             return result
@@ -366,12 +380,24 @@ def run(
 
                 if result.chapters:
                     orden = [pm["nombre"] for pm in personas_meta if pm["nombre"] in result.chapters]
+                    prologo, epilogo, transiciones = "", "", {}
+                    if familia_id:
+                        try:
+                            from pipeline.utils import firestore as fs_mod
+                            import json as _json
+                            fam_doc = fs_mod._db().collection("familias").document(familia_id).get().to_dict() or {}
+                            prologo = fam_doc.get("manuscrito_prologo", "")
+                            epilogo = fam_doc.get("manuscrito_epilogo", "")
+                            raw_trans = fam_doc.get("manuscrito_transiciones", "{}")
+                            transiciones = _json.loads(raw_trans) if raw_trans else {}
+                        except Exception as _e:
+                            logger.warning("[orchestrator] familia=%s no se pudo cargar editorial: %s", familia_id, _e)
                     manuscript = BookManuscript(
                         orden=orden,
                         capitulos=result.chapters,
-                        prologo="",
-                        epilogo="",
-                        transiciones={},
+                        prologo=prologo,
+                        epilogo=epilogo,
+                        transiciones=transiciones,
                     )
                     result._manuscript = manuscript
                 else:
