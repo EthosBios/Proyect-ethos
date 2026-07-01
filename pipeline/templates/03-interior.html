@@ -25,15 +25,13 @@
       {%- elif b.tipo == 'cita' %}
       <blockquote class="pull center quote">«{{ b.texto | safe }}»</blockquote>
 
-      {%- elif b.tipo == 'foto' %}
+      {%- elif b.tipo == 'foto' and b.img %}
       <div class="photo-center">
         <div class="frame">
           <div class="polaroid">
-            {% if b.img %}
             <div class="ph-img-wrap" style="height:168px">
               <img class="ph-img" src="{{ b.img }}" alt="" />
             </div>
-            {% else %}<div class="ph" style="height:168px"><span>{{ b.alt_ph | default('foto') }}</span></div>{% endif %}
             <div class="cap">{{ b.caption | default('') }}</div>
           </div>
         </div>
