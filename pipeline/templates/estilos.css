@@ -179,7 +179,7 @@ html,body{ margin:0; padding:0; background:var(--paper); }
   background:rgba(245,240,232,.72); padding:3px 8px; }
 /* foto real: contenedor recorta, imagen llena el ancho */
 .ph-img-wrap{ width:100%; overflow:hidden; }
-.ph-img{ display:block; width:100%; height:auto; }
+.ph-img{ display:block; width:100%; height:100%; object-fit:cover; object-position:center; }
 
 /* ---------- polaroid ---------- */
 .polaroid{ position:relative; background:var(--cream); padding:9px 9px 34px 9px;
