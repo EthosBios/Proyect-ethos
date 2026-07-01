@@ -55,28 +55,16 @@ REGLAS DE ESCRITURA:
 Devolvé SOLO el texto del capítulo. Sin título. Sin notas. Sin explicaciones.
 """
 
-_SKIP_MENOR = """\
-Este capítulo pertenece a {nombre}, que es menor de edad.
-El capítulo debe ser escrito en tercera persona por sus padres/tutores,
-no generado automáticamente desde transcripciones propias.
-"""
-
-
 def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
     """
     persona dict esperado:
       nombre, perfil_voz (dict con los 7 campos), transcripcion,
       familia_ctx (optional dict from sheets.build_family_context)
-    Returns empty string (with marker) if es_menor=True.
     """
     nombre = persona["nombre"]
     perfil = persona.get("perfil_voz", {})
     transcripcion = persona.get("transcripcion", "")
     fctx = persona.get("familia_ctx", {})
-
-    # Skip chapter generation for minors
-    if fctx.get("es_menor"):
-        return f"[MENOR: {nombre} — capítulo a escribir por padres/tutores]"
 
     frases_propias = perfil.get("frases_propias", [])
     frases_propias_lista = ", ".join(f'"{f}"' for f in frases_propias[:5]) if frases_propias else "ninguna registrada"

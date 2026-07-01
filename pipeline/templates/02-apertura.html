@@ -12,47 +12,6 @@
       {% if capitulo.epigrafe %}<p class="ch-epi">«{{ capitulo.epigrafe }}»</p>{% endif %}
     </div>
 
-    <div class="tree">
-      <svg viewBox="{{ arbol.viewBox }}" preserveAspectRatio="xMidYMax meet">
-        {%- for b in arbol.ramas %}
-        <path d="{{ b.d }}" fill="none" stroke="{{ b.color | default('#7B5E3A') }}"
-              stroke-width="{{ b.w | default(2.6) }}" stroke-linecap="round"
-              opacity="{{ b.op | default(1) }}" />
-        {%- endfor %}
-
-        {%- for s in arbol.brotes %}
-        <circle cx="{{ s.x }}" cy="{{ s.y }}" r="6" fill="none" stroke="#8B9A78" stroke-width="1.4" opacity="0.6" />
-        {%- endfor %}
-
-        {%- for h in arbol.hojas %}
-        <g transform="translate({{ h.x }},{{ h.y }}) rotate({{ h.rot }}) scale({{ h.s | default(1) }})">
-          <ellipse rx="10" ry="4.6" fill="{{ '#6C7A59' if h.deep else '#8B9A78' }}" />
-          <line x1="-9" y1="0" x2="9" y2="0" stroke="#F5F0E8" stroke-width="0.9" opacity="0.55" />
-        </g>
-        {%- endfor %}
-
-        {%- for n in arbol.nodos %}
-        <g>
-          {%- if n.current %}
-          <g transform="translate({{ n.x + n.r*0.72 }},{{ n.y - n.r*0.72 }}) rotate(28)">
-            <ellipse rx="11" ry="5.4" fill="#8B9A78" />
-            <line x1="-9" y1="0" x2="9" y2="0" stroke="#FBF8F1" stroke-width="1" opacity="0.7" />
-          </g>
-          <circle cx="{{ n.x }}" cy="{{ n.y }}" r="{{ n.r }}" fill="#7B5E3A" />
-          <text x="{{ n.x }}" y="{{ n.y }}" dy="{{ n.r*0.34 }}" text-anchor="middle"
-                font-family="'Cormorant Garamond',serif" font-style="italic" font-weight="500"
-                font-size="{{ n.r*0.92 }}" fill="#FBF8F1">{{ n.inicial }}</text>
-          {%- else %}
-          <circle cx="{{ n.x }}" cy="{{ n.y }}" r="{{ n.r }}" fill="#FBF8F1" stroke="#B69A72" stroke-width="1.4" />
-          <text x="{{ n.x }}" y="{{ n.y }}" dy="{{ n.r*0.34 }}" text-anchor="middle"
-                font-family="'Cormorant Garamond',serif" font-style="italic" font-weight="500"
-                font-size="{{ n.r*0.92 }}" fill="#7B5E3A">{{ n.inicial }}</text>
-          {%- endif %}
-        </g>
-        {%- endfor %}
-      </svg>
-    </div>
-
     <div class="folio">{{ capitulo.folio | default(capitulo.numero) }}</div>
   </div>
 </body>

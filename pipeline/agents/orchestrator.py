@@ -90,7 +90,7 @@ def run(
     nombres: list[str],
     pais: str = "argentina",
     solo_desde: str | None = None,
-    familia: str = "Familia Mariño · Saraniti",
+    familia: str = "",
     upload_to_gcs: bool = False,
     familia_id: str | None = None,
     from_job_id: str | None = None,
@@ -174,12 +174,7 @@ def run(
     else:
         personas_meta = _build_personas_meta(nombres, integrantes, relaciones)
 
-    # Menores: se registran como skip, no se procesan
-    menores = [p["nombre"] for p in personas_meta if p.get("es_menor")]
-    adultos = [p["nombre"] for p in personas_meta if not p.get("es_menor")]
-
-    if menores:
-        logger.info("[orchestrator] familia=%s menores detectados (sin capítulo): %s", familia_id, menores)
+    adultos = [p["nombre"] for p in personas_meta]
 
     # ── Paso 1: Transcriber ───────────────────────────────────────────────────
     if start_idx <= 0:
@@ -203,22 +198,7 @@ def run(
         logger.info("[orchestrator] familia=%s paso 2: análisis de voz", familia_id)
         try:
             if familia_id and _fs_integrantes:
-                adultos_fs = [p for p in _fs_integrantes if not p.get("es_menor")]
-                print(f"[DEBUG] _fs_integrantes={[(p['nombre'], p.get('es_menor'), type(p.get('es_menor')).__name__) for p in _fs_integrantes]}", flush=True)
-                print(f"[DEBUG] adultos_fs={[p['nombre'] for p in adultos_fs]}", flush=True)
-                logger.info(
-                    "[orchestrator] familia=%s _fs_integrantes=%d adultos_fs=%s",
-                    familia_id,
-                    len(_fs_integrantes),
-                    [(p["nombre"], p.get("es_menor")) for p in _fs_integrantes],
-                )
-                if not adultos_fs:
-                    result.errores.append(
-                        f"voice_agent: adultos_fs vacío — integrantes en Firestore: "
-                        f"{[(p['nombre'], p.get('es_menor')) for p in _fs_integrantes]}"
-                    )
-                    return result
-                result.voice = voice_agent.run_from_firestore(familia_id, adultos_fs)
+                result.voice = voice_agent.run_from_firestore(familia_id, _fs_integrantes)
             else:
                 logger.warning(
                     "[orchestrator] familia=%s sin _fs_integrantes (len=%d), usando Sheets (adultos=%s)",
@@ -256,20 +236,12 @@ def run(
             import anthropic as _anthropic
             client = _anthropic.Anthropic(timeout=120.0)
 
-            # Menores: placeholders (sin llamada a Claude)
-            for pm in personas_meta:
-                if pm.get("es_menor"):
-                    result.chapters[pm["nombre"]] = f"[MENOR: {pm['nombre']} — capítulo a escribir por padres/tutores]"
-
             # familia_ctx keyed by nombre (para cualquier path)
             personas_meta_by_nombre = {pm["nombre"]: pm for pm in personas_meta}
 
             if _fs_integrantes:
-                # Firestore path: iteramos sobre los objetos directamente, sin lookup por nombre
                 gen_items = []
                 for p in _fs_integrantes:
-                    if p.get("es_menor"):
-                        continue
                     item = dict(p)
                     item["familia_ctx"] = personas_meta_by_nombre.get(p["nombre"], {}).get("familia_ctx", {})
                     gen_items.append(item)
@@ -302,7 +274,7 @@ def run(
 
             else:
                 # Sheets path: iteramos sobre personas_meta
-                gen_items = [pm for pm in personas_meta if not pm.get("es_menor")]
+                gen_items = list(personas_meta)
 
                 def _generar(item: dict):
                     nombre = item["nombre"]
@@ -347,7 +319,6 @@ def run(
                     if p and p.get("capitulo"):
                         result.chapters[nombre] = p["capitulo"]
 
-            # Build editor personas list (only those with chapters, excluding menores)
             editor_personas = [
                 {
                     "nombre": pm["nombre"],
@@ -355,12 +326,12 @@ def run(
                     "perfil_voz": pm.get("familia_ctx", {}),
                 }
                 for pm in personas_meta
-                if not pm.get("es_menor") and pm["nombre"] in result.chapters
+                if pm["nombre"] in result.chapters
             ]
 
             result.editor = editor_agent.run(
                 personas=editor_personas,
-                capitulos={k: v for k, v in result.chapters.items() if not v.startswith("[MENOR")},
+                capitulos=result.chapters,
                 relaciones=relaciones,
                 fallecidos=fallecidos,
             )
@@ -379,9 +350,8 @@ def run(
             # Fallback: si solo_desde=layout, cargar capítulos guardados y armar manuscrito mínimo
             if manuscript is None:
                 logger.warning("[orchestrator] familia=%s manuscrito no disponible — cargando capítulos guardados", familia_id)
-                adultos_meta = [pm for pm in personas_meta if not pm.get("es_menor")]
                 fs_integrantes_by_nombre = {p["nombre"]: p for p in _fs_integrantes} if _fs_integrantes else {}
-                for pm in adultos_meta:
+                for pm in personas_meta:
                     nombre = pm["nombre"]
                     if nombre in result.chapters:
                         continue
@@ -395,7 +365,7 @@ def run(
                             result.chapters[nombre] = p["capitulo"]
 
                 if result.chapters:
-                    orden = [pm["nombre"] for pm in adultos_meta if pm["nombre"] in result.chapters]
+                    orden = [pm["nombre"] for pm in personas_meta if pm["nombre"] in result.chapters]
                     manuscript = BookManuscript(
                         orden=orden,
                         capitulos=result.chapters,
@@ -411,7 +381,7 @@ def run(
                 raise ValueError("No hay manuscrito disponible para el layout")
 
             # personas_meta for chapters (with rol/vive/fecha_fallec)
-            capitulo_personas = [pm for pm in personas_meta if not pm.get("es_menor")]
+            capitulo_personas = list(personas_meta)
 
             # todos_integrantes = full family list for timeline
             todos_integrantes = [

@@ -288,7 +288,7 @@ class PipelineRequest(BaseModel):
     nombres: list[str]
     pais: str = "argentina"
     solo_desde: str | None = None
-    familia: str = "Familia Mariño · Saraniti"
+    familia: str = ""
     upload_to_gcs: bool = False
     familia_id: str | None = None
     from_job_id: str | None = None  # reutilizar capítulos de un job anterior
@@ -442,7 +442,7 @@ def run_editor(req: EditorRequest, _: None = Depends(_admin_auth)):
 
 class LayoutRequest(BaseModel):
     nombres: list[str]
-    familia: str = "Familia Mariño · Saraniti"
+    familia: str = ""
     upload_to_gcs: bool = False
 
 
@@ -792,11 +792,7 @@ def _check_y_trigger(familia_id: str) -> None:
         return
 
     familia = fs.get_familia(familia_id) or {}
-    nombres = [
-        i.get("nombre", "")
-        for i in integrantes
-        if i.get("nombre") and not i.get("es_menor")
-    ]
+    nombres = [i.get("nombre", "") for i in integrantes if i.get("nombre")]
     job_id = str(uuid.uuid4())
     fs.create_job(job_id, familia_id=familia_id)
     enqueue_pipeline(
@@ -805,7 +801,7 @@ def _check_y_trigger(familia_id: str) -> None:
             "nombres": nombres,
             "pais": familia.get("pais", "argentina"),
             "solo_desde": None,
-            "familia": familia.get("nombre", "Familia Mariño · Saraniti"),
+            "familia": familia.get("nombre", ""),
             "upload_to_gcs": True,
             "familia_id": familia_id,
             "from_job_id": None,

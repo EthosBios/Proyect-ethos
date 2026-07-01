@@ -588,6 +588,34 @@ header .logo {
 
 .foto-label:hover { border-style: solid; background: #fdf6f0; }
 
+/* ── Consent section ── */
+.consent-section {
+  margin: 24px 0 8px;
+  padding: 18px 20px;
+  background: #fdf6f0;
+  border: 1.5px solid var(--accent-light);
+  border-radius: 12px;
+}
+
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.consent-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 /* ── Responsive tweaks ── */
 @media (max-width: 480px) {
   .welcome-card { padding: 36px 22px 30px; }
@@ -826,9 +854,12 @@ function empezar() {
   renderBloque(0);
 }
 
-function siguienteBloque() {
+async function siguienteBloque() {
   const esUltimo = bloqueActual === BLOQUES.length - 1;
   if (esUltimo) {
+    try {
+      await fetch(`${API_BASE}/token/${TOKEN}/consentimiento`, { method: 'POST' });
+    } catch (_) {}
     completar();
     document.getElementById('screen-preguntas').classList.add('hidden');
     document.getElementById('screen-gracias').classList.remove('hidden');
@@ -872,6 +903,17 @@ function renderBloque(idx) {
       </div>
     `;
   });
+
+  if (esUltimo) {
+    html += `
+      <div class="consent-section hidden" id="consent-section">
+        <label class="consent-label">
+          <input type="checkbox" id="consent-checkbox" onchange="onConsentChange()">
+          <span>Autorizo el uso de mis respuestas grabadas para la generación del libro familiar.</span>
+        </label>
+      </div>
+    `;
+  }
 
   container.innerHTML = html;
 
@@ -1008,7 +1050,20 @@ async function enviarAudio(pid) {
 function checkBloqueCompleto() {
   const bloque = BLOQUES[bloqueActual];
   const todas = bloque.preguntas.every(pid => state[pid]?.sent === true);
-  document.getElementById('btn-siguiente').disabled = !todas;
+  const esUltimo = bloqueActual === BLOQUES.length - 1;
+
+  if (esUltimo && todas) {
+    const consentSection = document.getElementById('consent-section');
+    if (consentSection) consentSection.classList.remove('hidden');
+    const consentChecked = document.getElementById('consent-checkbox')?.checked ?? false;
+    document.getElementById('btn-siguiente').disabled = !consentChecked;
+  } else {
+    document.getElementById('btn-siguiente').disabled = !todas;
+  }
+}
+
+function onConsentChange() {
+  checkBloqueCompleto();
 }
 
 // ── Completar (fire-and-forget) ──

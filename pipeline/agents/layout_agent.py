@@ -433,15 +433,6 @@ def _render_libro(
         if not capitulo_texto:
             continue
 
-        # Árbol acumulativo para esta apertura
-        tree_root = build_family_tree(
-            integrantes=integrantes,
-            relaciones=relaciones,
-            capitulo_actual=nombre,
-            nombres_escritos=nombres_escritos,
-        )
-        arbol = layout_family(tree_root) if tree_root.get("people") else _arbol_vacio()
-
         epigrafe = _extraer_frase(capitulo_texto)
         folio_apertura = next_folio()
 
@@ -453,7 +444,7 @@ def _render_libro(
             "epigrafe": epigrafe,
             "folio": folio_apertura,
         }
-        partes.append(_extract_body(tmpl_apertura.render(capitulo=cap_ctx, arbol=arbol)))
+        partes.append(_extract_body(tmpl_apertura.render(capitulo=cap_ctx)))
 
         # 03 · Páginas interiores
         tmpl_interior = env.get_template("03-interior.html")
@@ -546,7 +537,7 @@ def _arbol_vacio() -> dict:
 def run(
     manuscript: BookManuscript,
     personas_meta: list[dict],
-    nombre_familia: str = "Familia Mariño · Saraniti",
+    nombre_familia: str = "",
     output_path: Optional[str] = None,
     todos_integrantes: Optional[list[dict]] = None,
     relaciones: Optional[list[dict]] = None,
