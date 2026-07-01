@@ -27,7 +27,7 @@ Analizá las siguientes transcripciones orales de {nombre}.
 {bloques}
 </transcripciones>
 
-Devolvé EXCLUSIVAMENTE un JSON válido con estos 7 campos:
+Devolvé EXCLUSIVAMENTE un JSON válido con estos 6 campos:
 
 {{
   "muletillas": ["lista de muletillas y palabras de relleno que usa habitualmente"],
@@ -35,8 +35,7 @@ Devolvé EXCLUSIVAMENTE un JSON válido con estos 7 campos:
   "registro": "descripción del registro lingüístico: formal/informal/coloquial/técnico/mixto, con ejemplos",
   "detalles_sensoriales": ["imágenes, metáforas, referencias concretas al cuerpo, al espacio, a los sentidos"],
   "tono": "descripción del tono emocional predominante y sus variaciones",
-  "citas_directas": ["5 a 8 fragmentos literales especialmente expresivos o reveladores, mínimo 20 palabras cada uno"],
-  "texto_limpio": "toda la transcripción unificada, sin indicadores de pregunta, como un monólogo continuo"
+  "citas_directas": ["5 a 8 fragmentos literales especialmente expresivos o reveladores, mínimo 20 palabras cada uno"]
 }}
 
 Solo JSON. Sin explicaciones. Sin markdown.
@@ -45,22 +44,9 @@ Solo JSON. Sin explicaciones. Sin markdown.
 
 def _parse_json_response(text: str) -> dict:
     text = text.strip()
-    # Strip markdown code fences if present
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```$", "", text)
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        # Claude occasionally generates truncated JSON — find the last complete field
-        # by trimming to the last full key-value pair and closing braces
-        last_comma = text.rfind(",\n")
-        if last_comma > 0:
-            truncated = text[:last_comma] + "\n}}"
-            try:
-                return json.loads(truncated)
-            except json.JSONDecodeError:
-                pass
-        raise
+    return json.loads(text)
 
 
 def _build_perfil(client: anthropic.Anthropic, nombre: str, transcripciones: list[dict]) -> tuple[dict, str]:
