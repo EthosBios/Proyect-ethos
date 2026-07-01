@@ -13,8 +13,7 @@
     <div class="block">
       <div class="kicker" style="color:var(--brown)">{{ libro.kicker | default('El libro de la familia') }}</div>
       <h1 class="title serif">
-        {{ libro.apellido_1 }}<br />
-        <span class="mid">·</span> {{ libro.apellido_2 }}
+        {{ libro.apellido_1 }}{% if libro.apellido_2 %}<br /><span class="mid">·</span> {{ libro.apellido_2 }}{% endif %}
       </h1>
       <p class="body lede">{{ libro.lede | default('Cada voz, un capítulo. Cada capítulo, una rama nueva en el árbol de los que somos.') }}</p>
     </div>
