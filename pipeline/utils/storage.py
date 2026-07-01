@@ -56,12 +56,27 @@ def upload_to_gcs(
 
 def get_signed_url(gs_url: str, expiration_hours: int = 720) -> str:
     """Return a v4 signed URL valid for expiration_hours (default 30 days)."""
+    import json
+    from google.oauth2 import service_account
+
     bucket_name, blob_name = _parse_gs_url(gs_url)
-    bucket = _gcs().bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    url = blob.generate_signed_url(
+
+    # Cloud Run usa Compute Engine credentials (token-only), que no pueden firmar.
+    # Usamos la SA key de GCP_SA_KEY_JSON para obtener credenciales firmables.
+    sa_key_json = os.environ.get("GCP_SA_KEY_JSON", "")
+    if sa_key_json:
+        signing_creds = service_account.Credentials.from_service_account_info(
+            json.loads(sa_key_json)
+        )
+        client = storage.Client(credentials=signing_creds)
+    else:
+        signing_creds = None
+        client = _gcs()
+
+    blob = client.bucket(bucket_name).blob(blob_name)
+    return blob.generate_signed_url(
         version="v4",
         expiration=timedelta(hours=expiration_hours),
         method="GET",
+        credentials=signing_creds,
     )
-    return url
