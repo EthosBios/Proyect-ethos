@@ -235,7 +235,7 @@ def run(
         try:
             from concurrent.futures import ThreadPoolExecutor, as_completed
             import anthropic as _anthropic
-            client = _anthropic.Anthropic(timeout=120.0)
+            client = _anthropic.Anthropic(timeout=600.0)
 
             # familia_ctx keyed by nombre (para cualquier path)
             personas_meta_by_nombre = {pm["nombre"]: pm for pm in personas_meta}

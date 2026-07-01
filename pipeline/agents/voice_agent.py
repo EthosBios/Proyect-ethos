@@ -48,7 +48,19 @@ def _parse_json_response(text: str) -> dict:
     # Strip markdown code fences if present
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```$", "", text)
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Claude occasionally generates truncated JSON — find the last complete field
+        # by trimming to the last full key-value pair and closing braces
+        last_comma = text.rfind(",\n")
+        if last_comma > 0:
+            truncated = text[:last_comma] + "\n}}"
+            try:
+                return json.loads(truncated)
+            except json.JSONDecodeError:
+                pass
+        raise
 
 
 def _build_perfil(client: anthropic.Anthropic, nombre: str, transcripciones: list[dict]) -> tuple[dict, str]:

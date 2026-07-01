@@ -130,7 +130,7 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
 
 def run(nombres: list[str]) -> dict[str, str]:
     """Standalone: generate chapters for each nombre. Returns {nombre: capitulo_str}."""
-    client = anthropic.Anthropic(timeout=120.0)
+    client = anthropic.Anthropic(timeout=600.0)
     results = {}
 
     try:
