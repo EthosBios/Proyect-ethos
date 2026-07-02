@@ -161,6 +161,7 @@ def run(
         # Firestore path: build personas_meta directly from fs objects — no name lookup
         personas_meta = [
             {
+                "id": p["id"],
                 "nombre": p["nombre"],
                 "fecha_nac": p.get("fecha_nac", ""),
                 "rol": p.get("rol", ""),
@@ -261,17 +262,15 @@ def run(
                 if pm.get("es_menor"):
                     result.chapters[pm["nombre"]] = f"[MENOR: {pm['nombre']} — capítulo a escribir por padres/tutores]"
 
-            # familia_ctx keyed by nombre (para cualquier path)
-            personas_meta_by_nombre = {pm["nombre"]: pm for pm in personas_meta}
-
             if _fs_integrantes:
-                # Firestore path: iteramos sobre los objetos directamente, sin lookup por nombre
+                # Firestore path: iteramos sobre los objetos directamente, matcheando por id
+                personas_meta_by_id = {pm["id"]: pm for pm in personas_meta}
                 gen_items = []
                 for p in _fs_integrantes:
                     if p.get("es_menor"):
                         continue
                     item = dict(p)
-                    item["familia_ctx"] = personas_meta_by_nombre.get(p["nombre"], {}).get("familia_ctx", {})
+                    item["familia_ctx"] = personas_meta_by_id.get(p["id"], {}).get("familia_ctx", {})
                     gen_items.append(item)
 
                 def _generar(item: dict):
@@ -380,13 +379,13 @@ def run(
             if manuscript is None:
                 logger.warning("[orchestrator] familia=%s manuscrito no disponible — cargando capítulos guardados", familia_id)
                 adultos_meta = [pm for pm in personas_meta if not pm.get("es_menor")]
-                fs_integrantes_by_nombre = {p["nombre"]: p for p in _fs_integrantes} if _fs_integrantes else {}
+                fs_integrantes_by_id = {p["id"]: p for p in _fs_integrantes} if _fs_integrantes else {}
                 for pm in adultos_meta:
                     nombre = pm["nombre"]
                     if nombre in result.chapters:
                         continue
                     if familia_id and _fs_integrantes:
-                        fs_data = fs_integrantes_by_nombre.get(nombre)
+                        fs_data = fs_integrantes_by_id.get(pm.get("id"))
                         if fs_data and fs_data.get("capitulo"):
                             result.chapters[nombre] = fs_data["capitulo"]
                     if nombre not in result.chapters:
