@@ -330,7 +330,9 @@ def build_family_context(nombre: str, integrantes: list[dict], relaciones: list[
             if r["persona_b"].lower() != nombre_lower:
                 siblings.add(r["persona_b"])
 
-    integrante = get_integrante(nombre) or {}
+    integrante = next(
+        (p for p in integrantes if p["nombre"].strip().lower() == nombre_lower), {}
+    )
     return {
         "rol": integrante.get("rol", ""),
         "vive": integrante.get("vive", True),
