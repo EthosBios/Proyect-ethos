@@ -135,6 +135,6 @@ See `.env.example` for all required environment variables.
 
 ## Notes
 
-- **CORS**: The backend has `CORSMiddleware` allowing requests from `https://fedegiacomozzi.github.io`. Update `allow_origins` if the frontend URL changes.
+- **CORS**: The backend has `CORSMiddleware` allowing requests from `https://ethosbios.com`, `https://www.ethosbios.com`, and `https://ethosbios.vercel.app`. Update `allow_origins` if the frontend URL changes.
 - **Credentials**: Always use `GOOGLE_CREDENTIALS_JSON` (JSON string) or `GOOGLE_CREDENTIALS_FILE` (path). Never commit credentials to git.
 - **Pipeline duration**: Full pipeline for 10 people takes 35–56 min. The current `/run/pipeline` is synchronous. See `HEALTH_CHECK.md` for the async upgrade plan.
