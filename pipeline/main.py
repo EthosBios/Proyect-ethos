@@ -195,7 +195,6 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://fedegiacomozzi.github.io",
         "https://ethosbios.com",
         "https://www.ethosbios.com",
         "https://ethosbios.vercel.app",
@@ -1845,7 +1844,10 @@ def test_bienvenida(familia_id: str, email: str | None = None, _: None = Depends
 
 
 @app.post("/admin/test-email-libro")
-def test_email_libro(email: str = "fede.giacomozzi@gmail.com", _: None = Depends(_admin_auth)):
+def test_email_libro(
+    email: str = os.environ.get("ADMIN_EMAIL", "hola@ethosbios.com"),
+    _: None = Depends(_admin_auth),
+):
     from pipeline.utils.email import send_libro_listo
     send_libro_listo(email_comprador=email, nombre_familia="Familia García", signed_url="https://ethosbios.com")
     return {"ok": True, "message": "Email libro listo enviado"}

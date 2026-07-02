@@ -175,7 +175,7 @@ def send_alerta_admin(familia_id: str, job_id: str, etapa: str, error: str) -> N
     key = _get_key()
     if not key:
         return
-    admin_email = os.environ.get("ADMIN_EMAIL", "fede.giacomozzi@gmail.com")
+    admin_email = os.environ.get("ADMIN_EMAIL", "hola@ethosbios.com")
     html = f"""<html><body style="font-family:sans-serif;color:#3d2b0a;max-width:560px;margin:0 auto;padding:24px">
 <p style="font-family:Georgia,serif;font-size:22px;margin-bottom:16px">Ethos Bios</p>
 <h2 style="font-weight:400;margin-bottom:8px;color:#c0392b">Pipeline fallido</h2>
