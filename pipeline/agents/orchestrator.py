@@ -14,6 +14,7 @@ from pipeline.agents import (
 )
 from pipeline.agents.editor_agent import BookManuscript
 from pipeline.utils import sheets
+from pipeline.utils.costos import CostAccumulator
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,57 @@ def run(
     Corre el pipeline completo (o desde un paso específico).
     solo_desde: uno de "transcriber", "voice", "chapters", "editor", "layout"
     from_job_id: job anterior del que reutilizar capítulos (evita volver a llamar a Claude)
+
+    Envuelve _run_pipeline: arranca el contador de costos y los timestamps de
+    pipeline_inicio/pipeline_fin/pipeline_paso_actual/numero_corrida (Briefing #32).
     """
+    costos = CostAccumulator()
+    numero_corrida = None
+
+    if familia_id:
+        from pipeline.utils import firestore as fs
+        start_idx = STEPS.index(solo_desde) if solo_desde in STEPS else 0
+        try:
+            numero_corrida = fs.increment_numero_corrida(familia_id)
+            fs.marcar_pipeline_inicio(familia_id, STEPS[start_idx])
+        except Exception as _e:  # noqa: BLE001
+            logger.warning("[orchestrator] familia=%s no se pudo marcar pipeline_inicio: %s", familia_id, _e)
+
+    result = _run_pipeline(
+        nombres=nombres,
+        pais=pais,
+        solo_desde=solo_desde,
+        familia=familia,
+        upload_to_gcs=upload_to_gcs,
+        familia_id=familia_id,
+        from_job_id=from_job_id,
+        costos=costos,
+    )
+
+    if familia_id:
+        from pipeline.utils import firestore as fs
+        try:
+            fs.save_costos(familia_id, costos.as_dict(), numero_corrida or 0)
+        except Exception as _e:  # noqa: BLE001
+            logger.warning("[orchestrator] familia=%s no se pudo guardar costos: %s", familia_id, _e)
+        try:
+            fs.marcar_pipeline_fin(familia_id, result.ok)
+        except Exception as _e:  # noqa: BLE001
+            logger.warning("[orchestrator] familia=%s no se pudo marcar pipeline_fin: %s", familia_id, _e)
+
+    return result
+
+
+def _run_pipeline(
+    nombres: list[str],
+    pais: str,
+    solo_desde: str | None,
+    familia: str,
+    upload_to_gcs: bool,
+    familia_id: str | None,
+    from_job_id: str | None,
+    costos: CostAccumulator,
+) -> PipelineResult:
     result = PipelineResult(personas=nombres)
 
     # Forzar datos frescos de Sheets al inicio de cada pipeline
@@ -108,6 +159,15 @@ def run(
     start_idx = 0
     if solo_desde and solo_desde in STEPS:
         start_idx = STEPS.index(solo_desde)
+
+    def _marcar_paso(paso: str) -> None:
+        if not familia_id:
+            return
+        try:
+            from pipeline.utils import firestore as fs_mod
+            fs_mod.update_pipeline_paso_actual(familia_id, paso)
+        except Exception as _e:  # noqa: BLE001
+            logger.warning("[orchestrator] familia=%s no se pudo actualizar pipeline_paso_actual: %s", familia_id, _e)
 
     # ── Cargar datos de familia (Firestore primero, Sheets como fallback) ────────
     integrantes, relaciones, fallecidos = [], [], []
@@ -180,16 +240,17 @@ def run(
 
     # ── Paso 1: Transcriber ───────────────────────────────────────────────────
     if start_idx <= 0:
+        _marcar_paso("transcriber")
         logger.info("[orchestrator] familia=%s job=%s paso 1: transcripción", familia_id, from_job_id)
         try:
             if familia_id and _fs_integrantes:
-                result.transcriber = transcriber.run_from_firestore(familia_id, pais)
+                result.transcriber = transcriber.run_from_firestore(familia_id, pais, costos=costos)
             else:
                 row_indices = _get_row_indices(adultos)
                 if not row_indices:
                     result.errores.append("No se encontraron filas en el Sheet para los nombres dados")
                     return result
-                result.transcriber = transcriber.run(row_indices, pais)
+                result.transcriber = transcriber.run(row_indices, pais, costos=costos)
             logger.info("[orchestrator] familia=%s transcripción: %s", familia_id, result.transcriber)
         except Exception as e:
             result.errores.append(f"transcriber: {e}")
@@ -197,10 +258,11 @@ def run(
 
     # ── Paso 2: Voice agent ───────────────────────────────────────────────────
     if start_idx <= 1:
+        _marcar_paso("voice")
         logger.info("[orchestrator] familia=%s paso 2: análisis de voz", familia_id)
         try:
             if familia_id and _fs_integrantes:
-                result.voice = voice_agent.run_from_firestore(familia_id, _fs_integrantes)
+                result.voice = voice_agent.run_from_firestore(familia_id, _fs_integrantes, costos=costos)
             else:
                 logger.warning(
                     "[orchestrator] familia=%s sin _fs_integrantes (len=%d), usando Sheets (adultos=%s)",
@@ -209,7 +271,7 @@ def run(
                 if not adultos:
                     result.errores.append("voice_agent: lista de adultos vacía y sin datos Firestore")
                     return result
-                result.voice = voice_agent.run(adultos)
+                result.voice = voice_agent.run(adultos, costos=costos)
             errores_voz = [n for n, v in result.voice.items() if "error" in v]
             if errores_voz:
                 result.errores.append(f"voice_agent falló para: {errores_voz}")
@@ -243,6 +305,7 @@ def run(
 
     # ── Paso 3: Chapter agent ─────────────────────────────────────────────────
     if start_idx <= 2:
+        _marcar_paso("chapters")
         logger.info("[orchestrator] familia=%s paso 3: generación de capítulos (paralelo)", familia_id)
         try:
             from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -273,7 +336,7 @@ def run(
                         "transcripcion": transcripcion,
                         "familia_ctx": item.get("familia_ctx", {}),
                     }
-                    cap = chapter_agent.generar_capitulo(client, persona)
+                    cap = chapter_agent.generar_capitulo(client, persona, costos=costos)
 
                     if familia_id and cap:
                         try:
@@ -299,7 +362,7 @@ def run(
                         "transcripcion": p.get("transcripcion", ""),
                         "familia_ctx": item.get("familia_ctx", {}),
                     }
-                    cap = chapter_agent.generar_capitulo(client, persona)
+                    cap = chapter_agent.generar_capitulo(client, persona, costos=costos)
                     return nombre, cap, None
 
             with ThreadPoolExecutor(max_workers=min(6, len(gen_items))) as executor:
@@ -322,6 +385,7 @@ def run(
 
     # ── Paso 4: Editor agent ──────────────────────────────────────────────────
     if start_idx <= 3:
+        _marcar_paso("editor")
         logger.info("[orchestrator] familia=%s paso 4: edición del manuscrito", familia_id)
         try:
             if start_idx > 2:
@@ -346,6 +410,7 @@ def run(
                 capitulos=result.chapters,
                 relaciones=relaciones,
                 fallecidos=fallecidos,
+                costos=costos,
             )
             result._manuscript = result.editor
 
@@ -368,6 +433,7 @@ def run(
 
     # ── Paso 5: Layout agent ──────────────────────────────────────────────────
     if start_idx <= 4:
+        _marcar_paso("layout")
         logger.info("[orchestrator] familia=%s paso 5: generación del PDF", familia_id)
         try:
             manuscript = result._manuscript or result.editor

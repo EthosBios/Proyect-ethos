@@ -19,6 +19,7 @@ import httpx
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -26,6 +27,8 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 _STATIC_DIR = Path(__file__).parent / "static"
+_TEMPLATES_DIR = Path(__file__).parent / "templates"
+_templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +104,7 @@ def _run_pipeline_job(job_id: str, req_dict: dict) -> None:
                 if comprador_email and layout_url:
                     signed = st.get_signed_url(layout_url, expiration_hours=168)
                     send_libro_listo(email_comprador=comprador_email, nombre_familia=nombre_familia, signed_url=signed)
+                    _fs_email.set_entregado_at(familia_id_job)
                     logger.info('[email-libro-listo] enviado a %s', comprador_email)
             except Exception as exc:  # noqa: BLE001
                 logger.warning('[email-libro-listo] error: %s', exc)
@@ -856,6 +860,7 @@ def recibir_audio(token: str, req: AudioRequest):
         os.unlink(tmp_path)
 
     fs.update_integrante_estado(familia_id, integrante_id, "completo")
+    fs.update_familia_ultima_grabacion(familia_id)
     _check_y_trigger(familia_id)
 
     return {"ok": True, "audio_url": gcs_uri}
@@ -973,6 +978,7 @@ async def token_respuesta(
         os.unlink(tmp_path)
 
     fs.save_respuesta(familia_id, integrante_id, pregunta, gs_url)
+    fs.update_familia_ultima_grabacion(familia_id)
     respuestas_guardadas = fs.get_respuestas(familia_id, integrante_id)
     pct = round(len([r for r in respuestas_guardadas if r.get("audio_url")]) / 16 * 100)
     fs.update_porcentaje_avance(familia_id, integrante_id, pct)
@@ -1903,3 +1909,100 @@ def test_email(email: str = "test@raices.app", _: None = Depends(_admin_auth)):
         ],
     )
     return {"ok": True, "message": "Email de prueba enviado", "base_url": base}
+
+
+# ─── Panel Admin Pro: /admin/dashboard (Briefing #32) ─────────────────────────
+
+def _admin_auth_header(x_admin_key: str | None = Header(default=None)) -> None:
+    """Igual que _admin_auth pero pensado para el GET del panel (mismo esquema X-Admin-Key)."""
+    _admin_auth(x_admin_key)
+
+
+@app.get("/admin/dashboard")
+def admin_dashboard(request: Request, _: None = Depends(_admin_auth_header)):
+    from pipeline.utils import dashboard as dash
+
+    data = dash.build_dashboard_data()
+    return _templates.TemplateResponse(
+        request=request,
+        name="admin_dashboard.html",
+        context={
+            "alertas": data["alertas"],
+            "kpis": data["kpis"],
+            "familias": data["familias"],
+        },
+    )
+
+
+@app.post("/admin/familia/{familia_id}/recordatorio")
+def admin_familia_recordatorio(familia_id: str, _: None = Depends(_admin_auth)):
+    """Envía el email de recordatorio a los integrantes con grabación pendiente."""
+    from pipeline.utils import firestore as fs
+    from pipeline.utils.email import send_recordatorio
+
+    familia = fs.get_familia(familia_id)
+    if not familia:
+        raise HTTPException(status_code=404, detail=f"Familia no encontrada: {familia_id}")
+
+    nombre_familia = familia.get("nombre", "tu familia")
+    base = _recording_base()
+    integrantes = fs.get_integrantes(familia_id)
+    pendientes = [i for i in integrantes if i.get("estado") != "completo" and i.get("email")]
+
+    enviados = []
+    for integrante in pendientes:
+        token = integrante.get("token_unico", "")
+        if not token:
+            continue
+        try:
+            send_recordatorio(
+                email_integrante=integrante["email"],
+                nombre_integrante=integrante.get("nombre", ""),
+                nombre_familia=nombre_familia,
+                token_url=f"{base}/r/{token}",
+            )
+            enviados.append(integrante.get("nombre", ""))
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[admin-recordatorio] error enviando a %s: %s", integrante.get("email"), exc)
+
+    return {"ok": True, "familia_id": familia_id, "enviados": enviados, "pendientes_sin_email": len(pendientes) - len(enviados)}
+
+
+class ReintentarPipelineBody(BaseModel):
+    solo_desde: str | None = None
+
+
+@app.post("/admin/familia/{familia_id}/reintentar-pipeline")
+def admin_familia_reintentar_pipeline(
+    familia_id: str, body: ReintentarPipelineBody, _: None = Depends(_admin_auth)
+):
+    """Reintenta el pipeline para una familia desde el paso indicado (o desde el principio)."""
+    from pipeline.utils import firestore as fs
+    from pipeline.utils.tasks import enqueue_pipeline
+
+    familia = fs.get_familia(familia_id)
+    if not familia:
+        raise HTTPException(status_code=404, detail=f"Familia no encontrada: {familia_id}")
+
+    if body.solo_desde and body.solo_desde not in orchestrator.STEPS:
+        raise HTTPException(status_code=400, detail=f"solo_desde inválido: {body.solo_desde!r}")
+
+    integrantes = fs.get_integrantes(familia_id)
+    nombres = [i.get("nombre", "") for i in integrantes if i.get("nombre")]
+
+    job_id = str(uuid.uuid4())
+    fs.create_job(job_id, familia_id=familia_id)
+    enqueue_pipeline(
+        job_id,
+        {
+            "nombres": nombres,
+            "pais": familia.get("pais", "argentina"),
+            "solo_desde": body.solo_desde,
+            "familia": familia.get("nombre", ""),
+            "upload_to_gcs": True,
+            "familia_id": familia_id,
+            "from_job_id": None,
+        },
+    )
+    logger.info("[admin-reintentar-pipeline] familia=%s solo_desde=%s job=%s", familia_id, body.solo_desde, job_id)
+    return {"ok": True, "job_id": job_id, "solo_desde": body.solo_desde}

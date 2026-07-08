@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — Ethos Bios</title>
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --card: #ffffff;
+    --ink: #1f2320;
+    --muted: #6b7280;
+    --border: #e6e4de;
+    --accent: #2f6b4f;
+    --rojo: #c0392b;
+    --amarillo: #b7830a;
+    --verde: #2f6b4f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 24px;
+  }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .subt { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+  section { margin-bottom: 32px; }
+  h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 12px; }
+
+  .kpis { display: flex; flex-wrap: wrap; gap: 12px; }
+  .kpi {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; min-width: 160px; flex: 1 1 160px;
+  }
+  .kpi .valor { font-size: 1.6rem; font-weight: 700; }
+  .kpi .label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  th { background: #efece4; font-weight: 600; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; }
+  tr:last-child td { border-bottom: none; }
+
+  .btn {
+    border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    border-radius: 6px; padding: 5px 10px; font-size: 0.78rem; cursor: pointer;
+  }
+  .btn.secundario { background: #fff; color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+  .badge.rojo { background: #fbe4e1; color: var(--rojo); }
+  .badge.amarillo { background: #fbf0da; color: var(--amarillo); }
+  .badge.verde { background: #e2f0e8; color: var(--verde); }
+
+  .refund-resumen { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .refund-total {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 20px;
+  }
+  .refund-total .valor { font-size: 1.4rem; font-weight: 700; color: var(--rojo); }
+
+  .vacio { color: var(--muted); font-style: italic; padding: 12px 0; }
+  .msg { font-size: 0.78rem; margin-top: 6px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>📊 Panel Admin — Ethos Bios</h1>
+<div class="subt">Fuente operativa de clientes (reemplaza a la DB de Notion "Familias"). Generado al cargar la página, sin cron.</div>
+
+{# ── Bloque A: Alertas accionables ─────────────────────────────────────── #}
+{% if alertas %}
+<section>
+  <h2>🔔 Alertas accionables ({{ alertas|length }})</h2>
+  <table>
+    <thead>
+      <tr><th>Alerta</th><th>Familia</th><th>Detalle</th><th>Acción</th></tr>
+    </thead>
+    <tbody>
+      {% for a in alertas %}
+      <tr>
+        <td>{{ a.tipo }}</td>
+        <td>{{ a.familia_nombre }}</td>
+        <td>{{ a.detalle }}</td>
+        <td>
+          {% if a.accion == "recordatorio" %}
+            <button class="btn" onclick="accionRecordatorio('{{ a.familia_id }}', this)">Reenviar recordatorio</button>
+          {% elif a.accion == "reintentar" %}
+            <button class="btn" onclick="accionReintentar('{{ a.familia_id }}', '{{ a.solo_desde or "" }}', this)">Reintentar</button>
+          {% elif a.accion == "disparar" %}
+            <button class="btn" onclick="accionReintentar('{{ a.familia_id }}', '', this)">Disparar pipeline</button>
+          {% else %}
+            <a class="btn secundario" href="/familia/{{ a.familia_id }}">Ver detalle</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+{# ── Bloque B: KPIs agregados ──────────────────────────────────────────── #}
+<section>
+  <h2>KPIs</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="valor">{{ kpis.libros_entregados_total }}</div><div class="label">Libros entregados (total)</div></div>
+    <div class="kpi"><div class="valor">{{ kpis.libros_entregados_30d }}</div><div class="label">Entregados últimos 30 días</div></div>
+    <div class="kpi"><div class="valor">{{ kpis.familias_en_curso }}</div><div class="label">Familias en curso</div></div>
+    <div class="kpi">
+      <div class="valor">{{ kpis.tiempo_promedio_entrega_hs if kpis.tiempo_promedio_entrega_hs is not none else "—" }}{% if kpis.tiempo_promedio_entrega_hs is not none %}hs{% endif %}</div>
+      <div class="label">Compra → entrega (promedio, promesa &lt;24hs)</div>
+    </div>
+    <div class="kpi"><div class="valor">USD {{ "%.2f"|format(kpis.exposicion_refund_usd) }}</div><div class="label">Exposición refund (ventana 7 días)</div></div>
+    <div class="kpi">
+      <div class="valor">{{ ("USD %.2f"|format(kpis.margen_promedio_usd)) if kpis.margen_promedio_usd is not none else "—" }}</div>
+      <div class="label">Margen promedio real / libro</div>
+    </div>
+    <div class="kpi">
+      <div class="valor">{{ ("USD %.2f"|format(kpis.costo_promedio_limpio)) if kpis.costo_promedio_limpio is not none else "—" }}</div>
+      <div class="label">Costo promedio corrida limpia (nº 1)</div>
+    </div>
+    <div class="kpi">
+      <div class="valor">{{ ("%.1f%%"|format(kpis.pct_sobrecosto_reintentos)) if kpis.pct_sobrecosto_reintentos is not none else "—" }}</div>
+      <div class="label">Sobrecosto por reintentos</div>
+    </div>
+  </div>
+  {% if kpis.error %}
+  <div class="msg">⚠️ No se pudo calcular el costo de corridas limpias/reintentos — probablemente falta el índice de collection group "costos" en Firestore.</div>
+  {% endif %}
+</section>
+
+{# ── Bloque C: Semáforo de riesgo refund ───────────────────────────────── #}
+<section>
+  <h2>🚦 Semáforo de riesgo refund (ventana Hotmart 7 días)</h2>
+  <div class="refund-resumen">
+    <div class="refund-total">
+      <div class="valor">USD {{ "%.2f"|format(kpis.exposicion_refund_usd) }}</div>
+      <div class="label">Exposición acumulada — decide si se activa el Briefing #27 (hold de entrega)</div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Celda</th><th>Condición</th><th>Color</th><th>Exposición estimada</th></tr></thead>
+    <tbody>
+      <tr><td>Compró, 0 grabaciones</td><td>avance = 0</td><td><span class="badge verde">🟢</span></td><td>~USD 0.50 (comisión)</td></tr>
+      <tr><td>Grabando parcial</td><td>0 &lt; avance &lt; 100</td><td><span class="badge amarillo">🟡</span></td><td>costo Whisper parcial acumulado</td></tr>
+      <tr><td>Libro entregado</td><td>entregado_at existe</td><td><span class="badge rojo">🔴</span></td><td>costo real completo de la familia</td></tr>
+    </tbody>
+  </table>
+</section>
+
+{# ── Bloque D: Tabla de familias ───────────────────────────────────────── #}
+<section>
+  <h2>Familias ({{ familias|length }})</h2>
+  {% if familias %}
+  <table>
+    <thead>
+      <tr>
+        <th>Familia</th><th>Estado</th><th>% avance</th><th>Días desde compra</th>
+        <th>Plan / precio</th><th>Costo / margen</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in familias %}
+      <tr>
+        <td><a href="/familia/{{ f.familia_id }}" title="Ver JSON (endpoint /familia/{id})">{{ f.nombre }}</a></td>
+        <td>{{ f.estado_operativo }}</td>
+        <td>{{ f.avance }}%</td>
+        <td>
+          {{ f.dias_desde_compra if f.dias_desde_compra is not none else "—" }}
+          {% if f.semaforo_refund %}<span class="badge {{ 'rojo' if f.semaforo_refund == '🔴' else ('amarillo' if f.semaforo_refund == '🟡' else 'verde') }}">{{ f.semaforo_refund }}</span>{% endif %}
+        </td>
+        <td>{{ f.pack or "—" }}{% if f.precio %} / USD {{ f.precio }}{% endif %}</td>
+        <td>
+          {% if f.costo_real is not none %}USD {{ "%.2f"|format(f.costo_real) }}{% else %}—{% endif %}
+          {% if f.margen_real is not none %} / margen USD {{ "%.2f"|format(f.margen_real) }}{% endif %}
+        </td>
+        <td>
+          <button class="btn secundario" onclick="accionRecordatorio('{{ f.familia_id }}', this)">Recordatorio</button>
+          <button class="btn secundario" onclick="accionReintentar('{{ f.familia_id }}', '', this)">Reintentar pipeline</button>
+          <button class="btn secundario" onclick="accionReenviarLibro('{{ f.familia_id }}', this)">Reenviar libro</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="vacio">No hay familias registradas todavía.</div>
+  {% endif %}
+</section>
+
+<script>
+function adminKey() {
+  let k = sessionStorage.getItem('admin_key');
+  if (!k) {
+    k = prompt('X-Admin-Key:');
+    if (k) sessionStorage.setItem('admin_key', k);
+  }
+  return k;
+}
+
+async function postAdmin(url, body, btn) {
+  const key = adminKey();
+  if (!key) return;
+  if (btn) { btn.disabled = true; }
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'X-Admin-Key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {}),
+    });
+    if (!resp.ok) {
+      const detail = await resp.text();
+      alert('Error: ' + resp.status + ' ' + detail);
+    } else {
+      alert('Listo.');
+    }
+  } catch (e) {
+    alert('Error de red: ' + e);
+  } finally {
+    if (btn) { btn.disabled = false; }
+  }
+}
+
+function accionRecordatorio(familiaId, btn) {
+  postAdmin('/admin/familia/' + familiaId + '/recordatorio', {}, btn);
+}
+function accionReintentar(familiaId, soloDesde, btn) {
+  postAdmin('/admin/familia/' + familiaId + '/reintentar-pipeline', { solo_desde: soloDesde || null }, btn);
+}
+function accionReenviarLibro(familiaId, btn) {
+  postAdmin('/admin/reenviar-libro?familia_id=' + encodeURIComponent(familiaId), {}, btn);
+}
+</script>
+
+</body>
+</html>

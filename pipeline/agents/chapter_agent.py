@@ -55,11 +55,12 @@ REGLAS DE ESCRITURA:
 Devolvé SOLO el texto del capítulo. Sin título. Sin notas. Sin explicaciones.
 """
 
-def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
+def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) -> str:
     """
     persona dict esperado:
       nombre, perfil_voz (dict con los 7 campos), transcripcion,
       familia_ctx (optional dict from sheets.build_family_context)
+    costos: pipeline.utils.costos.CostAccumulator opcional.
     """
     nombre = persona["nombre"]
     perfil = persona.get("perfil_voz", {})
@@ -102,6 +103,8 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
         messages=[{"role": "user", "content": prompt}],
         label=f"claude/capitulo/{nombre}",
     )
+    if costos is not None:
+        costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
     capitulo = message.content[0].text.strip()
 
@@ -127,6 +130,8 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict) -> str:
             messages=[{"role": "user", "content": prompt + refuerzo}],
             label=f"claude/capitulo/{nombre}/retry{attempt}",
         )
+        if costos is not None:
+            costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
         capitulo = message.content[0].text.strip()
 
     words_final = len(capitulo.split())

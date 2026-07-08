@@ -49,10 +49,13 @@ def _parse_json_response(text: str) -> dict:
     return json.loads(text)
 
 
-def _build_perfil(client: anthropic.Anthropic, nombre: str, transcripciones: list[dict]) -> tuple[dict, str]:
+def _build_perfil(
+    client: anthropic.Anthropic, nombre: str, transcripciones: list[dict], costos=None
+) -> tuple[dict, str]:
     """
     Core logic: recibe transcripciones [{pregunta, transcripcion}],
     llama a Claude y retorna (perfil_dict, transcripcion_completa).
+    costos: pipeline.utils.costos.CostAccumulator opcional.
     """
     if not transcripciones:
         raise ValueError(f"No hay transcripciones para {nombre}")
@@ -70,28 +73,30 @@ def _build_perfil(client: anthropic.Anthropic, nombre: str, transcripciones: lis
         messages=[{"role": "user", "content": _PROMPT_TEMPLATE.format(nombre=nombre, bloques=bloques)}],
         label=f"claude/voz/{nombre}",
     )
+    if costos is not None:
+        costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
     perfil = _parse_json_response(message.content[0].text)
     transcripcion_completa = "\n\n".join(t["transcripcion"] for t in transcripciones)
     return perfil, transcripcion_completa
 
 
-def _analyze_persona(client: anthropic.Anthropic, nombre: str) -> dict:
+def _analyze_persona(client: anthropic.Anthropic, nombre: str, costos=None) -> dict:
     transcripciones = sheets.get_transcripciones(nombre)
-    perfil, transcripcion_completa = _build_perfil(client, nombre, transcripciones)
+    perfil, transcripcion_completa = _build_perfil(client, nombre, transcripciones, costos=costos)
     fecha_process = datetime.now().strftime("%d/%m/%Y %H:%M")
     sheets.save_profile(nombre, fecha_process, json.dumps(perfil, ensure_ascii=False), transcripcion_completa)
     return perfil
 
 
-def run(nombres: list[str]) -> dict[str, dict]:
+def run(nombres: list[str], costos=None) -> dict[str, dict]:
     """Analyze each persona and return {nombre: perfil_dict}. Saves to Sheets."""
     from concurrent.futures import ThreadPoolExecutor, as_completed
     client = anthropic.Anthropic(timeout=120.0)
     results = {}
 
     def _tarea(nombre):
-        return nombre, _analyze_persona(client, nombre)
+        return nombre, _analyze_persona(client, nombre, costos=costos)
 
     with ThreadPoolExecutor(max_workers=min(6, len(nombres))) as executor:
         futures = {executor.submit(_tarea, n): n for n in nombres}
@@ -106,11 +111,12 @@ def run(nombres: list[str]) -> dict[str, dict]:
     return results
 
 
-def run_from_firestore(familia_id: str, integrantes: list[dict]) -> dict[str, dict]:
+def run_from_firestore(familia_id: str, integrantes: list[dict], costos=None) -> dict[str, dict]:
     """
     Variante Firestore: lee transcripciones de Firestore por integrante_id,
     genera perfil de voz, guarda resultado en Firestore.
     Recibe lista de dicts con al menos {id, nombre}. Retorna {nombre: perfil_dict}.
+    costos: pipeline.utils.costos.CostAccumulator opcional.
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from pipeline.utils import firestore as fs
@@ -132,7 +138,7 @@ def run_from_firestore(familia_id: str, integrantes: list[dict]) -> dict[str, di
             if not transcripciones:
                 raise ValueError(f"Sin transcripciones para {nombre} (ni Firestore ni Sheets)")
 
-        perfil, transcripcion_completa = _build_perfil(client, nombre, transcripciones)
+        perfil, transcripcion_completa = _build_perfil(client, nombre, transcripciones, costos=costos)
         fs.save_perfil_voz(familia_id, integrante_id, perfil, transcripcion_completa)
         return nombre, perfil
 

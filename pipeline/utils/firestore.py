@@ -75,6 +75,78 @@ def save_libro_url(familia_id: str, url: str) -> None:
     _db().collection("familias").document(familia_id).update({"libro_url": url})
 
 
+# ─── Timestamps operativos (Briefing #32) ────────────────────────────────────
+
+def update_familia_ultima_grabacion(familia_id: str) -> None:
+    """Marca el momento del último audio recibido de cualquier integrante de la familia."""
+    _db().collection("familias").document(familia_id).set(
+        {"ultima_grabacion": firestore.SERVER_TIMESTAMP}, merge=True
+    )
+
+
+def marcar_pipeline_inicio(familia_id: str, paso_actual: str) -> None:
+    """Marca el inicio de una corrida del pipeline y limpia pipeline_fin de corridas previas."""
+    _db().collection("familias").document(familia_id).set(
+        {
+            "pipeline_inicio": firestore.SERVER_TIMESTAMP,
+            "pipeline_fin": None,
+            "pipeline_paso_actual": paso_actual,
+        },
+        merge=True,
+    )
+
+
+def update_pipeline_paso_actual(familia_id: str, paso_actual: str) -> None:
+    _db().collection("familias").document(familia_id).set(
+        {"pipeline_paso_actual": paso_actual}, merge=True
+    )
+
+
+def marcar_pipeline_fin(familia_id: str, ok: bool) -> None:
+    _db().collection("familias").document(familia_id).set(
+        {
+            "pipeline_fin": firestore.SERVER_TIMESTAMP,
+            "pipeline_paso_actual": None,
+            "pipeline_ultima_corrida_ok": ok,
+        },
+        merge=True,
+    )
+
+
+def set_entregado_at(familia_id: str) -> None:
+    """Se marca la primera vez que se envía el email de libro listo (Postmark)."""
+    doc = _db().collection("familias").document(familia_id).get()
+    if doc.exists and doc.to_dict().get("entregado_at"):
+        return  # ya estaba seteado, no lo pisamos con reenvíos
+    _db().collection("familias").document(familia_id).set(
+        {"entregado_at": firestore.SERVER_TIMESTAMP}, merge=True
+    )
+
+
+def increment_numero_corrida(familia_id: str) -> int:
+    """Contador que incrementa en cada ejecución del pipeline para la misma familia."""
+    ref = _db().collection("familias").document(familia_id)
+    ref.set({"pipeline_numero_corrida": firestore.Increment(1)}, merge=True)
+    doc = ref.get()
+    return (doc.to_dict() or {}).get("pipeline_numero_corrida", 1)
+
+
+def save_costos(familia_id: str, costos: dict, numero_corrida: int) -> None:
+    """Persiste el costo de la corrida en un subdoc (histórico) y actualiza el rollup en la familia."""
+    from datetime import datetime, timezone
+
+    _db().collection("familias").document(familia_id).collection("costos").document(
+        str(numero_corrida)
+    ).set(
+        {
+            **costos,
+            "numero_corrida": numero_corrida,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    )
+    _db().collection("familias").document(familia_id).set({"costos": costos}, merge=True)
+
+
 # ─── Integrantes ─────────────────────────────────────────────────────────────
 
 def get_integrantes(familia_id: str) -> list[dict]:

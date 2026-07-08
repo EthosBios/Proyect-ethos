@@ -69,11 +69,12 @@ def _get_prompt(pais: str) -> str:
     )
 
 
-def run(row_indices: list[int], pais: str = "argentina") -> dict:
+def run(row_indices: list[int], pais: str = "argentina", costos=None) -> dict:
     """
     Transcribe audio for the given sheet row indices (1-based, skipping header).
     Updates col F (Transcripción) in the Sheet for each row.
     Returns {"procesadas": N, "errores": M}.
+    costos: pipeline.utils.costos.CostAccumulator opcional, para acumular minutos Whisper.
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -98,8 +99,11 @@ def run(row_indices: list[int], pais: str = "argentina") -> dict:
                     file=audio_file,
                     language="es",
                     prompt=prompt,
+                    response_format="verbose_json",
                     label="whisper/fila",
                 )
+            if costos is not None:
+                costos.add_whisper_minutos(getattr(result, "duration", 0) / 60)
             sheets.save_transcription(row_idx, result.text.strip())
             return True
         finally:
@@ -125,10 +129,11 @@ def run(row_indices: list[int], pais: str = "argentina") -> dict:
     return {"procesadas": procesadas, "errores": errores}
 
 
-def run_from_firestore(familia_id: str, pais: str = "argentina") -> dict:
+def run_from_firestore(familia_id: str, pais: str = "argentina", costos=None) -> dict:
     """
     Transcribe todos los audios pendientes de una familia desde Firestore/GCS.
     Solo procesa respuestas donde audio_url está seteado y transcripcion está vacía.
+    costos: pipeline.utils.costos.CostAccumulator opcional, para acumular minutos Whisper.
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from pipeline.utils import firestore as fs, storage as gcs_storage
@@ -164,8 +169,11 @@ def run_from_firestore(familia_id: str, pais: str = "argentina") -> dict:
                     file=audio_file,
                     language="es",
                     prompt=prompt,
+                    response_format="verbose_json",
                     label="whisper/firestore",
                 )
+            if costos is not None:
+                costos.add_whisper_minutos(getattr(result, "duration", 0) / 60)
             fs.save_transcripcion(familia_id, integrante_id, pregunta_id, result.text.strip())
             return True
         finally:

@@ -54,7 +54,7 @@ def _verificar_palabras_prohibidas(texto: str) -> list[str]:
     return encontradas
 
 
-def _call_orden(client: anthropic.Anthropic, personas: list[dict]) -> dict:
+def _call_orden(client: anthropic.Anthropic, personas: list[dict], costos=None) -> dict:
     """
     Determina el orden cronológico por fecha de nacimiento.
     temperature=0 para resultados deterministas.
@@ -90,6 +90,8 @@ Solo JSON. Sin markdown.
         messages=[{"role": "user", "content": prompt}],
         label="claude/editor/orden",
     )
+    if costos is not None:
+        costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
     text = message.content[0].text.strip()
     text = re.sub(r"^```(?:json)?\s*", "", text)
@@ -104,6 +106,7 @@ def _call_una_transicion(
     nombre_b: str,
     capitulo_b: str,
     relacion_entre: str = "",
+    costos=None,
 ) -> str:
     """
     Genera la transición entre dos capítulos. temperature=1.0 para variedad.
@@ -142,6 +145,8 @@ Solo el texto de la transición. Sin títulos ni notas.
         messages=[{"role": "user", "content": prompt}],
         label=f"claude/editor/transicion/{nombre_a}-{nombre_b}",
     )
+    if costos is not None:
+        costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
     return message.content[0].text.strip()
 
@@ -164,6 +169,7 @@ def _call_transiciones(
     orden: list[str],
     capitulos: dict[str, str],
     relaciones: list[dict] | None = None,
+    costos=None,
 ) -> dict[str, str]:
     """Genera transiciones en paralelo. Returns {"{A}→{B}": texto}."""
     pares = list(zip(orden[:-1], orden[1:]))
@@ -173,7 +179,7 @@ def _call_transiciones(
     def _tarea(par):
         a, b = par
         rel_hint = _relacion_entre(a, b, relaciones)
-        return f"{a}→{b}", _call_una_transicion(client, a, capitulos[a], b, capitulos[b], rel_hint)
+        return f"{a}→{b}", _call_una_transicion(client, a, capitulos[a], b, capitulos[b], rel_hint, costos=costos)
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {executor.submit(_tarea, par): par for par in pares}
@@ -195,6 +201,7 @@ def _call_prologo_epilogo(
     capitulos: dict[str, str],
     perfiles: dict[str, dict],
     fallecidos: list[dict] | None = None,
+    costos=None,
 ) -> tuple[str, str]:
     """
     Prólogo: usa las primeras 80 palabras de cada capítulo.
@@ -281,6 +288,8 @@ Solo el texto del epílogo.
         messages=[{"role": "user", "content": prologo_prompt}],
         label="claude/editor/prologo",
     )
+    if costos is not None:
+        costos.add_claude_usage(prologo_msg.usage.input_tokens, prologo_msg.usage.output_tokens)
     prologo = prologo_msg.content[0].text.strip()
 
     epilogo_msg = call_with_retry(
@@ -291,6 +300,8 @@ Solo el texto del epílogo.
         messages=[{"role": "user", "content": epilogo_prompt}],
         label="claude/editor/epilogo",
     )
+    if costos is not None:
+        costos.add_claude_usage(epilogo_msg.usage.input_tokens, epilogo_msg.usage.output_tokens)
     epilogo = epilogo_msg.content[0].text.strip()
 
     return prologo, epilogo
@@ -301,19 +312,21 @@ def run(
     capitulos: dict[str, str],
     relaciones: list[dict] | None = None,
     fallecidos: list[dict] | None = None,
+    costos=None,
 ) -> BookManuscript:
     """
     personas: list of {nombre, fecha_nac, perfil_voz}
     capitulos: {nombre: texto_capitulo}
     relaciones: list from sheets.get_familia_relaciones()
     fallecidos: list from sheets.get_fallecidos()
+    costos: pipeline.utils.costos.CostAccumulator opcional.
     Returns a BookManuscript.
     """
     client = anthropic.Anthropic(timeout=120.0)
     manuscript = BookManuscript(capitulos=capitulos)
 
     # 1. Determinar orden
-    orden_data = _call_orden(client, personas)
+    orden_data = _call_orden(client, personas, costos=costos)
     manuscript.orden = orden_data.get("orden", [p["nombre"] for p in personas])
     manuscript.razonamiento_orden = orden_data.get("razonamiento", "")
 
@@ -325,13 +338,13 @@ def run(
 
     # 2. Transiciones (con contexto relacional)
     manuscript.transiciones = _call_transiciones(
-        client, manuscript.orden, capitulos, relaciones or []
+        client, manuscript.orden, capitulos, relaciones or [], costos=costos
     )
 
     # 3. Prólogo y epílogo (con fallecidos)
     perfiles = {p["nombre"]: p for p in personas}
     manuscript.prologo, manuscript.epilogo = _call_prologo_epilogo(
-        client, manuscript.orden, capitulos, perfiles, fallecidos or []
+        client, manuscript.orden, capitulos, perfiles, fallecidos or [], costos=costos
     )
 
     return manuscript
