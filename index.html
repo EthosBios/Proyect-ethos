@@ -146,11 +146,7 @@ nav.s{background:rgba(15,10,6,.88);backdrop-filter:blur(16px);border-bottom:1px 
 /* ══════════════════════════════════════════
    ACT 3 — GENEALOGY TREE (SVG animated)
 ══════════════════════════════════════════ */
-#tree-section{
-  background:var(--ink2);
-  padding:60px 0;
-  position:relative;overflow:hidden;
-}
+
 .tree-label{
   text-align:center;font-size:.68rem;letter-spacing:.22em;
   text-transform:uppercase;color:var(--gold);
@@ -222,14 +218,24 @@ nav.s{background:rgba(15,10,6,.88);backdrop-filter:blur(16px);border-bottom:1px 
 .fconn-line.drawn{stroke-dashoffset:0}
 
 /* ══════════════════════════════════════════
-   BOOK REVEAL (after tree)
+   ÁRBOL + LIBRO UNIFICADOS (#tree-book)
 ══════════════════════════════════════════ */
-#book-reveal{
+#tree-book{
   background:var(--ink2);
-  padding:60px 0;
-  display:flex;flex-direction:column;
-  align-items:center;
+  padding:80px 0;
   position:relative;overflow:hidden;
+}
+.tree-book-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+  padding:0 40px;
+}
+.tree-book-col-book{text-align:center}
+@media(max-width:768px){
+  .tree-book-inner{grid-template-columns:1fr;gap:0;padding:0}
+  .tree-book-col-tree{order:1}
+  .tree-book-col-book{order:2;padding:48px 20px 0}
 }
 .book-glow-bg{
   position:absolute;width:500px;height:500px;border-radius:50%;
@@ -538,8 +544,48 @@ src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
   </p>
 </section>
 
-<!-- ═══ ACT 3: ÁRBOL GENEALÓGICO ANIMADO ═══ -->
-<section id="tree-section">
+<!-- TRUST -->
+<div id="trust">
+  <div class="trust-row">
+    <span class="ti"><span class="td"></span>Sin instalaciones</span>
+    <span class="ti"><span class="td"></span>Solo desde el celular</span>
+    <span class="ti"><span class="td"></span>Entrega en menos de 24 hs desde que todos graban</span>
+    <span class="ti"><span class="td"></span>Pago 100% seguro</span>
+    <span class="ti"><span class="td"></span>100% privado</span>
+  </div>
+</div>
+
+<!-- VIDEO: reactivar cuando esté el HeyGen -->
+
+<!-- ═══ ACT 3: ÁRBOL + LIBRO UNIFICADOS ═══ -->
+<section id="tree-book">
+  <div class="tree-book-inner">
+
+    <!-- Columna izquierda (desktop) / abajo (mobile): libro -->
+    <div class="tree-book-col tree-book-col-book">
+  <div class="book-glow-bg"></div>
+  <img
+    src="libro-cover.png"
+    alt="Libro familiar Ethos Bios"
+    class="r"
+    style="width:100%;max-width:380px;display:block;margin:0 auto 48px;border-radius:4px;box-shadow:0 24px 60px rgba(0,0,0,.5)"
+  />
+  <div class="r d2" style="text-align:center">
+    <p class="book-tagline">El libro que recibes por mail.</p>
+    <div class="book-meta-strip">
+      <div class="bm"><div class="bm-n">16</div><div class="bm-l">preguntas</div></div>
+      <div class="bm"><div class="bm-n">24</div><div class="bm-l">hs desde que graban</div></div>
+      <div class="bm"><div class="bm-n">0</div><div class="bm-l">instalaciones</div></div>
+      <div class="bm bm-last"><div class="bm-n">∞</div><div class="bm-l">generaciones</div></div>
+    </div>
+    <div style="margin-top:36px">
+      <a class="btn-g" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener">Empezar ahora →</a>
+    </div>
+  </div>
+    </div>
+
+    <!-- Columna derecha (desktop) / arriba (mobile): árbol -->
+    <div class="tree-book-col tree-book-col-tree">
   <div class="tree-label r">El proceso — en vivo</div>
   <h2 class="tree-title r d1">Cada uno graba desde el celular.<br><em>Nosotros armamos el árbol.</em></h2>
 
@@ -653,43 +699,10 @@ src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
       </div>
     </div>
   </div><!-- /tree-cols-grid -->
-</section>
+    </div>
 
-<!-- LIBRO 3D REVEAL -->
-<section id="book-reveal">
-  <div class="book-glow-bg"></div>
-  <img
-    src="libro-cover.png"
-    alt="Libro familiar Ethos Bios"
-    class="r"
-    style="width:100%;max-width:380px;display:block;margin:0 auto 48px;border-radius:4px;box-shadow:0 24px 60px rgba(0,0,0,.5)"
-  />
-  <div class="r d2" style="text-align:center">
-    <p class="book-tagline">El libro que recibes por mail.</p>
-    <div class="book-meta-strip">
-      <div class="bm"><div class="bm-n">16</div><div class="bm-l">preguntas</div></div>
-      <div class="bm"><div class="bm-n">24</div><div class="bm-l">hs desde que graban</div></div>
-      <div class="bm"><div class="bm-n">0</div><div class="bm-l">instalaciones</div></div>
-      <div class="bm bm-last"><div class="bm-n">∞</div><div class="bm-l">generaciones</div></div>
-    </div>
-    <div style="margin-top:36px">
-      <a class="btn-g" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener">Empezar ahora →</a>
-    </div>
   </div>
 </section>
-
-<!-- TRUST -->
-<div id="trust">
-  <div class="trust-row">
-    <span class="ti"><span class="td"></span>Sin instalaciones</span>
-    <span class="ti"><span class="td"></span>Solo desde el celular</span>
-    <span class="ti"><span class="td"></span>Entrega en menos de 24 hs desde que todos graban</span>
-    <span class="ti"><span class="td"></span>Pago 100% seguro</span>
-    <span class="ti"><span class="td"></span>100% privado</span>
-  </div>
-</div>
-
-<!-- VIDEO: reactivar cuando esté el HeyGen -->
 
 <!-- HOW IT WORKS -->
 <section id="como">
@@ -752,9 +765,74 @@ src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
 
 
 
+<!-- FAMILIAS + TESTIMONIOS -->
+<section id="familias" style="background:var(--ink2);padding:60px 0">
+  <div class="wrap">
+    <div class="fam-head">
+      <div>
+        <span class="s-label r">Familias reales</span>
+        <h2 class="s-title r d1">Cada libro es único<br><em>como quien la vive.</em></h2>
+      </div>
+      <p class="s-body r d2" style="color:rgba(240,232,220,.5)">Desde los 35 hasta los 85. Historias de familias reales, en tres países.</p>
+    </div>
 
+    <!-- 3 testimonios como cards con cita + familia -->
+    <div class="fam-grid">
+      <div class="fcard r">
+        <div class="fbg g1"></div>
+        <div class="fover"></div>
+        <div class="fcontent">
+          <div class="fname">Eduardo R.</div>
+          <div class="fmeta">Ciudad de México · Aniversario 50 años</div>
+          <div class="fquote">"No pensé que íbamos a terminar llorando juntos leyéndolo. Cincuenta años de historia en un libro."</div>
+        </div>
+      </div>
+      <div class="fcard r d1">
+        <div class="fbg g2"></div>
+        <div class="fover"></div>
+        <div class="fcontent">
+          <div class="fname">Santiago R.</div>
+          <div class="fmeta">Buenos Aires · Cumpleaños 75</div>
+          <div class="fquote">"Mi mamá grabó sola desde el celular. Tardó dos semanas porque se emocionaba contando. Es lo más hermoso que tenemos de ella."</div>
+        </div>
+      </div>
+      <div class="fcard r d2">
+        <div class="fbg g3"></div>
+        <div class="fover"></div>
+        <div class="fcontent">
+          <div class="fname">Carolina V.</div>
+          <div class="fmeta">Bogotá · Para que nunca se olvide</div>
+          <div class="fquote">"Queríamos que nuestros hijos supieran de dónde vienen. El libro lo dice mejor que nosotros."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-
+<!-- SAMPLE TEXT -->
+<section id="muestra">
+  <div class="wrap">
+    <span class="s-label r">Así queda escrito</span>
+    <h2 class="s-title r d1">Fragmentos de libros<br><em>ya entregados.</em></h2>
+  </div>
+  <div class="mtrack">
+    <div class="mcards">
+      <div class="mcard"><div class="mchap">Cap. I · De dónde vienes</div><p class="mtext">"Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años."</p><p class="mname">Jorge M. · 74 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. III · Tus elecciones</div><p class="mtext">"Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice."</p><p class="mname">Valentina R. · 38 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. V · Lo que sabes ahora</div><p class="mtext">"No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres."</p><p class="mname">Alberto R. · 81 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi madre nunca me dijo que me amaba con esas palabras. Pero se levantaba a las cinco para que yo pudiera dormir hasta las siete."</p><p class="mname">Marta V. · 72 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. IV · Tu gente</div><p class="mtext">"Nunca fui de hablar mucho. Pero cuando me preguntaron por mis amigos de la infancia, no pude parar."</p><p class="mname">Nicolás M. · 32 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer."</p><p class="mname">Camila T. · 45 años</p></div>
+      <!-- duplicate for loop -->
+      <div class="mcard"><div class="mchap">Cap. I · De dónde vienes</div><p class="mtext">"Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años."</p><p class="mname">Jorge M. · 74 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. III · Tus elecciones</div><p class="mtext">"Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice."</p><p class="mname">Valentina R. · 38 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. V · Lo que sabes ahora</div><p class="mtext">"No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres."</p><p class="mname">Alberto R. · 81 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi madre nunca me dijo que me amaba con esas palabras. Pero se levantaba a las cinco para que yo pudiera dormir hasta las siete."</p><p class="mname">Marta V. · 72 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. IV · Tu gente</div><p class="mtext">"Nunca fui de hablar mucho. Pero cuando me preguntaron por mis amigos de la infancia, no pude parar."</p><p class="mname">Nicolás M. · 32 años</p></div>
+      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer."</p><p class="mname">Camila T. · 45 años</p></div>
+    </div>
+  </div>
+</section>
 
 <!-- PRICING -->
 <section id="precios">
@@ -809,75 +887,6 @@ src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
       </div>
     </div>
     
-  </div>
-</section>
-
-<!-- SAMPLE TEXT -->
-<section id="muestra">
-  <div class="wrap">
-    <span class="s-label r">Así queda escrito</span>
-    <h2 class="s-title r d1">Fragmentos de libros<br><em>ya entregados.</em></h2>
-  </div>
-  <div class="mtrack">
-    <div class="mcards">
-      <div class="mcard"><div class="mchap">Cap. I · De dónde vienes</div><p class="mtext">"Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años."</p><p class="mname">Jorge M. · 74 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. III · Tus elecciones</div><p class="mtext">"Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice."</p><p class="mname">Valentina R. · 38 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. V · Lo que sabes ahora</div><p class="mtext">"No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres."</p><p class="mname">Alberto R. · 81 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi madre nunca me dijo que me amaba con esas palabras. Pero se levantaba a las cinco para que yo pudiera dormir hasta las siete."</p><p class="mname">Marta V. · 72 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. IV · Tu gente</div><p class="mtext">"Nunca fui de hablar mucho. Pero cuando me preguntaron por mis amigos de la infancia, no pude parar."</p><p class="mname">Nicolás M. · 32 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer."</p><p class="mname">Camila T. · 45 años</p></div>
-      <!-- duplicate for loop -->
-      <div class="mcard"><div class="mchap">Cap. I · De dónde vienes</div><p class="mtext">"Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años."</p><p class="mname">Jorge M. · 74 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. III · Tus elecciones</div><p class="mtext">"Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice."</p><p class="mname">Valentina R. · 38 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. V · Lo que sabes ahora</div><p class="mtext">"No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres."</p><p class="mname">Alberto R. · 81 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi madre nunca me dijo que me amaba con esas palabras. Pero se levantaba a las cinco para que yo pudiera dormir hasta las siete."</p><p class="mname">Marta V. · 72 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. IV · Tu gente</div><p class="mtext">"Nunca fui de hablar mucho. Pero cuando me preguntaron por mis amigos de la infancia, no pude parar."</p><p class="mname">Nicolás M. · 32 años</p></div>
-      <div class="mcard"><div class="mchap">Cap. II · Los que te formaron</div><p class="mtext">"Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer."</p><p class="mname">Camila T. · 45 años</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- FAMILIAS + TESTIMONIOS -->
-<section id="familias" style="background:var(--ink2);padding:60px 0">
-  <div class="wrap">
-    <div class="fam-head">
-      <div>
-        <span class="s-label r">Familias reales</span>
-        <h2 class="s-title r d1">Cada libro es único<br><em>como quien la vive.</em></h2>
-      </div>
-      <p class="s-body r d2" style="color:rgba(240,232,220,.5)">Desde los 35 hasta los 85. Historias de familias reales, en tres países.</p>
-    </div>
-
-    <!-- 3 testimonios como cards con cita + familia -->
-    <div class="fam-grid">
-      <div class="fcard r">
-        <div class="fbg g1"></div>
-        <div class="fover"></div>
-        <div class="fcontent">
-          <div class="fname">Eduardo R.</div>
-          <div class="fmeta">Ciudad de México · Aniversario 50 años</div>
-          <div class="fquote">"No pensé que íbamos a terminar llorando juntos leyéndolo. Cincuenta años de historia en un libro."</div>
-        </div>
-      </div>
-      <div class="fcard r d1">
-        <div class="fbg g2"></div>
-        <div class="fover"></div>
-        <div class="fcontent">
-          <div class="fname">Santiago R.</div>
-          <div class="fmeta">Buenos Aires · Cumpleaños 75</div>
-          <div class="fquote">"Mi mamá grabó sola desde el celular. Tardó dos semanas porque se emocionaba contando. Es lo más hermoso que tenemos de ella."</div>
-        </div>
-      </div>
-      <div class="fcard r d2">
-        <div class="fbg g3"></div>
-        <div class="fover"></div>
-        <div class="fcontent">
-          <div class="fname">Carolina V.</div>
-          <div class="fmeta">Bogotá · Para que nunca se olvide</div>
-          <div class="fquote">"Queríamos que nuestros hijos supieran de dónde vienen. El libro lo dice mejor que nosotros."</div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -936,6 +945,8 @@ src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
   </div>
 </section>
 
+
+
 <!-- FOOTER -->
 <footer>
   <div class="foot-row">
@@ -977,7 +988,7 @@ document.querySelectorAll('.r').forEach(el=>ro.observe(el));
 
 // ── ÁRBOL ANIMADO CON FOTOS
 let treeAnimated = false;
-const treeSec = document.getElementById('tree-section');
+const treeSec = document.getElementById('tree-book');
 const treeObs = new IntersectionObserver(([e])=>{
   if(e.isIntersecting && !treeAnimated){
     treeAnimated = true;
@@ -1016,7 +1027,7 @@ treeObs.observe(treeSec);
 
 // ── SPARKLES around book
 (function(){
-  const b=document.getElementById('book-reveal');
+  const b=document.getElementById('tree-book');
   if(!b) return;
   for(let i=0;i<16;i++){
     const s=document.createElement('div');
