@@ -7,7 +7,7 @@ import anthropic
 from pipeline.utils import sheets
 from pipeline.utils.retry import call_with_retry
 
-MODEL = "claude-opus-4-7"
+MODEL = "claude-opus-4-8"
 
 _SYSTEM = """\
 Sos un escritor literario especializado en memorias familiares y narrativa oral latinoamericana.
@@ -16,25 +16,30 @@ manteniendo la autenticidad de cada persona.
 """
 
 _PROMPT_TEMPLATE = """\
-Escribí un capítulo narrativo de entre 3200 y 3800 palabras sobre {nombre}.
+<contexto_familiar>
+Nombre: {nombre}
+Rol en la familia: {rol}
+Estado: {estado}
+Cónyuge/s: {conyuges}
+Hijos: {hijos}
+Padres: {padres}
+Hermanos (inferidos): {hermanos}
+</contexto_familiar>
 
-CONTEXTO FAMILIAR:
-- Rol en la familia: {rol}
-- Estado: {estado}
-- Cónyuge/s: {conyuges}
-- Hijos: {hijos}
-- Padres: {padres}
-- Hermanos (inferidos): {hermanos}
+<perfil_de_voz>
+Muletillas: {muletillas}
+Frases propias: {frases_propias}
+Registro: {registro}
+Detalles sensoriales: {detalles_sensoriales}
+Tono: {tono}
+</perfil_de_voz>
 
-PERFIL DE VOZ:
-- Muletillas: {muletillas}
-- Frases propias: {frases_propias}
-- Registro: {registro}
-- Detalles sensoriales: {detalles_sensoriales}
-- Tono: {tono}
-
-TRANSCRIPCIÓN COMPLETA:
+<transcripciones>
 {transcripcion}
+</transcripciones>
+
+<instrucciones>
+Escribí un capítulo narrativo de entre 3200 y 3800 palabras sobre {nombre}.
 
 ARCO NARRATIVO SUGERIDO (no obligatorio, podés adaptarlo):
 1. Apertura con imagen sensorial del lugar de origen
@@ -51,9 +56,12 @@ REGLAS DE ESCRITURA:
 - Podés abrir con una cita directa o una imagen antes del nombre del protagonista
 - El capítulo debe poder leerse solo, sin conocer a la persona previamente
 - Usá el rol familiar ({rol}) como lente narrativo: cómo lo/la ven los demás, qué lugar ocupa en la trama familiar
+- PROHIBIDO inventar nombres, relaciones, fechas o hechos que no estén en <contexto_familiar> o <transcripciones>. Ante ambigüedad, omitir antes que inventar.
 
 Devolvé SOLO el texto del capítulo. Sin título. Sin notas. Sin explicaciones.
+</instrucciones>
 """
+
 
 def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) -> str:
     """
@@ -98,15 +106,17 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) ->
     message = call_with_retry(
         client.messages.create,
         model=MODEL,
-        max_tokens=7000,
+        max_tokens=14000,
         system=_SYSTEM,
         messages=[{"role": "user", "content": prompt}],
         label=f"claude/capitulo/{nombre}",
+        thinking={"type": "adaptive"},
+        output_config={"effort": "high"},
     )
     if costos is not None:
         costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
-    capitulo = message.content[0].text.strip()
+    capitulo = "\n".join(b.text for b in message.content if b.type == "text").strip()
 
     MIN_WORDS = 3200
     MAX_ATTEMPTS = 3
@@ -125,14 +135,16 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) ->
         message = call_with_retry(
             client.messages.create,
             model=MODEL,
-            max_tokens=7000,
+            max_tokens=14000,
             system=_SYSTEM,
             messages=[{"role": "user", "content": prompt + refuerzo}],
             label=f"claude/capitulo/{nombre}/retry{attempt}",
+            thinking={"type": "adaptive"},
+            output_config={"effort": "high"},
         )
         if costos is not None:
             costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
-        capitulo = message.content[0].text.strip()
+        capitulo = "\n".join(b.text for b in message.content if b.type == "text").strip()
 
     words_final = len(capitulo.split())
     if words_final < MIN_WORDS:

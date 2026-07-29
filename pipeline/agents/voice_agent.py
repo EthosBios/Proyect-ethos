@@ -12,7 +12,7 @@ import anthropic
 from pipeline.utils import sheets
 from pipeline.utils.retry import call_with_retry
 
-MODEL = "claude-opus-4-7"
+MODEL = "claude-sonnet-5"
 
 _SYSTEM = """\
 Sos un lingüista descriptivo especializado en oralidad latinoamericana.
@@ -40,6 +40,66 @@ Devolvé EXCLUSIVAMENTE un JSON válido con estos 6 campos:
 
 Solo JSON. Sin explicaciones. Sin markdown.
 """
+
+# Ejemplo multishot: transcripción → perfil de voz esperado
+_MULTISHOT_EXAMPLE = [
+    {
+        "role": "user",
+        "content": (
+            "Analizá las siguientes transcripciones orales de Elena.\n\n"
+            "<transcripciones>\n"
+            "[Pregunta 1]\n"
+            "Me crié en un pueblo chico, un pueblo del norte, donde todo el mundo se conocía. "
+            "Mi mamá lavaba la ropa a mano, era muy de madrugada que empezaba, el olor a jabón "
+            "me acuerdo perfecto. Éramos cinco hermanos y yo la del medio, la que se perdía entre "
+            "todos. Pero bueno, a mí eso me sirvió, porque aprendí a observar, ¿viste? A mirar "
+            "sin que te miren a vos.\n\n"
+            "[Pregunta 2]\n"
+            "Después me vine a la ciudad, tenía diecinueve años, con una valija chiquita y mucho "
+            "miedo. Empecé a trabajar en una confitería, de cajera, y ahí conocí a mi marido. Él "
+            "venía todos los días a pedir un café cortado, ¡todos los días! Hasta que un día le "
+            "dije: si venís a buscar algo más que el café, decímelo de una vez. Y se murió de "
+            "la risa, claro.\n"
+            "</transcripciones>\n\n"
+            "Devolvé EXCLUSIVAMENTE un JSON válido con estos 6 campos:\n\n"
+            '{\n'
+            '  "muletillas": [...],\n'
+            '  "frases_propias": [...],\n'
+            '  "registro": "...",\n'
+            '  "detalles_sensoriales": [...],\n'
+            '  "tono": "...",\n'
+            '  "citas_directas": [...]\n'
+            '}\n\n'
+            "Solo JSON. Sin explicaciones. Sin markdown."
+        ),
+    },
+    {
+        "role": "assistant",
+        "content": (
+            '{\n'
+            '  "muletillas": ["¿viste?", "claro", "bueno"],\n'
+            '  "frases_propias": [\n'
+            '    "la que se perdía entre todos",\n'
+            '    "aprendí a observar, a mirar sin que te miren a vos",\n'
+            '    "si venís a buscar algo más que el café, decímelo de una vez"\n'
+            '  ],\n'
+            '  "registro": "Coloquial rioplatense. Mezcla expresiones cotidianas (¿viste?, claro) con imágenes sensoriales precisas. Sin tecnicismos. Relato pausado y narrativo.",\n'
+            '  "detalles_sensoriales": [\n'
+            '    "olor a jabón en la madrugada",\n'
+            '    "ropa lavada a mano",\n'
+            '    "valija chiquita",\n'
+            '    "café cortado todos los días"\n'
+            '  ],\n'
+            '  "tono": "Autodistanciado y levemente irónico. Cuenta con humor situaciones difíciles (la emigración, el trabajo). Cálida pero sin sentimentalismo.",\n'
+            '  "citas_directas": [\n'
+            '    "aprendí a observar, ¿viste? A mirar sin que te miren a vos",\n'
+            '    "si venís a buscar algo más que el café, decímelo de una vez",\n'
+            '    "me vine a la ciudad, tenía diecinueve años, con una valija chiquita y mucho miedo"\n'
+            '  ]\n'
+            '}'
+        ),
+    },
+]
 
 
 def _parse_json_response(text: str) -> dict:
@@ -70,13 +130,18 @@ def _build_perfil(
         model=MODEL,
         max_tokens=8192,
         system=_SYSTEM,
-        messages=[{"role": "user", "content": _PROMPT_TEMPLATE.format(nombre=nombre, bloques=bloques)}],
+        messages=[
+            *_MULTISHOT_EXAMPLE,
+            {"role": "user", "content": _PROMPT_TEMPLATE.format(nombre=nombre, bloques=bloques)},
+        ],
         label=f"claude/voz/{nombre}",
+        output_config={"effort": "medium"},
     )
     if costos is not None:
         costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
-    perfil = _parse_json_response(message.content[0].text)
+    text_content = "\n".join(b.text for b in message.content if b.type == "text").strip()
+    perfil = _parse_json_response(text_content)
     transcripcion_completa = "\n\n".join(t["transcripcion"] for t in transcripciones)
     return perfil, transcripcion_completa
 

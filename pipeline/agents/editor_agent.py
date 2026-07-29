@@ -12,7 +12,7 @@ import anthropic
 
 from pipeline.utils.retry import call_with_retry
 
-MODEL = "claude-opus-4-7"
+MODEL = "claude-opus-4-8"
 
 PALABRAS_PROHIBIDAS = [
     "memorable", "invaluable", "legado", "tesoro",
@@ -24,6 +24,8 @@ Sos el editor literario de un libro de memorias familiares.
 Tu escritura es precisa, cálida y sin sentimentalismo fácil.
 Nunca usás estas palabras: memorable, invaluable, legado, tesoro, entrañable, inmortal, huella.
 """
+
+_PROLOGO_EPILOGO_RANGE = (400, 600)
 
 
 @dataclass
@@ -93,7 +95,7 @@ Solo JSON. Sin markdown.
     if costos is not None:
         costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
-    text = message.content[0].text.strip()
+    text = "\n".join(b.text for b in message.content if b.type == "text").strip()
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```$", "", text)
     return json.loads(text)
@@ -140,15 +142,17 @@ Solo el texto de la transición. Sin títulos ni notas.
     message = call_with_retry(
         client.messages.create,
         model=MODEL,
-        max_tokens=512,
+        max_tokens=2000,
         system=_SYSTEM_EDITOR,
         messages=[{"role": "user", "content": prompt}],
         label=f"claude/editor/transicion/{nombre_a}-{nombre_b}",
+        thinking={"type": "adaptive"},
+        output_config={"effort": "high"},
     )
     if costos is not None:
         costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
 
-    return message.content[0].text.strip()
+    return "\n".join(b.text for b in message.content if b.type == "text").strip()
 
 
 def _relacion_entre(nombre_a: str, nombre_b: str, relaciones: list[dict]) -> str:
@@ -206,6 +210,7 @@ def _call_prologo_epilogo(
     """
     Prólogo: usa las primeras 80 palabras de cada capítulo.
     Epílogo: usa las últimas 120 palabras de cada capítulo + citas_directas.
+    Incluye loop de verificación de word count (máximo 1 retry cada uno).
     """
     aperturas = "\n\n".join(
         f"{nombre}: «{_primeras_palabras(capitulos[nombre], 80)}»"
@@ -280,29 +285,56 @@ El epílogo debe:
 Solo el texto del epílogo.
 """
 
-    prologo_msg = call_with_retry(
-        client.messages.create,
-        model=MODEL,
-        max_tokens=1024,
-        system=_SYSTEM_EDITOR,
-        messages=[{"role": "user", "content": prologo_prompt}],
-        label="claude/editor/prologo",
-    )
-    if costos is not None:
-        costos.add_claude_usage(prologo_msg.usage.input_tokens, prologo_msg.usage.output_tokens)
-    prologo = prologo_msg.content[0].text.strip()
+    def _generar_con_retry(prompt: str, label: str) -> str:
+        msg = call_with_retry(
+            client.messages.create,
+            model=MODEL,
+            max_tokens=4000,
+            system=_SYSTEM_EDITOR,
+            messages=[{"role": "user", "content": prompt}],
+            label=f"claude/editor/{label}",
+            thinking={"type": "adaptive"},
+            output_config={"effort": "high"},
+        )
+        if costos is not None:
+            costos.add_claude_usage(msg.usage.input_tokens, msg.usage.output_tokens)
+        texto = "\n".join(b.text for b in msg.content if b.type == "text").strip()
 
-    epilogo_msg = call_with_retry(
-        client.messages.create,
-        model=MODEL,
-        max_tokens=1024,
-        system=_SYSTEM_EDITOR,
-        messages=[{"role": "user", "content": epilogo_prompt}],
-        label="claude/editor/epilogo",
-    )
-    if costos is not None:
-        costos.add_claude_usage(epilogo_msg.usage.input_tokens, epilogo_msg.usage.output_tokens)
-    epilogo = epilogo_msg.content[0].text.strip()
+        lo, hi = _PROLOGO_EPILOGO_RANGE
+        words = len(texto.split())
+        if not (lo <= words <= hi):
+            direccion = "Expandí" if words < lo else "Condensá"
+            feedback = (
+                f"\n\nATENCIÓN: el texto que generaste tiene {words} palabras, "
+                f"fuera del rango requerido de {lo}–{hi}. "
+                f"{direccion} sin perder calidad literaria. "
+                "Reescribilo completo."
+            )
+            msg2 = call_with_retry(
+                client.messages.create,
+                model=MODEL,
+                max_tokens=4000,
+                system=_SYSTEM_EDITOR,
+                messages=[{"role": "user", "content": prompt + feedback}],
+                label=f"claude/editor/{label}/retry",
+                thinking={"type": "adaptive"},
+                output_config={"effort": "high"},
+            )
+            if costos is not None:
+                costos.add_claude_usage(msg2.usage.input_tokens, msg2.usage.output_tokens)
+            texto = "\n".join(b.text for b in msg2.content if b.type == "text").strip()
+            words2 = len(texto.split())
+            if not (lo <= words2 <= hi):
+                print(
+                    f"[editor] AVISO: {label} quedó con {words2} palabras tras retry "
+                    f"(rango {lo}–{hi}). Aceptado igual.",
+                    flush=True,
+                )
+
+        return texto
+
+    prologo = _generar_con_retry(prologo_prompt, "prologo")
+    epilogo = _generar_con_retry(epilogo_prompt, "epilogo")
 
     return prologo, epilogo
 
