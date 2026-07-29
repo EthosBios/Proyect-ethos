@@ -442,48 +442,6 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
 .btn-ghost{display:inline-flex;align-items:center;gap:6px;color:rgba(240,232,220,.45);font-size:.8rem;font-weight:300;background:none;border:none;cursor:pointer;transition:color .2s;padding:15px 0;text-decoration:none}
 .btn-ghost:hover{color:var(--cream)}
 
-/* ── MODAL ── */
-#modal{display:none;position:fixed;inset:0;z-index:300;align-items:center;justify-content:center;padding:20px}
-#modal.open{display:flex}
-.mover{position:absolute;inset:0;background:rgba(15,10,6,.9);backdrop-filter:blur(12px);cursor:pointer}
-.mbox{position:relative;z-index:1;background:var(--cream);width:100%;max-width:480px;padding:48px 40px;max-height:92svh;overflow-y:auto}
-.mclose{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);line-height:1;transition:color .2s}
-.mclose:hover{color:var(--ink)}
-.mtitle{font-family:var(--serif);font-size:1.6rem;font-weight:300;color:var(--ink);margin-bottom:6px;line-height:1.2}
-.msub{font-size:.8rem;color:var(--muted);margin-bottom:24px}
-.mptag{display:inline-block;background:var(--warm);padding:5px 12px;font-size:.7rem;font-weight:500;color:var(--deep);letter-spacing:.06em;margin-bottom:22px;text-transform:uppercase}
-.sdots{display:flex;gap:6px;margin-bottom:28px}
-.sdot{height:3px;background:rgba(107,61,30,.15);flex:1;transition:background .3s}
-.sdot.active{background:var(--deep)}
-.sdot.done{background:var(--gold)}
-.fpanel{display:none}
-.fpanel.active{display:block}
-.fl{display:block;font-size:.68rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
-.fi{width:100%;padding:12px 14px;background:#fff;border:1px solid rgba(107,61,30,.18);font-family:var(--sans);font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s;margin-bottom:14px;border-radius:0;-webkit-appearance:none}
-.fi:focus{border-color:var(--deep)}
-.fi.err{border-color:#c0392b}
-.mrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.mrow .fi{margin-bottom:0;flex:1}
-.brm{background:none;border:1px solid rgba(107,61,30,.18);width:36px;height:36px;flex-shrink:0;cursor:pointer;color:var(--muted);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.brm:hover{background:var(--ink);color:var(--cream)}
-.badd{background:none;border:1px dashed rgba(107,61,30,.2);width:100%;padding:9px;font-family:var(--sans);font-size:.78rem;color:var(--muted);cursor:pointer;margin-top:4px;margin-bottom:14px;transition:all .2s}
-.badd:hover{border-color:var(--deep);color:var(--deep)}
-.mnav{display:flex;gap:10px;margin-top:20px}
-.btn-d{display:inline-flex;align-items:center;justify-content:center;flex:1;background:var(--deep);color:var(--cream);font-family:var(--sans);font-size:.86rem;font-weight:500;padding:14px 24px;border:none;cursor:pointer;transition:background .2s}
-.btn-d:hover{background:#8B4A2F}
-.btn-o{background:transparent;border:1px solid rgba(107,61,30,.25);color:var(--ink);font-family:var(--sans);font-size:.86rem;font-weight:400;padding:14px 18px;cursor:pointer;transition:all .2s}
-.btn-o:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
-.msum{background:var(--warm);padding:16px;margin-bottom:18px;border-left:2px solid var(--gold)}
-.msrow{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:6px}
-.msrow:last-child{margin-bottom:0;border-top:1px solid rgba(107,61,30,.1);padding-top:6px;font-weight:500;color:var(--ink);font-size:.88rem}
-.msval{font-family:var(--serif);font-size:.88rem;color:var(--ink)}
-.pmethods{display:flex;flex-direction:column;gap:10px;margin-top:18px}
-.pmethod{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;font-family:var(--sans);font-size:.86rem;font-weight:500;border:none;cursor:pointer;transition:opacity .2s,transform .15s}
-.pmethod:hover{opacity:.88;transform:translateY(-1px)}
-.pmp{background:#009EE3;color:#fff}
-.pstripe{background:var(--ink);color:var(--cream)}
-.psafe{text-align:center;font-size:.68rem;color:var(--muted);margin-top:12px}
-
 /* ── KEYFRAMES ── */
 @keyframes heroZoom{from{transform:scale(1.06)}to{transform:scale(1)}}
 @keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -510,7 +468,6 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
   section{padding:80px 0}
   footer{padding:28px 20px}
   .foot-row{flex-direction:column;align-items:flex-start;gap:14px}
-  .mbox{padding:32px 22px}
   .book-meta-strip{flex-wrap:wrap}
   .tree-question{display:none}
 }
@@ -520,6 +477,23 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
   .trust-row{gap:12px}
 }
 </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1962559941118709');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1962559941118709&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -542,7 +516,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
     <h1 class="hero-h1" id="hero-h1"></h1>
     <p class="hero-price">Desde <strong>US$29</strong> · Un solo pago · Sin suscripción</p>
     <div class="hero-actions">
-      <a class="btn-g" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener">
+      <a class="btn-g" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener" onclick="fbq&&fbq('track','InitiateCheckout',{value:35,currency:'USD'})">
         Empezar ahora
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -715,25 +689,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
   </div>
 </div>
 
-<!-- VIDEO -->
-<section id="video-s">
-  <div class="wrap">
-    <div class="video-grid">
-      <div>
-        <span class="s-label r">El producto</span>
-        <h2 class="s-title r d1">En 90 segundos<br><em>lo entiendes todo.</em></h2>
-        <p class="s-body r d2" style="margin-top:14px">Ellos graban desde el celular. Tú recibes el libro.</p>
-      </div>
-      <div class="video-frame r d2">
-        <div class="video-ph" onclick="this.style.display='none'">
-          <div class="play-btn"><div class="play-icon"></div></div>
-          <div class="v-label">Ver video — 90 seg</div>
-        </div>
-        <!-- <iframe src="TU_HEYGEN_URL" allowfullscreen></iframe> -->
-      </div>
-    </div>
-  </div>
-</section>
+<!-- VIDEO: reactivar cuando esté el HeyGen -->
 
 <!-- HOW IT WORKS -->
 <section id="como">
@@ -766,18 +722,18 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
       en qué etapa está la producción. Y te avisamos por mail en cada paso.
     </p>
 
-    <!-- Imagen del panel: subir el screenshot como panel-progreso.png al repo -->
-    <!-- Si no existe el archivo, reemplazar por el div placeholder de abajo -->
-    <img
-      src="/panel-progreso.png"
-      alt="Panel de progreso de Ethos Bios"
-      style="width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.12); margin-bottom: 40px;"
-      onerror="this.style.display='none'; document.getElementById('panel-placeholder').style.display='flex';"
-    />
-
-    <!-- Placeholder si no hay imagen todavía -->
-    <div id="panel-placeholder" style="display:none; background: #2C1810; border-radius: 16px; padding: 60px 24px; margin-bottom: 40px; align-items: center; justify-content: center; flex-direction: column;">
-      <p style="color: #C9A96E; font-size: 15px; margin: 0;">Vista previa del panel — próximamente</p>
+    <!-- VIDEO: reemplazar por screenshot real cuando esté disponible (panel-progreso.png) -->
+    <div style="width:100%;max-width:600px;margin:0 auto 40px;background:#1C1208;border-radius:16px;padding:28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.18);font-family:'Mulish',sans-serif;font-size:15px">
+      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C9A96E;margin-bottom:18px">Panel de progreso — familia García</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px;color:#F0E8DC"><span style="color:#7AC77A;font-size:17px">✓</span><span>Abuela Rosa <span style="color:#7AC77A;font-size:13px">— grabó</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;color:#F0E8DC"><span style="color:#7AC77A;font-size:17px">✓</span><span>Abuelo Alberto <span style="color:#7AC77A;font-size:13px">— grabó</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;color:#F0E8DC"><span style="color:#7AC77A;font-size:17px">✓</span><span>Mamá <span style="color:#7AC77A;font-size:13px">— grabó</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;color:rgba(240,232,220,.5)"><span style="font-size:17px">◷</span><span>Papá <span style="font-size:13px;color:#C9A96E">— 3 / 16 preguntas</span></span></div>
+        <div style="display:flex;align-items:center;gap:12px;color:rgba(240,232,220,.5)"><span style="font-size:17px">◷</span><span>Valentina <span style="font-size:13px;color:rgba(240,232,220,.35)">— pendiente</span></span></div>
+        <div style="height:1px;background:rgba(201,166,110,.15);margin:6px 0"></div>
+        <div style="display:flex;align-items:center;gap:12px;color:#C9A96E;font-size:14px"><span style="font-size:17px">📖</span><span>Libro: <strong>en producción</strong></span></div>
+      </div>
     </div>
 
     <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
@@ -820,7 +776,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
           <li>PDF de alta calidad</li>
           <li>Entrega en menos de 24 hs desde que todos graban</li>
         </ul>
-        <a class="pcta pcta-out" href="https://pay.hotmart.com/M106470819T" target="_blank" rel="noopener">Empezar →</a>
+        <a class="pcta pcta-out" href="https://pay.hotmart.com/M106470819T" target="_blank" rel="noopener" onclick="fbq&&fbq('track','InitiateCheckout',{value:29,currency:'USD'})">Empezar →</a>
       </div>
       <div class="pcard feat r d1">
         <span class="pbadge">Más elegido</span>
@@ -835,7 +791,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
           <li>PDF descargable</li>
           <li>Entrega en menos de 24 hs desde que todos graban</li>
         </ul>
-        <a class="pcta pcta-gold" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener">Empezar →</a>
+        <a class="pcta pcta-gold" href="https://pay.hotmart.com/D106470872S" target="_blank" rel="noopener" onclick="fbq&&fbq('track','InitiateCheckout',{value:35,currency:'USD'})">Empezar →</a>
       </div>
       <div class="pcard r d2">
         <p class="pname">Bios</p>
@@ -849,7 +805,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
           <li>PDF descargable</li>
           <li>Entrega en menos de 24 hs desde que todos graban</li>
         </ul>
-        <a class="pcta pcta-out" href="https://pay.hotmart.com/E106470974U" target="_blank" rel="noopener">Empezar →</a>
+        <a class="pcta pcta-out" href="https://pay.hotmart.com/E106470974U" target="_blank" rel="noopener" onclick="fbq&&fbq('track','InitiateCheckout',{value:55,currency:'USD'})">Empezar →</a>
       </div>
     </div>
     
@@ -969,7 +925,7 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
         <div class="fitem"><button class="fq" onclick="faq(this)">¿Cuánto tiempo lleva grabar?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Entre 20 y 40 minutos por persona. Se puede hacer en varias sesiones, no hace falta hacerlo de una.</div></div></div>
         <div class="fitem"><button class="fq" onclick="faq(this)">¿Cómo puedo pagar?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Aceptamos tarjetas de crédito y débito internacionales, y medios de pago locales según tu país, a través de Hotmart. El proceso es 100% seguro.</div></div></div>
         <div class="fitem"><button class="fq" onclick="faq(this)">¿Cuántas personas pueden grabar en el mismo libro?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Las que quieras. Cada integrante recibe su propio link y graba desde su celular cuando pueda. El libro incorpora a todos.</div></div></div>
-        <div class="fitem"><button class="fq" onclick="faq(this)">¿Puedo ver cómo queda el libro antes de comprar?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Sí. En nuestra web tienes ejemplos de páginas reales para que veas el diseño y la calidad antes de decidir.</div></div></div>
+        <div class="fitem"><button class="fq" onclick="faq(this)">¿Puedo ver cómo queda el libro antes de comprar?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Sí. En esta misma página encontrás fragmentos reales de libros entregados, en la sección "Así queda escrito".</div></div></div>
         <div class="fitem"><button class="fq" onclick="faq(this)">¿Qué pasa si alguien no termina de grabar?<span class="ficon"></span></button><div class="fa"><div class="fa-in">No hay problema. El libro se genera cuando todos los integrantes terminan. Puedes hacer seguimiento desde tu panel personal y recordarles cuando quieras.</div></div></div>
         <div class="fitem"><button class="fq" onclick="faq(this)">¿Qué pasa con los audios?<span class="ficon"></span></button><div class="fa"><div class="fa-in">Solo se usan para generar el libro. Los eliminamos a los 90 días de la entrega.</div></div></div>
         <div class="fitem"><button class="fq" onclick="faq(this)">¿En qué idioma queda escrito el libro?<span class="ficon"></span></button><div class="fa"><div class="fa-in">En español, pero no un español genérico. El libro respeta la procedencia de cada integrante — si tu abuela es venezolana, suena venezolana. Si es rioplatense, suena rioplatense. El editor preserva sus modismos, su vocabulario y su forma de contar las cosas. Eso es parte de lo que hace único a cada libro.</div></div></div>
@@ -990,47 +946,10 @@ footer{background:var(--ink2);border-top:1px solid rgba(184,146,74,.08);padding:
       <li><a href="#faq">Preguntas</a></li>
       <li><a href="mailto:hola@ethosbios.com">Contacto</a></li>
     </ul>
-    <span class="fcopy">© 2025 Ethos Bios · Hecho en América Latina</span>
+    <span class="fcopy">© 2026 Ethos Bios · Hecho en América Latina</span>
   </div>
 </footer>
 
-<!-- MODAL -->
-<div id="modal">
-  <div class="mover" onclick="closeModal()"></div>
-  <div class="mbox">
-    <button class="mclose" onclick="closeModal()">×</button>
-    <h2 class="mtitle">Tu libro familiar</h2>
-    <p class="msub">3 pasos. Menos de 5 minutos.</p>
-    <span class="mptag" id="modal-badge">Plan Legado · US$35</span>
-    <div class="sdots"><div class="sdot active" id="sd1"></div><div class="sdot" id="sd2"></div><div class="sdot" id="sd3"></div></div>
-    <div class="fpanel active" id="sp1">
-      <label class="fl">Tu nombre</label><input type="text" class="fi" id="f-name" placeholder="María García" autocomplete="name">
-      <label class="fl">Tu email</label><input type="email" class="fi" id="f-email" placeholder="maria@ejemplo.com" autocomplete="email">
-      <label class="fl">Nombre de la familia</label><input type="text" class="fi" id="f-family" placeholder="Familia García">
-      <div class="mnav"><button class="btn-d" onclick="step(2)">Siguiente →</button></div>
-    </div>
-    <div class="fpanel" id="sp2">
-      <label class="fl">¿Quiénes van a grabar?</label>
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:14px;font-weight:300">Cada uno recibe un link personal para grabar cuando quiera.</p>
-      <div id="mlist">
-        <div class="mrow"><input type="text" class="fi" placeholder="Nombre" style="margin:0"><input type="email" class="fi" placeholder="Email" style="margin:0;margin-left:8px"></div>
-        <div class="mrow" style="margin-top:8px"><input type="text" class="fi" placeholder="Nombre" style="margin:0"><input type="email" class="fi" placeholder="Email" style="margin:0;margin-left:8px"><button class="brm" onclick="this.parentElement.remove()">−</button></div>
-      </div>
-      <button class="badd" onclick="addM()">+ Agregar integrante</button>
-      <div class="mnav"><button class="btn-o" onclick="step(1)">← Atrás</button><button class="btn-d" onclick="step(3)">Ver resumen →</button></div>
-    </div>
-    <div class="fpanel" id="sp3">
-      <div class="msum" id="msum"></div>
-      <label class="fl">Cómo quieres pagar</label>
-      <div class="pmethods">
-        <button class="pmethod pmp" onclick="pay('mp')">Pagar con Mercado Pago</button>
-        <button class="pmethod pstripe" onclick="pay('stripe')">Tarjeta internacional (USD)</button>
-      </div>
-      <p class="psafe">🔒 Pago seguro · SSL</p>
-      <div class="mnav" style="margin-top:14px"><button class="btn-o" onclick="step(2)">← Atrás</button></div>
-    </div>
-  </div>
-</div>
 
 <script>
 // ── NAV
@@ -1116,78 +1035,17 @@ function faq(btn){
   if(!open) item.classList.add('open');
 }
 
-// ── MODAL
-const PLANS={
-  esencial:{label:'Plan Recuerdo · US$29',base:29,max:4},
-  familiar:{label:'Plan Legado · US$35',base:35,max:6},
-  extendido:{label:'Plan Bios · US$55',base:55,max:10}
-};
-let cur='familiar';
-function openModal(p){
-  cur=p||'familiar';
-  document.getElementById('modal-badge').textContent=PLANS[cur].label;
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow='hidden';
-  step(1);
-}
-function closeModal(){
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow='';
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-function step(n){
-  if(n===2){
-    const fs=['f-name','f-email','f-family'].map(id=>document.getElementById(id));
-    let ok=true;
-    fs.forEach(f=>{f.classList.remove('err');if(!f.value.trim()){f.classList.add('err');ok=false;}});
-    if(!ok) return;
-  }
-  if(n===3) buildSum();
-  [1,2,3].forEach(i=>{
-    document.getElementById('sp'+i).classList.toggle('active',i===n);
-    const d=document.getElementById('sd'+i);
-    d.classList.toggle('active',i===n);
-    d.classList.toggle('done',i<n);
-  });
-  document.querySelector('.mbox').scrollTop=0;
-}
-
-function buildSum(){
-  const p=PLANS[cur];
-  const members=[...document.querySelectorAll('#mlist .mrow')]
-    .map(r=>r.querySelector('input').value.trim()).filter(Boolean);
-  const extra=Math.max(0,members.length-p.max);
-  const total=p.base+extra*8;
-  document.getElementById('msum').innerHTML=`
-    <div class="msrow"><span>${p.label.split('·')[0].trim()}</span><span class="msval">US$${p.base}</span></div>
-    <div class="msrow"><span>Integrantes</span><span class="msval">${members.length||1}</span></div>
-    
-    <div class="msrow"><span>Total</span><span class="msval">US$${total}</span></div>
-  `;
-}
-
-let mc=2;
-function addM(){
-  mc++;
-  const list=document.getElementById('mlist');
-  const r=document.createElement('div');
-  r.className='mrow';r.style.marginTop='8px';
-  r.innerHTML=`<input type="text" class="fi" placeholder="Nombre" style="margin:0"><input type="email" class="fi" placeholder="Email" style="margin:0;margin-left:8px"><button class="brm" onclick="this.parentElement.remove()">−</button>`;
-  list.appendChild(r);
-}
-
-function pay(method){
-  const name=document.getElementById('f-name').value.trim();
-  const email=document.getElementById('f-email').value.trim();
-  const family=document.getElementById('f-family').value.trim();
-  const members=[...document.querySelectorAll('#mlist .mrow')].map(r=>{
-    const ins=r.querySelectorAll('input');
-    return{name:ins[0].value.trim(),email:ins[1]?.value.trim()};
-  }).filter(m=>m.name);
-  const params=new URLSearchParams({pack:cur,nombre:name,email,familia:family,integrantes:JSON.stringify(members),payment:method});
-  window.location.href=`/onboarding.html?${params}`;
-}
+// ── META PIXEL: ViewContent al ver precios
+(function(){
+  const priceSec = document.getElementById('precios');
+  if(!priceSec || typeof fbq === 'undefined') return;
+  let fired = false;
+  const obs = new IntersectionObserver(([e]) => {
+    if(e.isIntersecting && !fired){ fired = true; fbq('track','ViewContent'); }
+  }, {threshold: 0.3});
+  obs.observe(priceSec);
+})();
 
 // ── PARALLAX HERO PHOTO
 (function(){
