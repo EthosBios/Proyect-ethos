@@ -7,8 +7,8 @@ import threading
 
 WHISPER_USD_PER_MIN = 0.006
 
-# Claude Opus 4.7 (MODEL usado en voice_agent, chapter_agent, editor_agent):
-# USD 5.00 / USD 25.00 por millón de tokens input/output.
+# Claude Opus 4.8 (chapter_agent, editor_agent): USD 5.00 / USD 25.00 por millón.
+# Claude Sonnet 5 (voice_agent): precio estimado similar a Opus; actualizar si cambia.
 CLAUDE_USD_PER_M_INPUT = 5.00
 CLAUDE_USD_PER_M_OUTPUT = 25.00
 
