@@ -181,6 +181,12 @@ def _run_pipeline(
             logger.warning("[orchestrator] familia=%s no se pudieron cargar integrantes de Firestore: %s", familia_id, e)
             _fs_integrantes = []
 
+        # Filtrar por nombres si se especificaron (evita procesar integrantes no solicitados)
+        if nombres and _fs_integrantes:
+            nombres_lower = {n.lower() for n in nombres}
+            _fs_integrantes = [p for p in _fs_integrantes if p["nombre"].lower() in nombres_lower]
+            logger.info("[orchestrator] familia=%s filtrado a %d integrantes por nombres=%s", familia_id, len(_fs_integrantes), nombres)
+
         # 2. Enriquecimiento OPCIONAL: relaciones (Firestore) y fallecidos (Sheets).
         #    Un fallo acá NO debe descartar _fs_integrantes ya cargado.
         if _fs_integrantes:
@@ -244,7 +250,8 @@ def _run_pipeline(
         logger.info("[orchestrator] familia=%s job=%s paso 1: transcripción", familia_id, from_job_id)
         try:
             if familia_id and _fs_integrantes:
-                result.transcriber = transcriber.run_from_firestore(familia_id, pais, costos=costos)
+                allowed_ids = {p["id"] for p in _fs_integrantes}
+                result.transcriber = transcriber.run_from_firestore(familia_id, pais, costos=costos, integrante_ids=allowed_ids)
             else:
                 row_indices = _get_row_indices(adultos)
                 if not row_indices:
@@ -286,6 +293,10 @@ def _run_pipeline(
         try:
             from pipeline.utils import firestore as fs_mod
             _fs_integrantes = fs_mod.get_integrantes_para_pipeline(familia_id)
+            # Reaplicar filtro por nombres tras el refresh
+            if nombres:
+                nombres_lower = {n.lower() for n in nombres}
+                _fs_integrantes = [p for p in _fs_integrantes if p["nombre"].lower() in nombres_lower]
             logger.info("[orchestrator] familia=%s _fs_integrantes refrescados post-voice", familia_id)
         except Exception as _e:
             logger.warning("[orchestrator] familia=%s no se pudo refrescar _fs_integrantes: %s", familia_id, _e)

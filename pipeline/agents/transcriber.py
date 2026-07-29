@@ -129,10 +129,16 @@ def run(row_indices: list[int], pais: str = "argentina", costos=None) -> dict:
     return {"procesadas": procesadas, "errores": errores}
 
 
-def run_from_firestore(familia_id: str, pais: str = "argentina", costos=None) -> dict:
+def run_from_firestore(
+    familia_id: str,
+    pais: str = "argentina",
+    costos=None,
+    integrante_ids: set[str] | None = None,
+) -> dict:
     """
-    Transcribe todos los audios pendientes de una familia desde Firestore/GCS.
+    Transcribe los audios pendientes de una familia desde Firestore/GCS.
     Solo procesa respuestas donde audio_url está seteado y transcripcion está vacía.
+    integrante_ids: si se pasa, solo procesa esos integrantes (filtro de corrida parcial).
     costos: pipeline.utils.costos.CostAccumulator opcional, para acumular minutos Whisper.
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -141,11 +147,13 @@ def run_from_firestore(familia_id: str, pais: str = "argentina", costos=None) ->
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=60.0)
     prompt = _get_prompt(pais)
 
-    # Recolectar tareas pendientes en todos los integrantes
+    # Recolectar tareas pendientes — respetando el filtro de integrantes si se especificó
     integrantes = fs.get_integrantes(familia_id)
     tasks = []  # [(integrante_id, pregunta_id, audio_url)]
     for integrante in integrantes:
         integrante_id = integrante["id"]
+        if integrante_ids is not None and integrante_id not in integrante_ids:
+            continue
         respuestas = fs.get_respuestas(familia_id, integrante_id)
         for r in respuestas:
             audio_url = r.get("audio_url", "").strip()
