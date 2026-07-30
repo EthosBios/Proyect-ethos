@@ -2023,8 +2023,14 @@ def test_email(email: str = "test@raices.app", _: None = Depends(_admin_auth)):
 # ─── Panel Admin Pro: /admin/dashboard (Briefing #32) ─────────────────────────
 
 def _admin_auth_header(x_admin_key: str | None = Header(default=None)) -> None:
-    """Igual que _admin_auth pero pensado para el GET del panel (mismo esquema X-Admin-Key)."""
+    """Igual que _admin_auth pero pensado para los GET del panel (mismo esquema X-Admin-Key)."""
     _admin_auth(x_admin_key)
+
+
+@app.get("/admin")
+def admin_root():
+    """Redirige /admin → /admin/dashboard (la URL canónica del panel)."""
+    return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 
 @app.get("/admin/dashboard")
@@ -2039,8 +2045,68 @@ def admin_dashboard(request: Request, _: None = Depends(_admin_auth_header)):
             "alertas": data["alertas"],
             "kpis": data["kpis"],
             "familias": data["familias"],
+            "quality": data["quality"],
         },
     )
+
+
+@app.get("/admin/dashboard/export.csv")
+def admin_dashboard_export_csv(_: None = Depends(_admin_auth_header)):
+    """Exporta la tabla de familias como CSV (mismas columnas que el Bloque D)."""
+    import csv
+    import io
+    from pipeline.utils import dashboard as dash
+
+    data = dash.build_dashboard_data()
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([
+        "familia_id", "nombre", "estado", "avance_%",
+        "dias_desde_compra", "semaforo_refund", "pack", "precio_usd",
+        "costo_real_usd", "margen_real_usd", "comprador_email",
+    ])
+    for f in data["familias"]:
+        writer.writerow([
+            f["familia_id"], f["nombre"], f["estado_operativo"],
+            f["avance"], f["dias_desde_compra"] if f["dias_desde_compra"] is not None else "",
+            f["semaforo_refund"] or "", f["pack"] or "",
+            f["precio"] if f["precio"] is not None else "",
+            f["costo_real"] if f["costo_real"] is not None else "",
+            f["margen_real"] if f["margen_real"] is not None else "",
+            f["comprador_email"],
+        ])
+    from fastapi.responses import Response
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=familias.csv"},
+    )
+
+
+class ResolverEscalacionBody(BaseModel):
+    nota: str = ""
+
+
+@app.post("/admin/familia/{familia_id}/integrante/{integrante_id}/resolver-escalacion")
+def admin_resolver_escalacion(
+    familia_id: str,
+    integrante_id: str,
+    body: ResolverEscalacionBody,
+    _: None = Depends(_admin_auth),
+):
+    """Marca una escalación humana como revisada y resuelta manualmente."""
+    from pipeline.utils import firestore as fs
+
+    familia = fs.get_familia(familia_id)
+    if not familia:
+        raise HTTPException(status_code=404, detail=f"Familia no encontrada: {familia_id}")
+
+    fs.mark_escalacion_resuelta(familia_id, integrante_id, nota=body.nota)
+    logger.info(
+        "[admin-resolver-escalacion] familia=%s integrante=%s nota=%r",
+        familia_id, integrante_id, body.nota,
+    )
+    return {"ok": True, "familia_id": familia_id, "integrante_id": integrante_id}
 
 
 @app.post("/admin/familia/{familia_id}/recordatorio")

@@ -68,7 +68,7 @@
 <body>
 
 <h1>📊 Panel Admin — Ethos Bios</h1>
-<div class="subt">Fuente operativa de clientes (reemplaza a la DB de Notion "Familias"). Generado al cargar la página, sin cron.</div>
+<div class="subt">Fuente operativa de clientes. Generado al cargar la página, sin cron. &nbsp;·&nbsp; <a href="/admin/dashboard/export.csv" style="color:var(--accent)">⬇ Exportar CSV</a></div>
 
 {# ── Bloque A: Alertas accionables ─────────────────────────────────────── #}
 {% if alertas %}
@@ -191,6 +191,92 @@
   {% endif %}
 </section>
 
+{# ── Bloque E: Calidad (quality_agent, Briefing #35) ───────────────────── #}
+<section>
+  <h2>🔬 Calidad de capítulos (quality_agent)</h2>
+  <div class="kpis" style="margin-bottom:20px">
+    <div class="kpi">
+      <div class="valor">{{ quality.total_evaluados }}</div>
+      <div class="label">Capítulos evaluados (total)</div>
+    </div>
+    <div class="kpi">
+      <div class="valor">{{ quality.pct_primera if quality.pct_primera is not none else "—" }}{% if quality.pct_primera is not none %}%{% endif %}</div>
+      <div class="label">Aprobados al primer intento</div>
+    </div>
+    <div class="kpi">
+      <div class="valor" style="color:{% if quality.total_escalaciones > 0 %}var(--rojo){% else %}var(--verde){% endif %}">{{ quality.total_escalaciones }}</div>
+      <div class="label">Escalaciones humanas pendientes</div>
+    </div>
+  </div>
+
+  {# Cola de escalaciones pendientes #}
+  {% if quality.escalaciones_pendientes %}
+  <h3 style="font-size:0.85rem;margin-bottom:8px;color:var(--rojo)">⚠️ Cola de revisión humana ({{ quality.escalaciones_pendientes|length }})</h3>
+  <table style="margin-bottom:16px">
+    <thead>
+      <tr><th>Integrante</th><th>Familia</th><th>Motivo escalación</th><th>Violaciones A</th><th>Violaciones B</th><th>Acción</th></tr>
+    </thead>
+    <tbody>
+      {% for e in quality.escalaciones_pendientes %}
+      <tr>
+        <td>{{ e.nombre }}</td>
+        <td>{{ e.familia_nombre }}</td>
+        <td><span class="badge rojo">{{ e.motivo or "—" }}</span></td>
+        <td style="font-size:0.75rem;max-width:220px">
+          {% if e.violaciones_a %}
+            {% for v in e.violaciones_a[:2] %}<div>· {{ v[:90] }}{% if v|length > 90 %}…{% endif %}</div>{% endfor %}
+            {% if e.violaciones_a|length > 2 %}<div style="color:var(--muted)">+ {{ e.violaciones_a|length - 2 }} más</div>{% endif %}
+          {% else %}—{% endif %}
+        </td>
+        <td style="font-size:0.75rem;max-width:220px">
+          {% if e.violaciones_b %}
+            {% for v in e.violaciones_b[:2] %}<div>· {{ v[:90] }}{% if v|length > 90 %}…{% endif %}</div>{% endfor %}
+            {% if e.violaciones_b|length > 2 %}<div style="color:var(--muted)">+ {{ e.violaciones_b|length - 2 }} más</div>{% endif %}
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <button class="btn" onclick="accionResolverEscalacion('{{ e.familia_id }}', '{{ e.integrante_id }}', this)">Marcar revisado</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="vacio" style="margin-bottom:16px">✓ Sin escalaciones humanas pendientes.</div>
+  {% endif %}
+
+  {# Ranking de violaciones #}
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px">
+      <h3 style="font-size:0.85rem;margin-bottom:8px">Top violaciones Checklist A (factual)</h3>
+      {% if quality.top_violaciones_a %}
+      <table>
+        <thead><tr><th>Violación</th><th>#</th></tr></thead>
+        <tbody>
+          {% for v, n in quality.top_violaciones_a %}
+          <tr><td style="font-size:0.75rem">{{ v[:100] }}{% if v|length > 100 %}…{% endif %}</td><td>{{ n }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<div class="vacio">Sin datos.</div>{% endif %}
+    </div>
+    <div style="flex:1;min-width:260px">
+      <h3 style="font-size:0.85rem;margin-bottom:8px">Top violaciones Checklist B (editorial)</h3>
+      {% if quality.top_violaciones_b %}
+      <table>
+        <thead><tr><th>Violación</th><th>#</th></tr></thead>
+        <tbody>
+          {% for v, n in quality.top_violaciones_b %}
+          <tr><td style="font-size:0.75rem">{{ v[:100] }}{% if v|length > 100 %}…{% endif %}</td><td>{{ n }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<div class="vacio">Sin datos.</div>{% endif %}
+    </div>
+  </div>
+  <div class="msg" style="margin-top:10px">ℹ️ Nota de diseño: el evaluador puede marcar como violación A inferencias literarias razonables (color narrativo no contradictorio). Evaluar separar en "advertencia" vs "violación real" — decisión pendiente.</div>
+</section>
+
 <script>
 function adminKey() {
   let k = sessionStorage.getItem('admin_key');
@@ -232,6 +318,10 @@ function accionReintentar(familiaId, soloDesde, btn) {
 }
 function accionReenviarLibro(familiaId, btn) {
   postAdmin('/admin/reenviar-libro?familia_id=' + encodeURIComponent(familiaId), {}, btn);
+}
+function accionResolverEscalacion(familiaId, integranteId, btn) {
+  const nota = prompt('Nota de revisión (opcional):') || '';
+  postAdmin('/admin/familia/' + familiaId + '/integrante/' + integranteId + '/resolver-escalacion', { nota }, btn);
 }
 </script>
 

@@ -238,4 +238,98 @@ def build_dashboard_data() -> dict:
         **_costo_promedio_corrida_limpia(),
     }
 
-    return {"alertas": alertas, "kpis": kpis, "familias": filas}
+    quality = _get_quality_metrics(familias_docs)
+
+    return {"alertas": alertas, "kpis": kpis, "familias": filas, "quality": quality}
+
+
+def _get_quality_metrics(familias_docs) -> dict:
+    """
+    Agrega métricas del quality_agent desde Firestore para el Bloque E del dashboard.
+    Lee evaluaciones_calidad de cada integrante que las tenga.
+    """
+    from collections import Counter
+
+    total_evaluados = 0
+    aprobados_primera = 0
+    escalaciones_pendientes = []
+    violaciones_a: Counter = Counter()
+    violaciones_b: Counter = Counter()
+
+    for doc in familias_docs:
+        familia_id = doc.id
+        familia_nombre = (doc.to_dict() or {}).get("nombre", "(sin nombre)")
+
+        try:
+            integrantes = fs.get_integrantes(familia_id)
+        except Exception:  # noqa: BLE001
+            continue
+
+        integrante_ids = [i.get("id", "") for i in integrantes if i.get("id")]
+
+        # Cola de escalaciones humanas
+        for integrante in integrantes:
+            if integrante.get("requiere_revision_humana") or integrante.get("escalacion_humana"):
+                esc = integrante.get("escalacion_humana") or {}
+                ev = esc.get("ultima_evaluacion") or {}
+                viol_a = (ev.get("checklist_a") or {}).get("violaciones", [])
+                viol_b = (ev.get("checklist_b") or {}).get("violaciones", [])
+                escalaciones_pendientes.append({
+                    "familia_id": familia_id,
+                    "familia_nombre": familia_nombre,
+                    "integrante_id": integrante.get("id", ""),
+                    "nombre": integrante.get("nombre", ""),
+                    "motivo": esc.get("motivo", ""),
+                    "timestamp": esc.get("timestamp", ""),
+                    "violaciones_a": viol_a,
+                    "violaciones_b": viol_b,
+                })
+
+        # Evaluaciones de calidad
+        if not integrante_ids:
+            continue
+
+        try:
+            evaluaciones = fs.get_quality_metrics_data(familia_id, integrante_ids)
+        except Exception:  # noqa: BLE001
+            continue
+
+        # Solo intento=1 para la tasa de primera pasada
+        for ev in evaluaciones:
+            if ev.get("intento") != 1:
+                continue
+            total_evaluados += 1
+            if ev.get("aprobado"):
+                aprobados_primera += 1
+
+            # Acumular violaciones A
+            ca = ev.get("checklist_a") or {}
+            for v in ca.get("violaciones", []):
+                if isinstance(v, str) and v.strip():
+                    # Truncar a 80 chars para usar como clave del ranking
+                    violaciones_a[v[:80]] += 1
+
+            # Acumular violaciones B
+            cb = ev.get("checklist_b") or {}
+            for v in cb.get("violaciones", []):
+                if isinstance(v, str) and v.strip():
+                    violaciones_b[v[:80]] += 1
+            # También contar items de B que fallaron
+            for item in ["word_count_ok", "sin_prohibidas", "cursiva_ok", "frases_integradas", "tono_literario"]:
+                if not cb.get(item, True):
+                    violaciones_b[f"[item] {item}"] += 1
+
+    pct_primera = (
+        round(aprobados_primera / total_evaluados * 100, 1)
+        if total_evaluados > 0 else None
+    )
+
+    return {
+        "total_evaluados": total_evaluados,
+        "aprobados_primera": aprobados_primera,
+        "pct_primera": pct_primera,
+        "escalaciones_pendientes": escalaciones_pendientes,
+        "top_violaciones_a": violaciones_a.most_common(5),
+        "top_violaciones_b": violaciones_b.most_common(5),
+        "total_escalaciones": len(escalaciones_pendientes),
+    }

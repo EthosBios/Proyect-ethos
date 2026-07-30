@@ -737,6 +737,7 @@ def mark_escalacion_humana(
 ) -> None:
     """Marca un integrante para revisión humana y registra el motivo."""
     from datetime import datetime, timezone
+    ts = datetime.now(timezone.utc).isoformat()
     (
         _db()
         .collection("familias")
@@ -747,9 +748,10 @@ def mark_escalacion_humana(
             {
                 "escalacion_humana": {
                     "motivo": motivo,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": ts,
                     "ultima_evaluacion": evaluacion,
-                }
+                },
+                "requiere_revision_humana": True,
             },
             merge=True,
         )
@@ -758,6 +760,33 @@ def mark_escalacion_humana(
     _db().collection("familias").document(familia_id).set(
         {"tiene_escalaciones": True}, merge=True
     )
+
+
+def mark_escalacion_resuelta(familia_id: str, integrante_id: str, nota: str = "") -> None:
+    """Marca una escalación humana como resuelta (el revisor la aprobó manualmente)."""
+    from datetime import datetime, timezone
+    (
+        _db()
+        .collection("familias")
+        .document(familia_id)
+        .collection("integrantes")
+        .document(integrante_id)
+        .set(
+            {
+                "requiere_revision_humana": False,
+                "escalacion_resuelta_at": datetime.now(timezone.utc).isoformat(),
+                "escalacion_nota": nota,
+            },
+            merge=True,
+        )
+    )
+    # Limpiar tiene_escalaciones en la familia si ya no quedan pendientes
+    integrantes = get_integrantes(familia_id)
+    quedan = any(i.get("requiere_revision_humana") for i in integrantes)
+    if not quedan:
+        _db().collection("familias").document(familia_id).set(
+            {"tiene_escalaciones": False}, merge=True
+        )
 
 
 def get_escalaciones(familia_id: str) -> list[dict]:
@@ -770,8 +799,33 @@ def get_escalaciones(familia_id: str) -> list[dict]:
             "escalacion": i.get("escalacion_humana", {}),
         }
         for i in integrantes
-        if i.get("escalacion_humana")
+        if i.get("requiere_revision_humana") or i.get("escalacion_humana")
     ]
+
+
+def get_quality_metrics_data(familia_id: str, integrante_ids: list[str]) -> list[dict]:
+    """
+    Para cada integrante_id, lee la subcollección evaluaciones_calidad y devuelve
+    una lista de dicts con los campos necesarios para el Bloque E del dashboard.
+    """
+    results = []
+    db = _db()
+    for integrante_id in integrante_ids:
+        try:
+            docs = (
+                db.collection("familias").document(familia_id)
+                .collection("integrantes").document(integrante_id)
+                .collection("evaluaciones_calidad")
+                .stream()
+            )
+            for doc in docs:
+                data = doc.to_dict() or {}
+                data["_integrante_id"] = integrante_id
+                data["_familia_id"] = familia_id
+                results.append(data)
+        except Exception:  # noqa: BLE001
+            pass
+    return results
 
 
 # ─── Upsell checkouts ────────────────────────────────────────────────────────
