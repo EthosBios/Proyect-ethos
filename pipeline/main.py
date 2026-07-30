@@ -1383,6 +1383,19 @@ def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str)
     from google.cloud import firestore as _firestore
     from pipeline.utils import firestore as fs
 
+    # Idempotencia: si ya existe un doc con este transaction, devolver ese ID sin crear otro
+    if transaction:
+        existing = list(
+            fs._db().collection("familias")
+            .where("hotmart_transaction", "==", transaction)
+            .limit(1)
+            .stream()
+        )
+        if existing:
+            familia_id = existing[0].id
+            logger.info("[webhook-hotmart] familia ya existe familia=%s transaction=%s (retry idempotente)", familia_id, transaction)
+            return familia_id
+
     familia_id = uuid.uuid4().hex[:16]
     nombre_familia = f"Familia {nombre.split()[0]}" if nombre else "Mi Familia"
     fs._db().collection("familias").document(familia_id).set({
@@ -2103,10 +2116,14 @@ def admin_logout():
 
 
 @app.get("/admin/dashboard")
-def admin_dashboard(request: Request, _: None = Depends(_admin_auth_browser)):
+def admin_dashboard(
+    request: Request,
+    mostrar_tests: bool = Query(default=False, alias="mostrar_tests"),
+    _: None = Depends(_admin_auth_browser),
+):
     from pipeline.utils import dashboard as dash
 
-    data = dash.build_dashboard_data()
+    data = dash.build_dashboard_data(show_tests=mostrar_tests)
     return _templates.TemplateResponse(
         request=request,
         name="admin_dashboard.html",
@@ -2115,18 +2132,23 @@ def admin_dashboard(request: Request, _: None = Depends(_admin_auth_browser)):
             "kpis": data["kpis"],
             "familias": data["familias"],
             "quality": data["quality"],
+            "mostrar_tests": mostrar_tests,
         },
     )
 
 
 @app.get("/admin/dashboard/export.csv")
-def admin_dashboard_export_csv(request: Request, _: None = Depends(_admin_auth_browser)):
+def admin_dashboard_export_csv(
+    request: Request,
+    mostrar_tests: bool = Query(default=False, alias="mostrar_tests"),
+    _: None = Depends(_admin_auth_browser),
+):
     """Exporta la tabla de familias como CSV (mismas columnas que el Bloque D)."""
     import csv
     import io
     from pipeline.utils import dashboard as dash
 
-    data = dash.build_dashboard_data()
+    data = dash.build_dashboard_data(show_tests=mostrar_tests)
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow([

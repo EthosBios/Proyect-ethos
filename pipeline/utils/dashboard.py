@@ -76,11 +76,12 @@ def _costo_promedio_corrida_limpia() -> dict:
     }
 
 
-def build_dashboard_data() -> dict:
+def build_dashboard_data(show_tests: bool = False) -> dict:
     db = fs._db()
     now = datetime.now(timezone.utc)
 
-    familias_docs = list(db.collection("familias").stream())
+    all_docs = list(db.collection("familias").stream())
+    familias_docs = [d for d in all_docs if show_tests or not (d.to_dict() or {}).get("es_test")]
 
     filas = []
     alertas = []

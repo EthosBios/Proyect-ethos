@@ -700,15 +700,17 @@ def validate_temp_token(token: str, familia_id: str) -> bool:
 
 
 def get_familia_by_email(email: str) -> tuple[str, dict] | None:
-    """Find familia by comprador email. Returns (familia_id, data) or None."""
+    """Find familia by comprador email. Returns (familia_id, data) or None.
+    Skips es_test docs so magic links don't land on stale/test families."""
     docs = (
         _db().collection("familias")
         .where("comprador.email", "==", email)
-        .limit(1)
         .stream()
     )
     for doc in docs:
-        data = doc.to_dict()
+        data = doc.to_dict() or {}
+        if data.get("es_test"):
+            continue
         data["id"] = doc.id
         return doc.id, data
     return None
