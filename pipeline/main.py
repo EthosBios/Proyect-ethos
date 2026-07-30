@@ -2022,19 +2022,88 @@ def test_email(email: str = "test@raices.app", _: None = Depends(_admin_auth)):
 
 # ─── Panel Admin Pro: /admin/dashboard (Briefing #32) ─────────────────────────
 
-def _admin_auth_header(x_admin_key: str | None = Header(default=None)) -> None:
-    """Igual que _admin_auth pero pensado para los GET del panel (mismo esquema X-Admin-Key)."""
-    _admin_auth(x_admin_key)
+_ADMIN_SESSION_COOKIE = "admin_session"
+_ADMIN_SESSION_MAX_AGE = 8 * 3600  # 8 horas
+
+
+def _sign_admin_session() -> str:
+    return URLSafeTimedSerializer(
+        os.environ.get("SESSION_SECRET", "fallback"), salt="admin"
+    ).dumps({"admin": True})
+
+
+def _verify_admin_session(cookie_value: str) -> bool:
+    try:
+        URLSafeTimedSerializer(
+            os.environ.get("SESSION_SECRET", "fallback"), salt="admin"
+        ).loads(cookie_value, max_age=_ADMIN_SESSION_MAX_AGE)
+        return True
+    except Exception:
+        return False
+
+
+def _admin_auth_browser(request: Request, x_admin_key: str | None = Header(default=None)) -> None:
+    """Acepta autenticación por header X-Admin-Key (curl/API) O por cookie de sesión (browser)."""
+    cookie = request.cookies.get(_ADMIN_SESSION_COOKIE, "")
+    if cookie and _verify_admin_session(cookie):
+        return
+    pwd = os.environ.get("ADMIN_PASSWORD", "")
+    if pwd and x_admin_key == pwd:
+        return
+    raise HTTPException(
+        status_code=302,
+        headers={"Location": "/admin/login"},
+        detail="No autorizado",
+    )
 
 
 @app.get("/admin")
 def admin_root():
-    """Redirige /admin → /admin/dashboard (la URL canónica del panel)."""
+    """Redirige /admin → /admin/dashboard."""
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 
+@app.get("/admin/login")
+def admin_login_form(request: Request):
+    cookie = request.cookies.get(_ADMIN_SESSION_COOKIE, "")
+    if cookie and _verify_admin_session(cookie):
+        return RedirectResponse(url="/admin/dashboard", status_code=302)
+    return _templates.TemplateResponse(request=request, name="admin_login.html", context={})
+
+
+@app.post("/admin/login")
+async def admin_login_submit(request: Request):
+    form = await request.form()
+    pwd_input = form.get("password", "")
+    pwd_real = os.environ.get("ADMIN_PASSWORD", "")
+    if not pwd_real or pwd_input != pwd_real:
+        return _templates.TemplateResponse(
+            request=request,
+            name="admin_login.html",
+            context={"error": "Contraseña incorrecta"},
+            status_code=401,
+        )
+    response = RedirectResponse(url="/admin/dashboard", status_code=303)
+    response.set_cookie(
+        key=_ADMIN_SESSION_COOKIE,
+        value=_sign_admin_session(),
+        max_age=_ADMIN_SESSION_MAX_AGE,
+        httponly=True,
+        samesite="lax",
+        secure=True,
+    )
+    return response
+
+
+@app.get("/admin/logout")
+def admin_logout():
+    response = RedirectResponse(url="/admin/login", status_code=302)
+    response.delete_cookie(_ADMIN_SESSION_COOKIE)
+    return response
+
+
 @app.get("/admin/dashboard")
-def admin_dashboard(request: Request, _: None = Depends(_admin_auth_header)):
+def admin_dashboard(request: Request, _: None = Depends(_admin_auth_browser)):
     from pipeline.utils import dashboard as dash
 
     data = dash.build_dashboard_data()
@@ -2051,7 +2120,7 @@ def admin_dashboard(request: Request, _: None = Depends(_admin_auth_header)):
 
 
 @app.get("/admin/dashboard/export.csv")
-def admin_dashboard_export_csv(_: None = Depends(_admin_auth_header)):
+def admin_dashboard_export_csv(request: Request, _: None = Depends(_admin_auth_browser)):
     """Exporta la tabla de familias como CSV (mismas columnas que el Bloque D)."""
     import csv
     import io

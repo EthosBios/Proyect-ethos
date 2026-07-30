@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Ethos Bios</title>
+<style>
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #f6f5f2; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .card {
+    background: #fff; border: 1px solid #e6e4de; border-radius: 12px;
+    padding: 40px 36px; width: 100%; max-width: 360px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  h1 { font-size: 1.2rem; margin: 0 0 6px; color: #1f2320; }
+  .subt { font-size: 0.82rem; color: #6b7280; margin-bottom: 28px; }
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  input[type="password"] {
+    width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #d1d5db;
+    border-radius: 7px; font-size: 0.95rem; outline: none; margin-bottom: 16px;
+    transition: border-color 0.15s;
+  }
+  input[type="password"]:focus { border-color: #2f6b4f; }
+  button {
+    width: 100%; padding: 11px; background: #2f6b4f; color: #fff; border: none;
+    border-radius: 7px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  }
+  button:hover { background: #265c43; }
+  .error {
+    background: #fbe4e1; color: #c0392b; border-radius: 7px;
+    padding: 9px 12px; font-size: 0.82rem; margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>📊 Panel Admin</h1>
+  <div class="subt">Ethos Bios — acceso restringido</div>
+  {% if error %}
+  <div class="error">{{ error }}</div>
+  {% endif %}
+  <form method="post" action="/admin/login">
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" name="password" autofocus autocomplete="current-password" placeholder="••••••••••••">
+    <button type="submit">Entrar</button>
+  </form>
+</div>
+</body>
+</html>
