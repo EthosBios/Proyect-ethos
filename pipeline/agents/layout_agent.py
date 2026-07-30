@@ -371,6 +371,7 @@ def _render_libro(
     fotos: dict[str, str],
     integrantes: list[dict],
     relaciones: list[dict],
+    qr_data: dict[str, str] | None = None,
 ) -> str:
     """Ensambla el HTML completo del libro concatenando todas las páginas."""
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
@@ -452,6 +453,20 @@ def _render_libro(
                 "bloques": pagina_bloques,
             }
             partes.append(_extract_body(tmpl_interior.render(pagina=pagina_ctx)))
+
+        # 07 · QR de voz permanente — solo si existe audio para este integrante
+        qr_b64 = (qr_data or {}).get(nombre, "")
+        if qr_b64:
+            partes.append(f'''
+<div class="page interior" style="display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:52px">
+  <div style="text-align:center;max-width:220px;margin:auto">
+    <img src="data:image/png;base64,{qr_b64}" alt="QR" style="width:120px;height:120px;display:block;margin:0 auto 14px" />
+    <p style="font-family:\'Cormorant Garamond\',serif;font-size:10px;color:#7B5E3A;line-height:1.6;letter-spacing:0.5px">
+      Escaneá para escuchar el mensaje de {nombre}<br>— su voz, para siempre.
+    </p>
+  </div>
+  <div class="folio">{next_folio()}</div>
+</div>''')
 
         # 06 · Transición hacia el siguiente capítulo
         if idx < len(manuscript.orden):
@@ -583,7 +598,18 @@ def run(
             except Exception:
                 pass
 
-    html_content = _render_libro(manuscript, nombre_familia, fotos, integrantes, rels)
+    # QR de voz permanente por integrante
+    qr_data: dict[str, str] = {}
+    for p in personas_meta:
+        voz_token = p.get("voz_token", "")
+        if voz_token:
+            try:
+                qr_url = f"https://ethosbios.com/voz/{voz_token}"
+                qr_data[p["nombre"]] = _generar_qr_b64(qr_url)
+            except Exception as e:
+                print(f"[layout] No se pudo generar QR para {p['nombre']}: {e}")
+
+    html_content = _render_libro(manuscript, nombre_familia, fotos, integrantes, rels, qr_data=qr_data)
 
     if output_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -591,6 +617,20 @@ def run(
 
     HTML(string=html_content, base_url=str(TEMPLATES_DIR)).write_pdf(output_path)
     return output_path
+
+
+def _generar_qr_b64(url: str) -> str:
+    """Genera un QR PNG en base64 para la URL dada."""
+    import base64
+    import io
+    import qrcode
+    qr = qrcode.QRCode(version=1, box_size=6, border=3)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="#3d2512", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode()
 
 
 def _download_gcs(gcs_uri: str, dest: str) -> None:

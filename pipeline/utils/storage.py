@@ -13,6 +13,7 @@ from google.cloud import storage
 GCS_BUCKET_AUDIOS = os.environ.get("GCS_BUCKET_AUDIOS", "libro-familiar-audios")
 GCS_BUCKET_FOTOS  = os.environ.get("GCS_BUCKET_FOTOS",  "libro-familiar-fotos")
 GCS_BUCKET_LIBROS = os.environ.get("GCS_BUCKET_LIBROS", "libro-familiar-libros")
+GCS_BUCKET_VOCES  = os.environ.get("GCS_BUCKET_VOCES",  "ethosbios-voces-permanentes")
 
 _client = None
 
@@ -52,6 +53,17 @@ def upload_to_gcs(
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(local_path, content_type=content_type)
     return f"gs://{bucket_name}/{blob_name}"
+
+
+def copy_to_voces_permanentes(gs_src_url: str, familia_id: str, integrante_id: str) -> str:
+    """Copy audio to the permanent voices bucket. Returns the gs:// URL of the copy."""
+    src_bucket_name, src_blob_name = _parse_gs_url(gs_src_url)
+    dest_blob_name = f"{familia_id}/{integrante_id}.mp3"
+    src_bucket = _gcs().bucket(src_bucket_name)
+    src_blob = src_bucket.blob(src_blob_name)
+    dest_bucket = _gcs().bucket(GCS_BUCKET_VOCES)
+    src_bucket.copy_blob(src_blob, dest_bucket, dest_blob_name)
+    return f"gs://{GCS_BUCKET_VOCES}/{dest_blob_name}"
 
 
 def get_signed_url(gs_url: str, expiration_hours: int = 720) -> str:

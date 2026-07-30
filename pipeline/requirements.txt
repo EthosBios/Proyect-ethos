@@ -16,3 +16,4 @@ python-multipart>=0.0.9
 google-cloud-tasks>=2.16.0
 slowapi>=0.1.9
 itsdangerous>=2.1.0
+qrcode[pil]>=7.4.2

@@ -415,6 +415,196 @@ header .logo {
 }
 
 /* ══════════════════════════════
+   SCREEN 4 — VOZ PERMANENTE (pregunta 17)
+══════════════════════════════ */
+.voz-screen {
+  background: #0F0A06;
+  min-height: calc(100vh - 57px);
+}
+
+.voz-card {
+  background: #1C1208;
+  border: 1px solid #3d2b1a;
+  border-radius: 16px;
+  padding: 40px 36px;
+  max-width: 620px;
+  margin: 0 auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+}
+
+.voz-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #B8924A;
+  margin-bottom: 10px;
+}
+
+.voz-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: #F0E8DC;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.voz-intro {
+  font-size: 14px;
+  color: #9a7b5a;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.voz-video-wrap {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #3d2b1a;
+  border-radius: 10px;
+  padding: 28px 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.voz-video-fallback {
+  font-size: 13px;
+  color: #6B3D1E;
+  line-height: 1.6;
+}
+
+.voz-pregunta {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: #F0E8DC;
+  line-height: 1.55;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(184,146,74,0.06);
+  border-left: 3px solid #B8924A;
+  border-radius: 0 8px 8px 0;
+}
+
+.voz-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.btn-voz-grabar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 2px solid #B8924A;
+  color: #B8924A;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-voz-grabar:hover:not(:disabled) {
+  background: #B8924A;
+  color: #0F0A06;
+}
+
+.btn-voz-grabar.grabando-btn {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: white;
+}
+
+.btn-voz-grabar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.voz-timer {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #B8924A;
+  min-width: 48px;
+}
+
+.voz-timer.urgente { color: #e74c3c; }
+.voz-timer.hidden { display: none; }
+
+.btn-voz-enviar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #B8924A;
+  color: #0F0A06;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-voz-enviar:hover:not(:disabled) { opacity: 0.85; }
+.btn-voz-enviar:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-voz-enviar.hidden { display: none; }
+
+.voz-status {
+  font-size: 12px;
+  color: #9a7b5a;
+  min-height: 18px;
+  margin-bottom: 16px;
+}
+.voz-status.ok { color: #4a9a2a; font-weight: 600; }
+.voz-status.err { color: #c0392b; }
+
+.voz-confirmacion {
+  background: rgba(184,146,74,0.08);
+  border: 1px solid #B8924A;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #B8924A;
+  line-height: 1.65;
+}
+
+.voz-confirmacion strong { color: #F0E8DC; }
+
+.btn-voz-omitir {
+  background: transparent;
+  border: none;
+  color: #6B3D1E;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.btn-voz-siguiente {
+  width: 100%;
+  background: #B8924A;
+  color: #0F0A06;
+  border: none;
+  border-radius: 999px;
+  padding: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-voz-siguiente:hover { opacity: 0.85; }
+
+/* ══════════════════════════════
    SCREEN 3 — GRACIAS
 ══════════════════════════════ */
 .gracias-card {
@@ -776,6 +966,48 @@ header .logo {
   </div>
 </div>
 
+<!-- ══════════════════ SCREEN 4: VOZ PERMANENTE ══════════════════ -->
+<div id="screen-voz" class="screen voz-screen hidden">
+  <div class="container" style="padding-top:40px;padding-bottom:80px">
+    <div class="voz-card">
+      <p class="voz-eyebrow">Pregunta 17 · Opcional</p>
+      <h2 class="voz-titulo">Esta es distinta.</h2>
+      <p class="voz-intro">Tu voz va a quedar dentro del libro, para siempre. Los que lo lean van a poder escucharte.</p>
+
+      <!-- TODO: video explicativo pregunta 17 - pendiente Fede -->
+      <div class="voz-video-wrap" id="voz-video-wrap">
+        <p class="voz-video-fallback">Un mensaje de voz tuyo se guardará en el libro mediante un código QR. Cualquiera que lo escanée podrá escucharte — sin límite de tiempo.</p>
+      </div>
+
+      <p class="voz-pregunta">"Si tuvieras que dejarle un mensaje a tu familia —a los que están y a los que vengan— para que lo escuchen siempre, ¿qué les dirías?"</p>
+
+      <div class="voz-controls">
+        <button class="btn-voz-grabar" id="btn-voz-grabar" onclick="vozToggleGrabar()">
+          <span class="dot"></span> ⏺ Grabar mensaje
+        </button>
+        <span class="voz-timer hidden" id="voz-timer">01:30</span>
+        <button class="btn-voz-enviar hidden" id="btn-voz-enviar" onclick="vozEnviar()">
+          Guardar para siempre ✓
+        </button>
+      </div>
+      <p class="voz-status" id="voz-status"></p>
+
+      <div class="voz-confirmacion hidden" id="voz-confirmacion">
+        <strong>¡Listo!</strong> Tu mensaje de voz quedó guardado permanentemente. A diferencia de las otras grabaciones (que eliminamos a los 90 días), <strong>este audio se preserva para siempre</strong> dentro del libro.
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px">
+        <button class="btn-voz-siguiente" id="btn-voz-siguiente" onclick="vozTerminar()">
+          Terminar →
+        </button>
+        <button class="btn-voz-omitir" id="btn-voz-omitir" onclick="vozOmitir()">
+          Omitir esta pregunta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════ SCREEN 3: GRACIAS ══════════════════ -->
 <div id="screen-gracias" class="screen hidden">
   <div class="container">
@@ -905,9 +1137,8 @@ function empezar() {
 function siguienteBloque() {
   const esUltimo = bloqueActual === BLOQUES.length - 1;
   if (esUltimo) {
-    completar();
     document.getElementById('screen-preguntas').classList.add('hidden');
-    document.getElementById('screen-gracias').classList.remove('hidden');
+    document.getElementById('screen-voz').classList.remove('hidden');
     window.scrollTo(0, 0);
   } else {
     bloqueActual++;
@@ -1120,6 +1351,115 @@ async function confirmarRegrabar() {
   const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
   btnGrabar.innerHTML = '<span class="dot"></span> ⏺ Grabar respuesta';
   await startGrabar(pid);
+}
+
+// ── Voz permanente (pregunta 17) ──
+let vozBlob = null;
+let vozMr = null;
+let vozTimerInterval = null;
+const VOZ_MAX_SECS = 90;
+
+function vozToggleGrabar() {
+  if (vozMr && vozMr.state === 'recording') {
+    vozMr.stop();
+  } else {
+    vozStartGrabar();
+  }
+}
+
+async function vozStartGrabar() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const chunks = [];
+    vozMr = new MediaRecorder(stream);
+    vozBlob = null;
+
+    vozMr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    vozMr.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      vozBlob = new Blob(chunks, { type: 'audio/webm' });
+      clearInterval(vozTimerInterval);
+      const btn = document.getElementById('btn-voz-grabar');
+      btn.classList.remove('grabando-btn');
+      btn.innerHTML = '<span class="dot"></span> ⏺ Grabar de nuevo';
+      document.getElementById('voz-timer').classList.add('hidden');
+      document.getElementById('btn-voz-enviar').classList.remove('hidden');
+      document.getElementById('btn-voz-omitir').textContent = 'Descartar y omitir';
+    };
+
+    vozMr.start();
+    const btn = document.getElementById('btn-voz-grabar');
+    btn.classList.add('grabando-btn');
+    btn.innerHTML = '<span class="dot"></span> ⏹ Grabando… (tocá para parar)';
+    document.getElementById('btn-voz-enviar').classList.add('hidden');
+    document.getElementById('voz-status').textContent = '';
+    document.getElementById('voz-status').className = 'voz-status';
+
+    let secs = 0;
+    const timerEl = document.getElementById('voz-timer');
+    timerEl.classList.remove('hidden');
+    vozTimerInterval = setInterval(() => {
+      secs++;
+      const rem = VOZ_MAX_SECS - secs;
+      const m = String(Math.floor(rem / 60)).padStart(2, '0');
+      const s = String(rem % 60).padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
+      if (rem <= 10) timerEl.classList.add('urgente');
+      if (rem <= 0) vozMr.stop(); // corte automático al llegar a 90s
+    }, 1000);
+
+  } catch (err) {
+    document.getElementById('voz-status').textContent = 'No se pudo acceder al micrófono.';
+    document.getElementById('voz-status').className = 'voz-status err';
+  }
+}
+
+async function vozEnviar() {
+  if (!vozBlob) return;
+  const btnEnviar = document.getElementById('btn-voz-enviar');
+  const btnGrabar = document.getElementById('btn-voz-grabar');
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Guardando…';
+  btnGrabar.disabled = true;
+  document.getElementById('voz-status').textContent = 'Guardando tu mensaje para siempre…';
+  document.getElementById('voz-status').className = 'voz-status';
+
+  try {
+    const fd = new FormData();
+    fd.append('audio', vozBlob, 'voz.webm');
+    const res = await fetch(`${API_BASE}/token/${TOKEN}/voz-permanente`, {
+      method: 'POST',
+      body: fd,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    document.getElementById('voz-status').textContent = '✓ Mensaje guardado para siempre';
+    document.getElementById('voz-status').className = 'voz-status ok';
+    btnEnviar.classList.add('hidden');
+    document.getElementById('voz-confirmacion').classList.remove('hidden');
+    document.getElementById('btn-voz-omitir').style.display = 'none';
+    document.getElementById('btn-voz-siguiente').textContent = 'Terminar →';
+  } catch (err) {
+    document.getElementById('voz-status').textContent = 'Error al guardar. Intentá de nuevo.';
+    document.getElementById('voz-status').className = 'voz-status err';
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Guardar para siempre ✓';
+    btnGrabar.disabled = false;
+  }
+}
+
+function vozOmitir() {
+  completar();
+  document.getElementById('screen-voz').classList.add('hidden');
+  document.getElementById('screen-gracias').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function vozTerminar() {
+  completar();
+  document.getElementById('screen-voz').classList.add('hidden');
+  document.getElementById('screen-gracias').classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
 // ── Helper ──

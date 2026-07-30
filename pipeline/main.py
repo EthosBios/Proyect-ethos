@@ -285,6 +285,67 @@ def serve_recording():
     return FileResponse(_STATIC_DIR / "recording.html")
 
 
+# ─── Página de reproducción de voz permanente ────────────────────────────────
+
+@app.get("/voz/{voz_token}")
+def voz_permanente(voz_token: str):
+    """Página pública (noindex) que reproduce el mensaje de voz de un integrante."""
+    from pipeline.utils import firestore as fs, storage as st
+
+    match = fs.get_integrante_by_voz_token(voz_token)
+    if match is None:
+        raise HTTPException(status_code=404, detail="Link inválido o no encontrado")
+
+    familia_id, integrante_id, data = match
+    familia = fs.get_familia(familia_id) or {}
+    nombre = data.get("nombre", "")
+    nombre_familia = familia.get("nombre", "")
+    audio_gs_url = data.get("_audio_gs_url", "") or data.get("voz_audio_url", "")
+
+    audio_url = ""
+    if audio_gs_url and audio_gs_url.startswith("gs://"):
+        try:
+            audio_url = st.get_signed_url(audio_gs_url, expiration_hours=2)
+        except Exception as exc:
+            logger.warning("[voz] no se pudo generar signed URL: %s", exc)
+
+    html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{nombre} — su voz, para siempre · Ethos Bios</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:'DM Sans',sans-serif;background:#0F0A06;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:#F0E8DC}}
+.logo{{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:400;letter-spacing:2px;color:#B8924A;text-transform:uppercase;margin-bottom:48px;text-align:center}}
+.card{{background:#1C1208;border:1px solid #3d2b1a;border-radius:16px;padding:48px 40px;max-width:480px;width:100%;text-align:center}}
+.nombre{{font-family:'Cormorant Garamond',serif;font-size:36px;font-style:italic;color:#F0E8DC;margin-bottom:6px;line-height:1.2}}
+.familia{{font-size:13px;color:#B8924A;letter-spacing:1px;text-transform:uppercase;margin-bottom:32px}}
+.sep{{width:40px;height:1px;background:#B8924A;margin:0 auto 32px;opacity:0.5}}
+audio{{width:100%;border-radius:99px;accent-color:#B8924A;margin-bottom:32px}}
+.firma{{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#6B3D1E;line-height:1.6}}
+@media(max-width:480px){{.card{{padding:36px 24px}}.nombre{{font-size:28px}}}}
+</style>
+</head>
+<body>
+<div class="logo">Ethos Bios</div>
+<div class="card">
+  <h1 class="nombre">{nombre}</h1>
+  <p class="familia">{nombre_familia}</p>
+  <div class="sep"></div>
+  {'<audio controls preload="auto" src="' + audio_url + '"></audio>' if audio_url else '<p style="color:#6B3D1E;font-size:14px;margin-bottom:32px">El audio no está disponible temporalmente.</p>'}
+  <p class="firma">Su voz, guardada para siempre.</p>
+</div>
+</body>
+</html>"""
+
+    from fastapi.responses import HTMLResponse
+    return HTMLResponse(content=html, headers={"Cache-Control": "no-store"})
+
+
 # ─── Full pipeline ────────────────────────────────────────────────────────────
 
 class PipelineRequest(BaseModel):
@@ -988,6 +1049,54 @@ async def token_respuesta(
     else:
         fs.update_integrante_estado(familia_id, integrante_id, "en_progreso")
     return {"ok": True}
+
+
+@app.post("/token/{token}/voz-permanente")
+async def token_voz_permanente(token: str, audio: UploadFile = File(...)):
+    """
+    Recibe el mensaje de voz de la pregunta 17, lo copia al bucket permanente,
+    genera un token de 64 bits y lo persiste en Firestore.
+    """
+    from pipeline.utils import firestore as fs, storage as st
+
+    match = fs.get_integrante_by_token(token)
+    if match is None:
+        raise HTTPException(status_code=404, detail="Token inválido o no encontrado")
+    familia_id, integrante_id, _ = match
+
+    content_type = (audio.content_type or "").split(";")[0].strip().lower()
+    if content_type not in _ALLOWED_AUDIO_TYPES:
+        raise HTTPException(
+            status_code=415,
+            detail=f"Tipo de archivo no permitido: {content_type!r}. Se aceptan: {', '.join(sorted(_ALLOWED_AUDIO_TYPES))}",
+        )
+
+    audio_bytes = await audio.read()
+    if len(audio_bytes) > _MAX_AUDIO_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Archivo demasiado grande ({len(audio_bytes) / 1024 / 1024:.1f} MB). Máximo permitido: 25 MB.",
+        )
+
+    filename = audio.filename or "voz.webm"
+    ext = filename.rsplit(".", 1)[-1] if "." in filename else "webm"
+    blob_name = f"{familia_id}/{integrante_id}_voz_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}.{ext}"
+
+    with tempfile.NamedTemporaryFile(suffix=f".{ext}", delete=False) as tmp:
+        tmp.write(audio_bytes)
+        tmp_path = tmp.name
+
+    try:
+        temp_gs_url = st.upload_to_gcs(tmp_path, st.GCS_BUCKET_AUDIOS, blob_name, audio.content_type or "audio/webm")
+        voz_gs_url = st.copy_to_voces_permanentes(temp_gs_url, familia_id, integrante_id)
+    finally:
+        os.unlink(tmp_path)
+
+    voz_token = uuid.uuid4().hex[:16]  # 64 bits
+    fs.save_voz_permanente(familia_id, integrante_id, voz_token, voz_gs_url)
+
+    base = _recording_base()
+    return {"ok": True, "voz_token": voz_token, "voz_url": f"{base}/voz/{voz_token}"}
 
 
 @app.patch("/token/{token}/nombre")

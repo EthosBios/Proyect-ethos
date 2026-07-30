@@ -258,6 +258,38 @@ def update_porcentaje_avance(familia_id: str, integrante_id: str, pct: int) -> N
     )
 
 
+def save_voz_permanente(familia_id: str, integrante_id: str, voz_token: str, audio_gs_url: str) -> None:
+    """Persiste el token permanente de voz bajo el integrante e indexa en voz_tokens/ para lookup O(1)."""
+    _db().collection("familias").document(familia_id) \
+        .collection("integrantes").document(integrante_id) \
+        .update({"voz_token": voz_token, "voz_audio_url": audio_gs_url})
+    _db().collection("voz_tokens").document(voz_token).set({
+        "familia_id": familia_id,
+        "integrante_id": integrante_id,
+        "audio_gs_url": audio_gs_url,
+    })
+
+
+def get_integrante_by_voz_token(voz_token: str) -> tuple[str, str, dict] | None:
+    """Resuelve un voz_token a (familia_id, integrante_id, data). None si no existe."""
+    doc = _db().collection("voz_tokens").document(voz_token).get()
+    if not doc.exists:
+        return None
+    ref = doc.to_dict()
+    familia_id = ref.get("familia_id", "")
+    integrante_id = ref.get("integrante_id", "")
+    integrante_doc = (
+        _db().collection("familias").document(familia_id)
+        .collection("integrantes").document(integrante_id).get()
+    )
+    if not integrante_doc.exists:
+        return None
+    data = integrante_doc.to_dict()
+    data["id"] = integrante_doc.id
+    data["_audio_gs_url"] = ref.get("audio_gs_url", "")
+    return familia_id, integrante_id, data
+
+
 def update_integrante_foto(familia_id: str, integrante_id: str, foto_url: str) -> None:
     (
         _db()
@@ -390,6 +422,7 @@ def get_integrantes_para_pipeline(familia_id: str) -> list[dict]:
             "perfil_voz": perfil_voz,
             "transcripcion": integrante.get("transcripcion_completa", ""),
             "capitulo": integrante.get("capitulo", ""),
+            "voz_token": integrante.get("voz_token", ""),
         })
     return result
 
