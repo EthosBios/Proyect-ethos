@@ -154,7 +154,10 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) ->
             flush=True,
         )
 
-    sheets.save_chapter(nombre, capitulo)
+    try:
+        sheets.save_chapter(nombre, capitulo)
+    except Exception as _e:
+        print(f"[chapter_agent] AVISO: no se pudo guardar en Sheets (legacy, no bloquea): {_e}")
     return capitulo
 
 

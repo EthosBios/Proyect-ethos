@@ -714,6 +714,66 @@ def get_familia_by_email(email: str) -> tuple[str, dict] | None:
     return None
 
 
+# ─── Evaluaciones de calidad (quality_agent) ─────────────────────────────────
+
+def save_evaluacion_calidad(
+    familia_id: str, integrante_id: str, evaluacion: dict, intento: int
+) -> None:
+    """Persiste la evaluación de calidad de un capítulo como subdoc numerado por intento."""
+    (
+        _db()
+        .collection("familias")
+        .document(familia_id)
+        .collection("integrantes")
+        .document(integrante_id)
+        .collection("evaluaciones_calidad")
+        .document(str(intento))
+        .set(evaluacion)
+    )
+
+
+def mark_escalacion_humana(
+    familia_id: str, integrante_id: str, motivo: str, evaluacion: dict
+) -> None:
+    """Marca un integrante para revisión humana y registra el motivo."""
+    from datetime import datetime, timezone
+    (
+        _db()
+        .collection("familias")
+        .document(familia_id)
+        .collection("integrantes")
+        .document(integrante_id)
+        .set(
+            {
+                "escalacion_humana": {
+                    "motivo": motivo,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "ultima_evaluacion": evaluacion,
+                }
+            },
+            merge=True,
+        )
+    )
+    # Marcar también en la familia para visibilidad en el panel
+    _db().collection("familias").document(familia_id).set(
+        {"tiene_escalaciones": True}, merge=True
+    )
+
+
+def get_escalaciones(familia_id: str) -> list[dict]:
+    """Lista los integrantes con escalación humana pendiente."""
+    integrantes = get_integrantes(familia_id)
+    return [
+        {
+            "integrante_id": i.get("id", ""),
+            "nombre": i.get("nombre", ""),
+            "escalacion": i.get("escalacion_humana", {}),
+        }
+        for i in integrantes
+        if i.get("escalacion_humana")
+    ]
+
+
 # ─── Upsell checkouts ────────────────────────────────────────────────────────
 
 def create_upsell_checkout(upsell_token: str, familia_id: str, nombre: str, relacion: str) -> None:

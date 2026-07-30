@@ -9,6 +9,7 @@ from pipeline.agents import (
     chapter_agent,
     editor_agent,
     layout_agent,
+    quality_agent,
     transcriber,
     voice_agent,
 )
@@ -350,6 +351,19 @@ def _run_pipeline(
                     }
                     cap = chapter_agent.generar_capitulo(client, persona, costos=costos)
 
+                    # ── Loop de calidad ───────────────────────────────────────
+                    cap, ev = quality_agent.loop_calidad(
+                        client, persona, cap,
+                        costos=costos,
+                        familia_id=familia_id,
+                        integrante_id=integrante_id,
+                    )
+                    if ev.escalado:
+                        logger.warning(
+                            "[orchestrator] familia=%s integrante=%s escalado a revisión humana",
+                            familia_id, nombre,
+                        )
+
                     if familia_id and cap:
                         try:
                             from pipeline.utils import firestore as fs_mod
@@ -375,6 +389,8 @@ def _run_pipeline(
                         "familia_ctx": item.get("familia_ctx", {}),
                     }
                     cap = chapter_agent.generar_capitulo(client, persona, costos=costos)
+                    # Loop de calidad (sin persistencia Firestore en path Sheets)
+                    cap, _ = quality_agent.loop_calidad(client, persona, cap, costos=costos)
                     return nombre, cap, None
 
             with ThreadPoolExecutor(max_workers=min(6, len(gen_items))) as executor:
