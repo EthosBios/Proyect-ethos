@@ -9,6 +9,10 @@
       "destination": "https://familia-pipeline-776445604502.southamerica-east1.run.app/r/:path*"
     },
     {
+      "source": "/voz/:path*",
+      "destination": "https://familia-pipeline-776445604502.southamerica-east1.run.app/voz/:path*"
+    },
+    {
       "source": "/recording",
       "destination": "https://familia-pipeline-776445604502.southamerica-east1.run.app/recording"
     },
