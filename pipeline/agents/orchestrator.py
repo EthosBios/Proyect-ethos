@@ -235,6 +235,7 @@ def _run_pipeline(
                 "vive": p.get("vive", True),
                 "es_menor": p.get("es_menor", False),
                 "foto_url": p.get("foto_url", ""),
+                "voz_token": p.get("voz_token", ""),
                 "familia_ctx": sheets.build_family_context(p["nombre"], integrantes, relaciones),
             }
             for p in _fs_integrantes
