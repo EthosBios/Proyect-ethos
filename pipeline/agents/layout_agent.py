@@ -604,7 +604,7 @@ def run(
         voz_token = p.get("voz_token", "")
         if voz_token:
             try:
-                qr_url = f"https://familia-pipeline-776445604502.southamerica-east1.run.app/voz/{voz_token}"
+                qr_url = f"{os.environ.get('BASE_URL', 'https://www.ethosbios.com')}/voz/{voz_token}"
                 qr_data[p["nombre"]] = _generar_qr_b64(qr_url)
             except Exception as e:
                 print(f"[layout] No se pudo generar QR para {p['nombre']}: {e}")
