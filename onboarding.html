@@ -942,9 +942,10 @@ function onPrimerIngInput(card) {
 // HTML de un select de países (reutilizable por card)
 // ─────────────────────────────────────────────────────────────────────
 
-function paisSelectHTML(valorInicial = '') {
+function paisSelectHTML(valorInicial = '', idAttr = '') {
+  const idPart = idAttr ? ` id="${idAttr}"` : '';
   return `
-    <select class="ing-pais">
+    <select class="ing-pais"${idPart}>
       <option value="">— Variante del idioma —</option>
       <optgroup label="América del Sur">
         <option value="argentina"${valorInicial==='argentina'?' selected':''}>Argentina</option>
@@ -1068,9 +1069,9 @@ function agregarIntegrante() {
     </div>
     <div class="field-row">
       <div class="field">
-        <label>¿Cómo habla?</label>
+        <label>País de esta persona</label>
         ${paisSelectHTML(paisAnterior)}
-        <p class="field-variante-hint">Para transcribir mejor el audio. Elegí el acento o vocabulario que usa, no el país de nacimiento.</p>
+        <p class="field-variante-hint">Determina el vos/tú en su sección del libro, y ayuda a transcribir mejor el audio.</p>
       </div>
       <div class="field">
         <label>Rol en la familia</label>

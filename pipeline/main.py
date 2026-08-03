@@ -302,7 +302,7 @@ def voz_permanente(voz_token: str):
     nombre_familia = familia.get("nombre", "")
     nombre_pila = nombre.split()[0] if nombre else nombre
     audio_gs_url = data.get("_audio_gs_url", "") or data.get("voz_audio_url", "")
-    pais = familia.get("pais", "")
+    pais = data.get("pais", "")
     pronombre = "vos" if _es_voseo(pais) else "ti"
     copy_voz = (
         f"Lo que vas a escuchar es la voz de {nombre_pila}, guardada para que nunca se pierda "
@@ -600,7 +600,7 @@ async def onboarding(request: Request, req: OnboardingRequest, _: None = Depends
             },
             "estado": "onboarding",
             "pack": "base",
-            "pais": req.integrantes[0].pais if req.integrantes else "argentina",
+            "pais": req.integrantes[0].pais if req.integrantes else "",
             "integrantes_extra": max(0, len(req.integrantes) - 4),
             "fecha_compra": _firestore.SERVER_TIMESTAMP,
             "fecha_entrega": None,
@@ -1392,7 +1392,7 @@ def _es_voseo(pais: str) -> bool:
     return pais.lower().strip() in _VOSEO_PAISES
 
 
-def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str, pais: str = "argentina") -> str:
+def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str) -> str:
     from google.cloud import firestore as _firestore
     from pipeline.utils import firestore as fs
 
@@ -1420,7 +1420,7 @@ def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str,
         },
         "estado": "onboarding",
         "pack": pack,
-        "pais": pais,
+        "pais": "",
         "fecha_compra": _firestore.SERVER_TIMESTAMP,
         "fecha_entrega": None,
         "origen": "hotmart",
@@ -1463,15 +1463,13 @@ async def webhook_hotmart(request: Request):
     nombre = (buyer.get("name") or "").strip()
     product_name = product.get("name", "")
     transaction = data.get("purchase", {}).get("transaction", "")
-    checkout_country = buyer.get("checkout_country", {})
-    pais = (checkout_country.get("name") or checkout_country.get("iso") or "argentina").lower()
 
     if not email:
         logger.warning("[webhook-hotmart] PURCHASE_APPROVED sin email")
         raise HTTPException(status_code=422, detail="Sin email de comprador")
 
     pack = _hotmart_pack(product_name)
-    familia_id = _crear_familia_hotmart(email, nombre, pack, transaction, pais=pais)
+    familia_id = _crear_familia_hotmart(email, nombre, pack, transaction)
     return {"ok": True, "familia_id": familia_id}
 
 
