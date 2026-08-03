@@ -30,6 +30,7 @@ from pipeline.utils.retry import call_with_retry
 logger = logging.getLogger(__name__)
 
 MODEL = "claude-sonnet-4-6"
+MODEL_C = "claude-sonnet-4-6"
 MAX_INTENTOS = 3
 MIN_WORDS = 3200
 MAX_WORDS = 3800
@@ -113,18 +114,64 @@ Reglas:
    integradas naturalmente en el texto (no listadas ni forzadas).
 3. tono_literario: la prosa es literaria, con variación en longitud de párrafos,
    imágenes concretas, y no suena a texto genérico de IA.
+4. flujo_narrativo: el capítulo fluye como narrativa continua. NO es una lista de
+   respuestas encadenadas tipo "Cuando le pregunté… respondió… Luego…". El lector
+   siente que lee una historia, no una entrevista transcripta.
+5. transiciones_naturales: los párrafos se conectan con transiciones narrativas
+   fluidas. No hay saltos abruptos de tema ni párrafos que empiezan sin relación
+   con el anterior.
+6. hilo_conductor: hay un hilo conductor claro e identificable a lo largo del
+   capítulo entero — una idea, emoción o período de vida que da unidad al texto.
+   No es una colección de anécdotas sueltas sin vínculo.
 
 Respondé EXCLUSIVAMENTE con este JSON:
 {{
   "cursiva_ok": true,
   "frases_integradas": true,
   "tono_literario": true,
+  "flujo_narrativo": true,
+  "transiciones_naturales": true,
+  "hilo_conductor": true,
   "violaciones": [],
   "feedback": "instrucción concreta de qué mejorar en la próxima versión (máx 3 frases)"
 }}
 
 Reemplazá true/false según corresponda y completá violaciones y feedback.
 Solo JSON. Sin explicaciones.
+"""
+
+_PROMPT_C = """\
+<transcripcion>
+{transcripcion}
+</transcripcion>
+
+<capitulo>
+{capitulo}
+</capitulo>
+
+<nombre>{nombre}</nombre>
+
+Tarea: evaluá la fidelidad del capítulo respecto al transcripto original.
+
+Paso 1 — Descomponer el transcripto en "unidades de contenido": anécdotas concretas,
+datos con carga propia (fechas, lugares, nombres de personas, hechos puntuales),
+y frases con valor propio del protagonista. No incluyas preguntas ni conectores genéricos.
+
+Paso 2 — Por cada unidad, determiná si está reflejada en el capítulo. No requiere
+literalidad; alcanza con que la sustancia aparezca. Marcá true/false.
+
+Paso 3 — Calculá el porcentaje y listá las unidades que NO aparecen en el capítulo.
+
+Respondé EXCLUSIVAMENTE con este JSON:
+{{
+  "unidades_totales": 0,
+  "unidades_usadas": 0,
+  "porcentaje_fidelidad": 0.0,
+  "unidades_omitidas": []
+}}
+
+Reemplazá los valores con los resultados reales.
+Solo JSON. Sin explicaciones. Sin markdown.
 """
 
 
@@ -149,6 +196,9 @@ class ResultadoB:
     cursiva_ok: bool = True
     frases_integradas: bool = True
     tono_literario: bool = True
+    flujo_narrativo: bool = True
+    transiciones_naturales: bool = True
+    hilo_conductor: bool = True
     violaciones: list[str] = field(default_factory=list)
     feedback: str = ""
 
@@ -160,7 +210,28 @@ class ResultadoB:
             and self.cursiva_ok
             and self.frases_integradas
             and self.tono_literario
+            and self.flujo_narrativo
+            and self.transiciones_naturales
+            and self.hilo_conductor
         )
+
+
+@dataclass
+class ResultadoC:
+    unidades_totales: int = 0
+    unidades_usadas: int = 0
+    porcentaje_fidelidad: float = 0.0
+    unidades_omitidas: list[str] = field(default_factory=list)
+    error: str = ""
+
+    def as_dict(self) -> dict:
+        return {
+            "unidades_totales": self.unidades_totales,
+            "unidades_usadas": self.unidades_usadas,
+            "porcentaje_fidelidad": self.porcentaje_fidelidad,
+            "unidades_omitidas": self.unidades_omitidas,
+            "error": self.error,
+        }
 
 
 @dataclass
@@ -170,6 +241,7 @@ class Evaluacion:
     palabras: int
     checklist_a: ResultadoA = field(default_factory=ResultadoA)
     checklist_b: ResultadoB = field(default_factory=ResultadoB)
+    checklist_c: ResultadoC | None = None
     escalado: bool = False
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -178,7 +250,7 @@ class Evaluacion:
         return self.checklist_a.pasa and self.checklist_b.pasa
 
     def as_dict(self) -> dict:
-        return {
+        d: dict = {
             "nombre": self.nombre,
             "intento": self.intento,
             "palabras": self.palabras,
@@ -199,10 +271,16 @@ class Evaluacion:
                 "cursiva_ok": self.checklist_b.cursiva_ok,
                 "frases_integradas": self.checklist_b.frases_integradas,
                 "tono_literario": self.checklist_b.tono_literario,
+                "flujo_narrativo": self.checklist_b.flujo_narrativo,
+                "transiciones_naturales": self.checklist_b.transiciones_naturales,
+                "hilo_conductor": self.checklist_b.hilo_conductor,
                 "violaciones": self.checklist_b.violaciones,
                 "feedback": self.checklist_b.feedback,
             },
         }
+        if self.checklist_c is not None:
+            d["checklist_c"] = self.checklist_c.as_dict()
+        return d
 
 
 # ─── Checks programáticos ─────────────────────────────────────────────────────
@@ -306,6 +384,49 @@ def _evaluar_b_llm(client: anthropic.Anthropic, persona: dict, capitulo: str, co
         return json.loads(m.group()) if m else {}
 
 
+# ─── Checklist C ─────────────────────────────────────────────────────────────
+
+def _evaluar_c(client: anthropic.Anthropic, persona: dict, capitulo: str, costos=None) -> ResultadoC:
+    """Evalúa la fidelidad del capítulo al transcripto. NO bloqueante."""
+    transcripcion = persona.get("transcripcion", "")
+    if not transcripcion.strip():
+        return ResultadoC(error="transcripción vacía")
+
+    prompt = _PROMPT_C.format(
+        nombre=persona["nombre"],
+        transcripcion=transcripcion[:8000],
+        capitulo=capitulo[:10000],
+    )
+
+    message = call_with_retry(
+        client.messages.create,
+        model=MODEL_C,
+        max_tokens=1500,
+        system=_SYSTEM,
+        messages=[{"role": "user", "content": prompt}],
+        label=f"quality/checklist_c/{persona['nombre']}",
+    )
+    if costos is not None:
+        costos.add_claude_usage(message.usage.input_tokens, message.usage.output_tokens)
+
+    raw = message.content[0].text.strip()
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        m = re.search(r"\{.*\}", raw, re.DOTALL)
+        data = json.loads(m.group()) if m else {}
+
+    totales = int(data.get("unidades_totales", 0))
+    usadas = int(data.get("unidades_usadas", 0))
+    pct = float(data.get("porcentaje_fidelidad", usadas / totales if totales else 0.0))
+    return ResultadoC(
+        unidades_totales=totales,
+        unidades_usadas=usadas,
+        porcentaje_fidelidad=round(pct, 3),
+        unidades_omitidas=data.get("unidades_omitidas", []),
+    )
+
+
 # ─── Evaluador principal ──────────────────────────────────────────────────────
 
 def evaluar_capitulo(
@@ -358,9 +479,27 @@ def evaluar_capitulo(
         cursiva_ok=bool(data_b.get("cursiva_ok", True)),
         frases_integradas=bool(data_b.get("frases_integradas", True)),
         tono_literario=bool(data_b.get("tono_literario", True)),
+        flujo_narrativo=bool(data_b.get("flujo_narrativo", True)),
+        transiciones_naturales=bool(data_b.get("transiciones_naturales", True)),
+        hilo_conductor=bool(data_b.get("hilo_conductor", True)),
         violaciones=viol_b_prog + data_b.get("violaciones", []),
         feedback=data_b.get("feedback", ""),
     )
+
+    # ── Checklist C (Fidelidad al transcripto) — NO bloqueante ───────────────
+    resultado_c: ResultadoC | None = None
+    try:
+        resultado_c = _evaluar_c(client, persona, capitulo, costos)
+        logger.info(
+            "[quality] %s checklist_c: fidelidad=%.0f%% (%d/%d unidades)",
+            nombre,
+            resultado_c.porcentaje_fidelidad * 100,
+            resultado_c.unidades_usadas,
+            resultado_c.unidades_totales,
+        )
+    except Exception as e:
+        logger.warning("[quality] %s checklist_c no disponible (ignorado): %s", nombre, e)
+        resultado_c = ResultadoC(error=str(e))
 
     ev = Evaluacion(
         nombre=nombre,
@@ -368,6 +507,7 @@ def evaluar_capitulo(
         palabras=palabras,
         checklist_a=resultado_a,
         checklist_b=resultado_b,
+        checklist_c=resultado_c,
     )
 
     logger.info(
@@ -490,6 +630,23 @@ def _reescribir(
         instrucciones.append(
             "Reescribí con prosa más literaria: párrafos de longitud variada, "
             "imágenes concretas, ritmo narrativo. Evitá el tono de IA genérica."
+        )
+    if not resultado_b.flujo_narrativo:
+        instrucciones.append(
+            "El capítulo suena a entrevista transcripta (respuestas encadenadas). "
+            "Reescribilo como narrativa continua: el narrador cuenta una historia, "
+            "no responde preguntas. Eliminá toda estructura de pregunta-respuesta."
+        )
+    if not resultado_b.transiciones_naturales:
+        instrucciones.append(
+            "Los párrafos tienen saltos abruptos o no se conectan entre sí. "
+            "Agregá transiciones narrativas que lleven al lector de un momento al siguiente."
+        )
+    if not resultado_b.hilo_conductor:
+        instrucciones.append(
+            "El capítulo es una colección de anécdotas sin unidad. "
+            "Identificá la idea o emoción central de esta persona y usala como hilo "
+            "conductor que atraviese y vincule todos los momentos narrados."
         )
     if resultado_b.feedback:
         instrucciones.append(f"Feedback adicional: {resultado_b.feedback}")

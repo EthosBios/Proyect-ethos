@@ -103,6 +103,16 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) ->
         frases_propias_lista=frases_propias_lista,
     )
 
+    coherencia_feedback = persona.get("coherencia_feedback", "")
+    if coherencia_feedback:
+        prompt += (
+            "\n\n⚠️ CORRECCIÓN POR COHERENCIA DEL LIBRO:\n"
+            f"{coherencia_feedback}\n\n"
+            "Asegurate de que el capítulo resuelva este conflicto. "
+            "No cambies hechos reales de la transcripción — solo ajustá la presentación "
+            "para que no contradiga lo narrado en otros capítulos."
+        )
+
     message = call_with_retry(
         client.messages.create,
         model=MODEL,

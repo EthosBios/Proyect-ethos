@@ -411,6 +411,89 @@ def _run_pipeline(
             result.errores.append(f"chapter_agent: {e}")
             return result
 
+    # ── Paso 3.5: Coherencia del libro ────────────────────────────────────────
+    if start_idx <= 2 and result.chapters and len(result.chapters) > 1:
+        _marcar_paso("coherencia_libro")
+        logger.info(
+            "[orchestrator] familia=%s paso 3.5: coherencia del libro (%d capítulos)",
+            familia_id, len(result.chapters),
+        )
+        try:
+            from pipeline.agents import libro_coherencia_agent
+            import anthropic as _anthropic
+            _client_coh = _anthropic.Anthropic(timeout=600.0)
+
+            # Closure: regenera un capítulo puntual con feedback de coherencia
+            def _regen_capitulo(nombre_regen: str, coherencia_feedback: str):
+                try:
+                    if _fs_integrantes:
+                        item = next((p for p in _fs_integrantes if p["nombre"] == nombre_regen), None)
+                        if not item:
+                            return None, f"No se encontró integrante '{nombre_regen}'"
+                        integrante_id_r = item["id"]
+                        persona_r = {
+                            "nombre": nombre_regen,
+                            "perfil_voz": item.get("perfil_voz", {}),
+                            "transcripcion": item.get("transcripcion", ""),
+                            "familia_ctx": next(
+                                (pm.get("familia_ctx", {}) for pm in personas_meta if pm["nombre"] == nombre_regen),
+                                {},
+                            ),
+                            "coherencia_feedback": coherencia_feedback,
+                        }
+                    else:
+                        p = sheets.get_profile(nombre_regen)
+                        if not p:
+                            return None, f"Perfil no encontrado para '{nombre_regen}'"
+                        integrante_id_r = None
+                        persona_r = {
+                            "nombre": nombre_regen,
+                            "perfil_voz": p.get("perfil_voz", {}),
+                            "transcripcion": p.get("transcripcion", ""),
+                            "familia_ctx": next(
+                                (pm.get("familia_ctx", {}) for pm in personas_meta if pm["nombre"] == nombre_regen),
+                                {},
+                            ),
+                            "coherencia_feedback": coherencia_feedback,
+                        }
+
+                    nuevo_cap = chapter_agent.generar_capitulo(_client_coh, persona_r, costos=costos)
+                    nuevo_cap, _ = quality_agent.loop_calidad(
+                        _client_coh, persona_r, nuevo_cap,
+                        costos=costos,
+                        familia_id=familia_id,
+                        integrante_id=integrante_id_r,
+                    )
+                    if familia_id and integrante_id_r and nuevo_cap:
+                        try:
+                            from pipeline.utils import firestore as fs_mod
+                            fs_mod.save_capitulo(familia_id, integrante_id_r, nuevo_cap)
+                        except Exception as _se:
+                            logger.warning(
+                                "[orchestrator] familia=%s no se pudo guardar capítulo regenerado para %s: %s",
+                                familia_id, nombre_regen, _se,
+                            )
+                    return nuevo_cap, None
+                except Exception as _re:
+                    return None, str(_re)
+
+            personas_con_tx = [
+                {"nombre": p["nombre"], "transcripcion": p.get("transcripcion", "")}
+                for p in (_fs_integrantes or [])
+            ]
+
+            result.chapters = libro_coherencia_agent.loop_coherencia_libro(
+                client=_client_coh,
+                capitulos=result.chapters,
+                personas_con_transcripciones=personas_con_tx,
+                nombre_familia=familia,
+                costos=costos,
+                familia_id=familia_id,
+                regenerar_capitulo_fn=_regen_capitulo,
+            )
+        except Exception as e:
+            logger.warning("[orchestrator] familia=%s coherencia_libro no bloqueó pipeline: %s", familia_id, e)
+
     # ── Paso 4: Editor agent ──────────────────────────────────────────────────
     if start_idx <= 3:
         _marcar_paso("editor")

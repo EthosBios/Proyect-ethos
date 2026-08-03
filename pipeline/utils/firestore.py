@@ -734,6 +734,18 @@ def save_evaluacion_calidad(
     )
 
 
+def save_evaluacion_coherencia_libro(familia_id: str, evaluacion: dict, intento: int) -> None:
+    """Persiste la evaluación de coherencia del libro (nivel libro, no capítulo)."""
+    (
+        _db()
+        .collection("familias")
+        .document(familia_id)
+        .collection("evaluaciones_coherencia_libro")
+        .document(str(intento))
+        .set(evaluacion)
+    )
+
+
 def mark_escalacion_humana(
     familia_id: str, integrante_id: str, motivo: str, evaluacion: dict
 ) -> None:
