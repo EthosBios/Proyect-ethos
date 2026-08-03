@@ -300,7 +300,14 @@ def voz_permanente(voz_token: str):
     familia = fs.get_familia(familia_id) or {}
     nombre = data.get("nombre", "")
     nombre_familia = familia.get("nombre", "")
+    nombre_pila = nombre.split()[0] if nombre else nombre
     audio_gs_url = data.get("_audio_gs_url", "") or data.get("voz_audio_url", "")
+    pais = familia.get("pais", "")
+    pronombre = "vos" if _es_voseo(pais) else "ti"
+    copy_voz = (
+        f"Lo que vas a escuchar es la voz de {nombre_pila}, guardada para que nunca se pierda "
+        f"— para {pronombre}, y para quienes lleguen después en tu familia."
+    )
 
     audio_url = ""
     if audio_gs_url and audio_gs_url.startswith("gs://"):
@@ -326,6 +333,7 @@ body{{font-family:'DM Sans',sans-serif;background:#0F0A06;min-height:100vh;displ
 .familia{{font-size:13px;color:#B8924A;letter-spacing:1px;text-transform:uppercase;margin-bottom:32px}}
 .sep{{width:40px;height:1px;background:#B8924A;margin:0 auto 32px;opacity:0.5}}
 audio{{width:100%;border-radius:99px;accent-color:#B8924A;margin-bottom:32px}}
+.copy-voz{{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#B8924A;line-height:1.65;margin-bottom:28px}}
 .firma{{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#6B3D1E;line-height:1.6}}
 @media(max-width:480px){{.card{{padding:36px 24px}}.nombre{{font-size:28px}}}}
 </style>
@@ -336,6 +344,7 @@ audio{{width:100%;border-radius:99px;accent-color:#B8924A;margin-bottom:32px}}
   <h1 class="nombre">{nombre}</h1>
   <p class="familia">{nombre_familia}</p>
   <div class="sep"></div>
+  <p class="copy-voz">{copy_voz}</p>
   {'<audio controls preload="auto" src="' + audio_url + '"></audio>' if audio_url else '<p style="color:#6B3D1E;font-size:14px;margin-bottom:32px">El audio no está disponible temporalmente.</p>'}
   <p class="firma">Su voz, guardada para siempre.</p>
 </div>
@@ -1376,7 +1385,14 @@ def _hotmart_pack(product_name: str) -> str:
     return "familiar"
 
 
-def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str) -> str:
+_VOSEO_PAISES = {"argentina", "uruguay", "paraguay", "ar", "uy", "py"}
+
+
+def _es_voseo(pais: str) -> bool:
+    return pais.lower().strip() in _VOSEO_PAISES
+
+
+def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str, pais: str = "argentina") -> str:
     from google.cloud import firestore as _firestore
     from pipeline.utils import firestore as fs
 
@@ -1404,7 +1420,7 @@ def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str)
         },
         "estado": "onboarding",
         "pack": pack,
-        "pais": "argentina",
+        "pais": pais,
         "fecha_compra": _firestore.SERVER_TIMESTAMP,
         "fecha_entrega": None,
         "origen": "hotmart",
@@ -1447,13 +1463,15 @@ async def webhook_hotmart(request: Request):
     nombre = (buyer.get("name") or "").strip()
     product_name = product.get("name", "")
     transaction = data.get("purchase", {}).get("transaction", "")
+    checkout_country = buyer.get("checkout_country", {})
+    pais = (checkout_country.get("name") or checkout_country.get("iso") or "argentina").lower()
 
     if not email:
         logger.warning("[webhook-hotmart] PURCHASE_APPROVED sin email")
         raise HTTPException(status_code=422, detail="Sin email de comprador")
 
     pack = _hotmart_pack(product_name)
-    familia_id = _crear_familia_hotmart(email, nombre, pack, transaction)
+    familia_id = _crear_familia_hotmart(email, nombre, pack, transaction, pais=pais)
     return {"ok": True, "familia_id": familia_id}
 
 
