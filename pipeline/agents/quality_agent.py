@@ -609,10 +609,18 @@ def _reescribir(
     instrucciones = []
     if not resultado_b.word_count_ok:
         viol_wc = next((v for v in resultado_b.violaciones if "word_count" in v), "")
+        palabras_actual = len(capitulo.split())
+        if palabras_actual < MIN_WORDS:
+            ajuste = "expandiendo con más anécdotas y detalle sensorial."
+        else:
+            ajuste = (
+                "condensando: sacá redundancias, digresiones y detalle accesorio, "
+                "conservando las mejores anécdotas y la voz del protagonista."
+            )
         instrucciones.append(
             f"El capítulo no tiene el largo correcto ({viol_wc}). "
             f"Reescribilo completo con entre {MIN_WORDS} y {MAX_WORDS} palabras, "
-            "expandiendo con más anécdotas y detalle sensorial."
+            + ajuste
         )
     if not resultado_b.sin_prohibidas:
         proh = [v for v in resultado_b.violaciones if "prohibidas" in v]
