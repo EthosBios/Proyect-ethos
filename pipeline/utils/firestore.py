@@ -866,6 +866,67 @@ def mark_upsell_checkout_procesado(upsell_token: str) -> None:
     _db().collection("upsell_checkouts").document(upsell_token).update({"procesado": True})
 
 
+def list_familias_test() -> list[str]:
+    """Returns list of familia_ids marked as es_test: True."""
+    docs = _db().collection("familias").where("es_test", "==", True).stream()
+    return [doc.id for doc in docs]
+
+
+def delete_familia_completa(familia_id: str) -> dict:
+    """
+    Recursively deletes all Firestore documents for a family: integrantes,
+    subcollections, token indexes, voz_token indexes, costos.
+    Returns stats dict. Raises ValueError if familia not found or not a test family.
+    """
+    db = _db()
+    familia_ref = db.collection("familias").document(familia_id)
+    familia_doc = familia_ref.get()
+    if not familia_doc.exists:
+        raise ValueError(f"Familia no encontrada: {familia_id}")
+    data = familia_doc.to_dict() or {}
+    if not data.get("es_test"):
+        raise ValueError(f"Familia {familia_id} no está marcada como es_test — omitida por seguridad")
+
+    stats: dict = {"integrantes": 0, "tokens_deleted": 0, "voz_tokens_deleted": 0, "subdocs_deleted": 0}
+
+    # Delete integrantes and their subcollections
+    for integrante_doc in db.collection("familias").document(familia_id).collection("integrantes").stream():
+        integrante_data = integrante_doc.to_dict() or {}
+
+        for subcol_name in ["respuestas", "evaluaciones_calidad"]:
+            for subdoc in integrante_doc.reference.collection(subcol_name).stream():
+                subdoc.reference.delete()
+                stats["subdocs_deleted"] += 1
+
+        token = integrante_data.get("token_unico", "")
+        if token:
+            db.collection("tokens").document(token).delete()
+            stats["tokens_deleted"] += 1
+
+        voz_token = integrante_data.get("voz_token", "")
+        if voz_token:
+            db.collection("voz_tokens").document(voz_token).delete()
+            stats["voz_tokens_deleted"] += 1
+
+        integrante_doc.reference.delete()
+        stats["integrantes"] += 1
+
+    # Delete costos subcollection
+    for subdoc in db.collection("familias").document(familia_id).collection("costos").stream():
+        subdoc.reference.delete()
+        stats["subdocs_deleted"] += 1
+
+    # Delete evaluaciones_coherencia_libro
+    for subdoc in db.collection("familias").document(familia_id).collection("evaluaciones_coherencia_libro").stream():
+        subdoc.reference.delete()
+        stats["subdocs_deleted"] += 1
+
+    libro_url = data.get("libro_url", "")
+    familia_ref.delete()
+
+    return {"ok": True, "familia_id": familia_id, "stats": stats, "libro_url": libro_url}
+
+
 def check_and_record_rate_limit(key: str, max_count: int, window_seconds: int) -> bool:
     """
     Check rate limit for a key. Records the hit if allowed.

@@ -2285,3 +2285,322 @@ def admin_familia_reintentar_pipeline(
     )
     logger.info("[admin-reintentar-pipeline] familia=%s solo_desde=%s job=%s", familia_id, body.solo_desde, job_id)
     return {"ok": True, "job_id": job_id, "solo_desde": body.solo_desde}
+
+
+# ─── Familia de prueba end-to-end (Briefing #42) ─────────────────────────────
+
+_TEST_INTEGRANTES = [
+    {
+        "nombre": "Rosa Pérez",
+        "relacion": "abuela",
+        "pais": "argentina",
+        "transcripcion": (
+            "[Pregunta 1] Mirá, yo nací en Realicó, un pueblo chico de La Pampa. Mi papá tenía un almacén "
+            "de campo, de esos que vendían de todo: yerba, harina, pala, alambre. Me acuerdo perfectamente "
+            "del olor adentro: era como a cedro viejo y a yerba fresca juntos. Los viernes yo ayudaba a "
+            "mi papá a contar la plata de la caja, eso era mi responsabilidad. Tenía diez años y me "
+            "enorgullecía un montón. Me sentaba en el taburete alto y contaba billete por billete.\n\n"
+            "[Pregunta 2] Mi mamá se llamaba Bernarda. Era una mujer de pocas palabras pero de mucho "
+            "trabajo. Se levantaba a las cinco de la mañana, todos los días sin excepción, aunque nevara. "
+            "Una vez me enseñó a hacer empanadas y me dijo: 'Rosita, las empanadas hay que hacerlas con "
+            "calma, como la vida.' Eso lo repito hasta hoy cuando cocino con mis nietos.\n\n"
+            "[Pregunta 3] Me casé a los veintidós años con Héctor, que era el hijo del veterinario del "
+            "pueblo. Nos conocimos en un baile de carnaval. Yo tenía un vestido celeste que me había "
+            "hecho mi tía Herminia en cuatro noches seguidas de costura. Héctor me sacó a bailar y me "
+            "pisó tres veces el pie. Le dije: 'Con esos pies no llegás a ningún lado.' Y se reía, se "
+            "reía. Fue un gran amor, más de cincuenta años juntos.\n\n"
+            "[Pregunta 5] Lo que le diría a mis nietos es que el tiempo pasa muy rápido. Que aprovechen "
+            "cada momento con la gente que quieren. Que no peleen por cosas materiales. Y que aprendan "
+            "a cocinar, porque la comida es amor concreto, es la única cosa que podés darle a alguien "
+            "que entra directo al cuerpo."
+        ),
+    },
+    {
+        "nombre": "Carlos Martínez",
+        "relacion": "tío",
+        "pais": "españa",
+        "transcripcion": (
+            "[Pregunta 1] Soy de Sevilla, aunque llevo treinta años viviendo aquí en Argentina. Me vine "
+            "a los treinta y cinco por una oferta de trabajo en un hospital privado, y me quedé porque "
+            "me enamoré de este país. Tengo dos pasaportes y, como me gusta decir, dos corazones: "
+            "uno andaluz y uno porteño.\n\n"
+            "[Pregunta 3] Soy traumatólogo, trabajo en el Hospital Italiano de Buenos Aires. Lo que más "
+            "me satisface es ver a un paciente que llegó en silla de ruedas salir caminando por su propio "
+            "pie. He tenido casos muy difíciles, fracturas que parecían irreparables, y la recuperación "
+            "fue total. El cuerpo humano tiene una capacidad de recuperación que me asombra todavía "
+            "después de treinta años de profesión.\n\n"
+            "[Pregunta 4] Mis amigos aquí son como mi familia adoptiva. Con Gerardo, que es dentista, "
+            "nos conocemos desde el primer día que llegué a Buenos Aires. Me encontraba perdido en "
+            "Palermo con un mapa de papel y él me explicó cómo llegar al hospital. Tomamos un café, "
+            "después una cerveza, y desde entonces somos inseparables. Eso no se planea."
+        ),
+    },
+    {
+        "nombre": "Graciela López",
+        "relacion": "abuela",
+        "pais": "uruguay",
+        "transcripcion": (
+            "[Pregunta 1] Bueno... no sé muy bien por dónde empezar la verdad. Yo nací en Montevideo, "
+            "eso sí. O por ahí, cerca. Éramos varios hermanos, no me acuerdo cuántos exactamente. "
+            "La infancia fue, bueno, normal. Como la de todos, supongo. No tengo algo especial "
+            "para contar, ¿sabés?\n\n"
+            "[Pregunta 2] Mis padres eran buenas personas, eso sí. Mi mamá trabajaba, creo que en algo "
+            "de costura, no estoy segura. Mi papá también hacía algo, no me acuerdo qué exactamente. "
+            "Vivíamos en un departamento, creo. O era una casa. Fue hace mucho tiempo todo eso, "
+            "la memoria me falla.\n\n"
+            "[Pregunta 3] Trabajé en varias cosas. En una oficina, en un comercio, no me acuerdo bien "
+            "la secuencia. Hice algunas cosas que me gustaron y otras que no tanto. Nada extraordinario, "
+            "en realidad. La vida normal de cualquier persona. No sé si eso sirve para el libro."
+        ),
+    },
+    {
+        "nombre": "Martín Pérez",
+        "relacion": "hijo",
+        "pais": "colombia",
+        "transcripcion": (
+            "[Pregunta 1] Soy de Medellín, aunque llegué a Argentina hace quince años. Estudié ingeniería "
+            "de sistemas y trabajé varios años en telecomunicaciones. Me vine porque conseguí trabajo "
+            "acá y me quedé porque me enamoré de Buenos Aires. Tengo tres hijos y son lo más importante "
+            "de mi vida.\n\n"
+            "[Pregunta 3] Hace cinco años armé mi propia empresa de desarrollo de software. Fue duro "
+            "al principio, muchas noches sin dormir, muchas incertidumbres. Pero ahora está bien "
+            "encaminada. Tengo un equipo de ocho personas, todos muy comprometidos. Mi sueño siempre "
+            "fue tener mi propio negocio y lo logré, así que no me puedo quejar.\n\n"
+            "[Pregunta 5] Le quiero dejar a mis hijos el ejemplo de que con trabajo y honestidad se "
+            "puede salir adelante. Que no hay atajos en la vida. Y que la familia primero, siempre, "
+            "porque el trabajo se puede recuperar pero el tiempo con la familia no."
+        ),
+    },
+]
+
+# Costo estimado del pipeline con 4 personas (Claude voice+chapters+quality+editor+coherencia)
+_COSTO_ESTIMADO_TEST_USD = 1.88
+
+
+@app.post("/admin/generar-familia-test")
+def admin_generar_familia_test(_: None = Depends(_admin_auth)):
+    """
+    Genera una familia sintética con 4 integrantes y transcripciones de prueba variadas,
+    y dispara el pipeline real completo (voice→chapters→quality→editor→layout→email).
+
+    ADVERTENCIA: consume API real (~USD 1.88: Claude + pipeline completo). No es gratis.
+
+    Devuelve todos los links navegables del sistema para esa familia test.
+    La familia queda marcada con es_test:true para no contaminar métricas de negocio.
+    """
+    from google.cloud import firestore as _firestore
+    from pipeline.utils import firestore as fs
+    from pipeline.utils.tasks import enqueue_pipeline
+
+    familia_id = uuid.uuid4().hex[:16]
+    nombre_familia = f"Familia Test {familia_id[:6].upper()}"
+    test_email = os.environ.get("ADMIN_EMAIL", "hola@ethosbios.com")
+    base = _recording_base()
+
+    # 1. Crear familia con es_test: True
+    db = fs._db()
+    db.collection("familias").document(familia_id).set({
+        "nombre": nombre_familia,
+        "comprador": {
+            "email": test_email,
+            "nombre": "Admin Test",
+            "es_tambien_retratado": False,
+        },
+        "estado": "grabando",
+        "pack": "familiar",
+        "pais": "",
+        "es_test": True,
+        "fecha_compra": _firestore.SERVER_TIMESTAMP,
+        "fecha_entrega": None,
+        "origen": "admin_test",
+    })
+
+    # 2. Crear integrantes con transcripciones sintéticas y marcarlos como completos
+    tokens_info = []
+    nombres = []
+    for ing_def in _TEST_INTEGRANTES:
+        integrante_id, token = fs.add_integrante(
+            familia_id=familia_id,
+            nombre=ing_def["nombre"],
+            relacion_con_comprador=ing_def["relacion"],
+        )
+        db.collection("familias").document(familia_id).collection("integrantes").document(integrante_id).update({
+            "pais": ing_def["pais"],
+            "estado": "completo",
+            "porcentaje_avance": 100,
+            "transcripcion_completa": ing_def["transcripcion"],
+        })
+
+        # Guardar transcripciones en respuestas/ por pregunta — mismo formato que Whisper.
+        # voice_agent.run_from_firestore lee de get_transcripciones_integrante(), que lee
+        # de respuestas/{pregunta_id}.transcripcion. Sin esto, voice_agent falla silenciosamente.
+        import re as _re
+        bloques = _re.split(r"\[Pregunta (\d+)\]", ing_def["transcripcion"])
+        # bloques: ["", "1", "texto1", "3", "texto3", ...]
+        it = iter(bloques[1:])  # saltar el string vacío inicial
+        for pregunta_id, texto in zip(it, it):
+            texto = texto.strip()
+            if texto:
+                fs.save_respuesta(familia_id, integrante_id, pregunta_id, audio_url="")
+                fs.save_transcripcion(familia_id, integrante_id, pregunta_id, texto)
+
+        # Token de voz permanente sintético (sin audio real; /voz/ mostrará "no disponible")
+        voz_token = uuid.uuid4().hex[:16]
+        fs.save_voz_permanente(familia_id, integrante_id, voz_token, "")
+
+        tokens_info.append({
+            "nombre": ing_def["nombre"],
+            "pais": ing_def["pais"],
+            "voseo": _es_voseo(ing_def["pais"]),
+            "token": token,
+            "voz_token": voz_token,
+        })
+        nombres.append(ing_def["nombre"])
+
+    # 3. Crear access_token para el panel /mi-familia
+    access_token = str(uuid.uuid4())
+    access_expires = datetime.now(timezone.utc) + timedelta(days=90)
+    fs.set_access_token(familia_id, access_token, access_expires)
+
+    # 4. Disparar pipeline real desde "voice" (saltamos transcripción; ya tenemos transcripcion_completa)
+    job_id = str(uuid.uuid4())
+    fs.create_job(job_id, familia_id=familia_id)
+    enqueue_pipeline(
+        job_id,
+        {
+            "nombres": nombres,
+            "pais": "",
+            "solo_desde": "voice",
+            "familia": nombre_familia,
+            "upload_to_gcs": True,
+            "familia_id": familia_id,
+            "from_job_id": None,
+        },
+    )
+    fs.update_familia_estado(familia_id, "generando")
+    logger.info(
+        "[admin-generar-familia-test] familia=%s job=%s nombres=%s email=%s",
+        familia_id, job_id, nombres, test_email,
+    )
+
+    return {
+        "ok": True,
+        "familia_id": familia_id,
+        "job_id": job_id,
+        "advertencia_costo": (
+            f"⚠️ Esta corrida consume API real. Costo estimado: ~USD {_COSTO_ESTIMADO_TEST_USD} "
+            "(Claude voice + chapters + quality A/B/C + coherencia + editor). "
+            "No incluye Whisper (omitido: transcripciones sintéticas). "
+            f"El email de entrega va a: {test_email}"
+        ),
+        "costo_estimado_usd": _COSTO_ESTIMADO_TEST_USD,
+        "links": {
+            "estado_job": f"{base}/job/{job_id}",
+            "panel_comprador_magic_link": f"{base}/auth/{access_token}",
+            "panel_comprador": f"{base}/mi-familia",
+            "admin_dashboard_test": f"{base}/admin/dashboard?mostrar_tests=true",
+            "pdf_cuando_listo": f"Consultar GET {base}/job/{job_id} — campo pdf_url cuando status=done",
+        },
+        "integrantes": [
+            {
+                "nombre": t["nombre"],
+                "pais": t["pais"],
+                "voseo": t["voseo"],
+                "copy_esperado": "vos/tuyo" if t["voseo"] else "tú/tuyo",
+                "link_grabacion": f"{base}/r/{t['token']}",
+                "link_voz": f"{base}/voz/{t['voz_token']}",
+            }
+            for t in tokens_info
+        ],
+        "instrucciones": [
+            f"Pipeline corriendo en background (~30-40 min). Estado: GET {base}/job/{job_id}",
+            f"El PDF y el email de entrega llegarán a {test_email} cuando termine.",
+            f"Panel del comprador: {base}/auth/{access_token}",
+            f"Ver en dashboard admin: /admin/dashboard?mostrar_tests=true",
+            f"Limpiar cuando termines: DELETE /admin/familias-test/{familia_id}",
+        ],
+    }
+
+
+@app.delete("/admin/familias-test/{familia_id}")
+def admin_borrar_familia_test(familia_id: str, _: None = Depends(_admin_auth)):
+    """
+    Elimina una familia de test específica (es_test:true) de Firestore y GCS.
+    Falla de forma segura si la familia no está marcada como es_test.
+    """
+    from pipeline.utils import firestore as fs, storage as st
+
+    try:
+        result = fs.delete_familia_completa(familia_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    # Limpieza GCS
+    gcs_stats: dict = {}
+    for bucket_name in [st.GCS_BUCKET_AUDIOS, st.GCS_BUCKET_FOTOS, st.GCS_BUCKET_VOCES]:
+        try:
+            n = st.delete_gcs_prefix(bucket_name, familia_id + "/")
+            gcs_stats[bucket_name] = n
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[admin-borrar-familia-test] GCS error bucket=%s: %s", bucket_name, exc)
+            gcs_stats[bucket_name] = f"error: {exc}"
+
+    # Borrar el PDF del libro si tiene URL GCS
+    libro_url = result.get("libro_url", "")
+    if libro_url and libro_url.startswith("gs://"):
+        try:
+            from pipeline.utils.storage import _parse_gs_url, _gcs
+            bucket_name_l, blob_name_l = _parse_gs_url(libro_url)
+            _gcs().bucket(bucket_name_l).blob(blob_name_l).delete()
+            gcs_stats["pdf_deleted"] = blob_name_l
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[admin-borrar-familia-test] no se pudo borrar PDF %s: %s", libro_url, exc)
+
+    logger.info("[admin-borrar-familia-test] familia=%s stats=%s gcs=%s", familia_id, result["stats"], gcs_stats)
+    return {
+        "ok": True,
+        "familia_id": familia_id,
+        "firestore": result["stats"],
+        "gcs": gcs_stats,
+    }
+
+
+@app.delete("/admin/familias-test")
+def admin_borrar_todas_familias_test(_: None = Depends(_admin_auth)):
+    """
+    Elimina TODAS las familias marcadas como es_test:true de Firestore y GCS.
+    Útil para limpieza periódica. Devuelve resumen por familia.
+    """
+    from pipeline.utils import firestore as fs, storage as st
+
+    familia_ids = fs.list_familias_test()
+    if not familia_ids:
+        return {"ok": True, "eliminadas": 0, "familias": []}
+
+    resultados = []
+    for fid in familia_ids:
+        try:
+            res = fs.delete_familia_completa(fid)
+            gcs_stats: dict = {}
+            for bucket_name in [st.GCS_BUCKET_AUDIOS, st.GCS_BUCKET_FOTOS, st.GCS_BUCKET_VOCES]:
+                try:
+                    gcs_stats[bucket_name] = st.delete_gcs_prefix(bucket_name, fid + "/")
+                except Exception as exc:  # noqa: BLE001
+                    gcs_stats[bucket_name] = f"error: {exc}"
+            libro_url = res.get("libro_url", "")
+            if libro_url and libro_url.startswith("gs://"):
+                try:
+                    from pipeline.utils.storage import _parse_gs_url, _gcs
+                    bn, blob = _parse_gs_url(libro_url)
+                    _gcs().bucket(bn).blob(blob).delete()
+                    gcs_stats["pdf_deleted"] = blob
+                except Exception as exc:  # noqa: BLE001
+                    gcs_stats["pdf_error"] = str(exc)
+            resultados.append({"familia_id": fid, "ok": True, "firestore": res["stats"], "gcs": gcs_stats})
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[admin-borrar-todas-test] error eliminando familia=%s: %s", fid, exc)
+            resultados.append({"familia_id": fid, "ok": False, "error": str(exc)})
+
+    eliminadas = sum(1 for r in resultados if r.get("ok"))
+    logger.info("[admin-borrar-todas-test] eliminadas=%d de %d", eliminadas, len(familia_ids))
+    return {"ok": True, "eliminadas": eliminadas, "total": len(familia_ids), "familias": resultados}

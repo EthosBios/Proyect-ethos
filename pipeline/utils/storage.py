@@ -66,6 +66,18 @@ def copy_to_voces_permanentes(gs_src_url: str, familia_id: str, integrante_id: s
     return f"gs://{GCS_BUCKET_VOCES}/{dest_blob_name}"
 
 
+def delete_gcs_prefix(bucket_name: str, prefix: str) -> int:
+    """Delete all blobs with the given prefix. Returns count of deleted blobs."""
+    bucket = _gcs().bucket(bucket_name)
+    blobs = list(bucket.list_blobs(prefix=prefix))
+    for blob in blobs:
+        try:
+            blob.delete()
+        except Exception:
+            pass
+    return len(blobs)
+
+
 def get_signed_url(gs_url: str, expiration_hours: int = 720) -> str:
     """Return a v4 signed URL valid for expiration_hours (default 30 days)."""
     import json
