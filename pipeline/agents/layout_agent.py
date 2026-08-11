@@ -18,244 +18,146 @@ from weasyprint import HTML
 from pipeline.agents.editor_agent import BookManuscript
 
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+ASSETS_DIR = TEMPLATES_DIR / "assets"
 
-# ── Constantes del árbol genealógico ─────────────────────────────────────────
-R_BY_GEN = [30, 22, 16, 13, 11]
-SLOT      = 58
-SIDE_PAD  = 46
-TOP_PAD   = 46
-BOT_PAD   = 86
-VB_HEIGHT = 420
-COL_BROWN     = "#7B5E3A"
-COL_SAGE_DEEP = "#6C7A59"
-COL_TINT      = "#B69A72"
+# ── Sello de marca Ethos Bios ────────────────────────────────────────────────
+# Dos assets de marca (dorado #C49B18):
+#   · sello-completo.svg  → logo completo (árbol/libro en el centro). Apertura y
+#                            cierre SIN QR. Su fondo crema se vuelve transparente.
+#   · sello-vacio.png     → mismo sello con el centro vacío, para componer el QR
+#                            real perfectamente centrado (cierre CON QR, 100%).
+# De cada uno se pre-genera una versión transparente (PNG) que es lo que se
+# embebe en el PDF: en runtime sólo se usa PIL (sin numpy/cairosvg).
+SELLO_COMPLETO_SVG    = ASSETS_DIR / "sello-completo.svg"
+SELLO_VACIO_PNG       = ASSETS_DIR / "sello-vacio.png"
+SELLO_COMPLETO_TRANSP = ASSETS_DIR / "sello-completo_transp.png"  # apertura + cierre sin QR
+SELLO_VACIO_TRANSP    = ASSETS_DIR / "sello-vacio_transp.png"     # base para componer QR
+
+SELLO_GOLD  = (196, 155, 24)    # #C49B18 dorado de marca
+CREAM_BG    = (251, 247, 240)   # #FBF7F0 fondo del SVG completo
+WHITE_BG    = (255, 255, 255)   # fondo del PNG vacío
+QR_DARK     = (90, 66, 38)      # #5A4226 marrón cálido para módulos del QR (contraste ~8:1)
+QR_PANEL_BG = (245, 240, 232)   # #F5F0E8 fondo real de la página (var --paper)
+# Centro geométrico del sello vacío (1024×1024) y lado del QR compuesto.
+VACIO_CENTER  = (506, 504)
+QR_BOX_TARGET = 360
 
 # Caracteres por página interior (ajuste empírico para A5, 11px Mulish)
 CHARS_PER_PAGE = 2400
 
 
-# ── Árbol genealógico SVG ─────────────────────────────────────────────────────
+# ── Sello de marca: transparencia + composición del QR ────────────────────────
 
-def layout_family(root: dict) -> dict:
+def _unmix_gold(img, bg):
     """
-    Genera las coordenadas SVG del árbol a partir de la estructura de unidades.
-
-    root = {
-      "people": [{"i": "I", "written": True, "current": False}, ...],
-      "children": [ <unidad>, ... ]
-    }
-
-    Retorna: {"viewBox": "0 0 W H", "ramas": [...], "hojas": [...], "nodos": [...]}
+    Devuelve un PIL.Image RGBA con sólo el dorado del sello y el fondo `bg`
+    convertido a transparente. La cobertura de dorado se estima por 'unmixing'
+    lineal (dorado ↔ fondo), dejando bordes anti-aliased con alpha parcial que
+    componen bien sobre cualquier papel. Requiere numpy (sólo en dev/generación).
     """
-    max_gen = 0
-    units: list[dict] = []
+    import numpy as np
+    from PIL import Image
 
-    def walk(u: dict, g: int) -> None:
-        nonlocal max_gen
-        u["_g"] = g
-        max_gen = max(max_gen, g)
-        units.append(u)
-        for c in u.get("children", []):
-            walk(c, g + 1)
-
-    walk(root, 0)
-
-    cursor = {"v": 0}
-
-    def place(u: dict) -> None:
-        ch = u.get("children", [])
-        if not ch:
-            u["_x"] = cursor["v"]
-            cursor["v"] += 1
-        else:
-            for c in ch:
-                place(c)
-            u["_x"] = (ch[0]["_x"] + ch[-1]["_x"]) / 2
-
-    place(root)
-    leaves = max(1, cursor["v"])
-
-    vb_w    = SIDE_PAD * 2 + (leaves - 1) * SLOT
-    gen_gap = (VB_HEIGHT - TOP_PAD - BOT_PAD) / max(1, max_gen)
-    X = lambda u: SIDE_PAD + u["_x"] * SLOT
-    if max_gen == 0:
-        Y = lambda u: int(VB_HEIGHT * 0.50)
-    else:
-        Y = lambda u: TOP_PAD + (max_gen - u["_g"]) * gen_gap
-
-    ramas: list[dict] = []
-    hojas: list[dict] = []
-    nodos: list[dict] = []
-
-    # tronco vertical
-    rx = X(root)
-    ry = Y(root)
-    r0 = R_BY_GEN[0]
-    ramas.append({
-        "d": (f"M{rx:.1f},{VB_HEIGHT} C{rx:.1f},{VB_HEIGHT-40} "
-              f"{rx:.1f},{ry+r0+30:.1f} {rx:.1f},{ry+r0:.1f}"),
-        "w": 3.2, "color": COL_BROWN, "op": 1,
-    })
-
-    for u in units:
-        ux, uy = X(u), Y(u)
-        r = R_BY_GEN[u["_g"]] if u["_g"] < len(R_BY_GEN) else 11
-
-        for c in u.get("children", []):
-            cx, cy = X(c), Y(c)
-            cr = R_BY_GEN[c["_g"]] if c["_g"] < len(R_BY_GEN) else 11
-            top_y = uy - r
-            mid_y = (top_y + (cy + cr)) / 2
-            w   = max(1.4, 2.8 - u["_g"] * 0.5)
-            col = COL_SAGE_DEEP if u["_g"] >= 1 else COL_BROWN
-            op  = 0.85 if u["_g"] >= 1 else 1.0
-            ramas.append({
-                "d": (f"M{ux:.1f},{top_y:.1f} C{ux:.1f},{top_y-gen_gap*0.4:.1f} "
-                      f"{cx:.1f},{mid_y+4:.1f} {cx:.1f},{cy+cr:.1f}"),
-                "w": w, "color": col, "op": op,
-            })
-            lx  = (ux + cx) / 2 + (-4 if cx < ux else 4)
-            rot = -50 if cx < ux else 50
-            s   = max(0.6, 0.9 - u["_g"] * 0.12)
-            hojas.append({"x": lx, "y": mid_y, "rot": rot, "s": s, "deep": (u["_g"] % 2 == 0)})
-
-        ppl = u.get("people", [])
-        if len(ppl) > 1:
-            ramas.append({
-                "d": f"M{ux-(r+7):.1f},{uy} L{ux+(r+7):.1f},{uy}",
-                "w": 1.4, "color": COL_TINT, "op": 0.7,
-            })
-
-        for i, p in enumerate(ppl):
-            px = (ux - (r + 7) if i == 0 else ux + (r + 7)) if len(ppl) > 1 else ux
-            nodos.append({
-                "x": px, "y": uy, "r": r,
-                "inicial": p["i"],
-                "written": p.get("written", True),
-                "current": bool(p.get("current", False)),
-            })
-
-    return {
-        "viewBox": f"0 0 {int(vb_w)} {VB_HEIGHT}",
-        "ramas": ramas,
-        "hojas": hojas,
-        "nodos": nodos,
-    }
+    arr = np.asarray(img.convert("RGB"), dtype=float)
+    gold = np.array(SELLO_GOLD, dtype=float)
+    c = np.array(bg, dtype=float)
+    d = gold - c
+    t = np.clip(((arr - c) @ d) / (d @ d), 0.0, 1.0)
+    out = np.zeros((*arr.shape[:2], 4), dtype=float)
+    out[..., 0], out[..., 1], out[..., 2] = SELLO_GOLD
+    out[..., 3] = t * 255.0
+    return Image.fromarray(out.astype("uint8"), "RGBA")
 
 
-def build_family_tree(
-    integrantes: list[dict],
-    relaciones: list[dict],
-    capitulo_actual: str,
-    nombres_escritos: Optional[list[str]] = None,
-) -> dict:
+def _stale(dst: Path, src: Path) -> bool:
+    return not dst.exists() or dst.stat().st_mtime < src.stat().st_mtime
+
+
+def ensure_derived_seals() -> None:
     """
-    Construye el root dict para layout_family() a partir de los datos del sistema.
-
-    integrantes: [{nombre, ...}]
-    relaciones:  [{persona_a, relacion, persona_b}]
-                 relacion ∈ {padre, madre, cónyuge, conyuge, esposo, esposa}
-    capitulo_actual: nombre de la persona cuyo capítulo se está abriendo (current=True)
-    nombres_escritos: nombres con capítulo escrito (written=True); por defecto todos
+    Pre-genera (en dev) los PNG transparentes derivados de los assets de marca.
+    En runtime (Cloud Run) se usan los PNG ya committeados; si faltan numpy o
+    cairosvg, no falla: se asume que los derivados ya están en el repo.
     """
-    escrito_set = set(nombres_escritos) if nombres_escritos else {p["nombre"] for p in integrantes}
-    nombres_set  = {p["nombre"] for p in integrantes}
+    try:
+        from PIL import Image
+        if _stale(SELLO_VACIO_TRANSP, SELLO_VACIO_PNG):
+            _unmix_gold(Image.open(SELLO_VACIO_PNG), WHITE_BG).save(SELLO_VACIO_TRANSP)
+        if _stale(SELLO_COMPLETO_TRANSP, SELLO_COMPLETO_SVG):
+            import io
+            import cairosvg
+            png = cairosvg.svg2png(url=str(SELLO_COMPLETO_SVG), output_width=1024, output_height=1024)
+            _unmix_gold(Image.open(io.BytesIO(png)), CREAM_BG).save(SELLO_COMPLETO_TRANSP)
+    except Exception as e:  # noqa: BLE001
+        print(f"[layout] assets derivados no regenerados (se usan los committeados): {e}")
 
-    conyuges_map: dict[str, set[str]] = {}
-    hijos_map:    dict[str, list[str]] = {}
-    padres_map:   dict[str, set[str]] = {}
 
-    for r in relaciones:
-        a   = r["persona_a"]
-        rel = r["relacion"].lower()
-        # normalizar tilde
-        rel = rel.replace("ó", "o")   # ó → o
-        b   = r["persona_b"]
-        if rel in ("conyuge", "esposo", "esposa", "pareja"):
-            conyuges_map.setdefault(a, set()).add(b)
-            conyuges_map.setdefault(b, set()).add(a)
-        elif rel in ("padre", "madre", "progenitor"):
-            if b not in hijos_map.get(a, []):
-                hijos_map.setdefault(a, []).append(b)
-            padres_map.setdefault(b, set()).add(a)
+def _sello_con_qr_b64(url: str) -> str:
+    """
+    Compone el QR real (módulos #3D3226 sobre panel #F5F0E8) perfectamente
+    centrado en el círculo vacío del sello y devuelve el PNG en base64 (100%).
+    Sólo usa PIL + qrcode (apto para runtime).
+    """
+    import base64
+    import io
+    import qrcode
+    from PIL import Image
 
-    visited: set[frozenset] = set()
+    # QR en tamaño de módulo nativo (sin resize) para módulos nítidos.
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=4)
+    qr.add_data(url)
+    qr.make(fit=True)
+    modules = len(qr.get_matrix())  # incluye quiet zone (border)
+    box = max(4, round(QR_BOX_TARGET / modules))
+    qr.box_size = box
+    qimg = qr.make_image(fill_color=QR_DARK, back_color=QR_PANEL_BG).convert("RGBA")
 
-    def make_unit(names: list[str]) -> Optional[dict]:
-        key = frozenset(names)
-        if key in visited:
-            return None
-        visited.add(key)
+    seal = Image.open(SELLO_VACIO_TRANSP).convert("RGBA")
+    cx, cy = VACIO_CENTER
+    qw, qh = qimg.size
+    seal.alpha_composite(qimg, (cx - qw // 2, cy - qh // 2))
 
-        # Solo mostrar en el nodo a quienes tienen capítulo propio o son la persona actual
-        visible = [n for n in names if n in escrito_set or n == capitulo_actual]
-        if not visible:
-            # Si ninguno tiene capítulo, mostrar solo el primero como nodo gris
-            visible = names[:1]
-
-        people = [
-            {
-                "i": n[0].upper(),
-                "written": n in escrito_set,
-                "current": n == capitulo_actual,
-            }
-            for n in visible
-        ]
-
-        # Hijos: unión de hijos de todas las personas de la unidad
-        all_children: list[str] = []
-        seen_children: set[str] = set()
-        for n in names:
-            for hijo in hijos_map.get(n, []):
-                if hijo not in seen_children and hijo in nombres_set:
-                    seen_children.add(hijo)
-                    all_children.append(hijo)
-
-        child_units: list[dict] = []
-        processed: set[str] = set()
-        for hijo in all_children:
-            if hijo in processed:
-                continue
-            processed.add(hijo)
-            # Buscar cónyuge del hijo que también sea integrante
-            spouse: Optional[str] = None
-            for c in conyuges_map.get(hijo, set()):
-                if c in nombres_set and c not in processed:
-                    # Solo incluir cónyuge si tiene capítulo o es la persona actual
-                    if c in escrito_set or c == capitulo_actual:
-                        spouse = c
-                        break
-            if spouse:
-                processed.add(spouse)
-                unit = make_unit([hijo, spouse])
-            else:
-                unit = make_unit([hijo])
-            if unit:
-                child_units.append(unit)
-
-        return {"people": people, "children": child_units}
-
-    # Raíces: personas sin padres en el dataset
-    root_candidates = [p["nombre"] for p in integrantes if p["nombre"] not in padres_map]
-    if not root_candidates:
-        root_candidates = [p["nombre"] for p in integrantes]
-
-    # Buscar pareja raíz (cónyuges sin padres)
-    for i, a in enumerate(root_candidates):
-        for b in root_candidates[i + 1:]:
-            if b in conyuges_map.get(a, set()):
-                result = make_unit([a, b])
-                return result if result else {"people": [], "children": []}
-
-    # Raíz individual
-    if root_candidates:
-        result = make_unit([root_candidates[0]])
-        return result if result else {"people": [], "children": []}
-
-    return {"people": [], "children": []}
+    buf = io.BytesIO()
+    seal.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode()
 
 
 # ── Helpers de contenido ──────────────────────────────────────────────────────
+
+_ROMANOS = [
+    (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"),
+    (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I"),
+]
+
+
+def _a_romano(n: int) -> str:
+    """Convierte un entero positivo a numeral romano (1 → I, 4 → IV, 21 → XXI)."""
+    if n <= 0:
+        return str(n)
+    out = []
+    for val, sym in _ROMANOS:
+        while n >= val:
+            out.append(sym)
+            n -= val
+    return "".join(out)
+
+
+def _elegir_cita(citas_directas: list[str], fallback_texto: str) -> str:
+    """
+    Elige la cita de apertura desde las citas_directas del perfil de voz (voice_agent):
+    la más corta y limpia; si no hay, cae al heurístico sobre el capítulo.
+    """
+    candidatas = [c.strip().strip('"«»*').strip() for c in (citas_directas or []) if c and c.strip()]
+    candidatas = [c for c in candidatas if len(c) >= 20]
+    if candidatas:
+        cita = min(candidatas, key=len)
+        # Si es muy larga, recortar a la primera oración.
+        if len(cita) > 180:
+            m = re.match(r"^(.{40,180}?[.!?…])(\s|$)", cita)
+            if m:
+                cita = m.group(1)
+        return cita.rstrip(" .,;:").strip()
+    return _extraer_frase(fallback_texto)
 
 def _extraer_frase(texto: str) -> str:
     """Extrae la primera cita (—…) o la primera oración del texto."""
@@ -372,15 +274,17 @@ def _render_libro(
     integrantes: list[dict],
     relaciones: list[dict],
     qr_data: dict[str, str] | None = None,
+    citas_data: dict[str, list[str]] | None = None,
 ) -> str:
     """Ensambla el HTML completo del libro concatenando todas las páginas."""
     env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
+    citas_data = citas_data or {}
 
     apellidos = nombre_familia.replace("Familia", "").strip().split("·")
     apellido_1 = apellidos[0].strip() if apellidos else nombre_familia
     apellido_2 = apellidos[1].strip() if len(apellidos) > 1 else ""
+    apellido_pie = " · ".join(a for a in (apellido_1, apellido_2) if a) or nombre_familia
 
-    nombres_escritos = manuscript.orden
     folio_counter = [1]
 
     def next_folio() -> str:
@@ -427,15 +331,16 @@ def _render_libro(
         if not capitulo_texto:
             continue
 
-        epigrafe = _extraer_frase(capitulo_texto)
+        cita = _elegir_cita(citas_data.get(nombre, []), capitulo_texto)
         folio_apertura = next_folio()
 
-        # 02 · Apertura
+        # 02 · Apertura de capítulo (sello a baja opacidad + cita real)
         tmpl_apertura = env.get_template("02-apertura.html")
         cap_ctx = {
             "numero": idx,
+            "romano": _a_romano(idx),
             "nombre": nombre,
-            "epigrafe": epigrafe,
+            "cita": cita,
             "folio": folio_apertura,
         }
         partes.append(_extract_body(tmpl_apertura.render(capitulo=cap_ctx)))
@@ -454,19 +359,17 @@ def _render_libro(
             }
             partes.append(_extract_body(tmpl_interior.render(pagina=pagina_ctx)))
 
-        # 07 · QR de voz permanente — solo si existe audio para este integrante
-        qr_b64 = (qr_data or {}).get(nombre, "")
-        if qr_b64:
-            partes.append(f'''
-<div class="page interior" style="display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:52px">
-  <div style="text-align:center;max-width:220px;margin:auto">
-    <img src="data:image/png;base64,{qr_b64}" alt="QR" style="width:120px;height:120px;display:block;margin:0 auto 14px" />
-    <p style="font-family:\'Cormorant Garamond\',serif;font-size:10px;color:#7B5E3A;line-height:1.6;letter-spacing:0.5px">
-      Escaneá para escuchar el mensaje de {nombre}<br>— su voz, para siempre.
-    </p>
-  </div>
-  <div class="folio">{next_folio()}</div>
-</div>''')
+        # 07 · Cierre de capítulo — sello de marca. Variante CON QR si la persona
+        #      grabó su voz (voz_token → seal_qr_b64); si no, sólo el sello.
+        tmpl_cierre = env.get_template("07-cierre.html")
+        seal_qr_b64 = (qr_data or {}).get(nombre, "")
+        cierre_ctx = {
+            "con_qr": bool(seal_qr_b64),
+            "seal_qr_b64": seal_qr_b64,
+            "apellido": apellido_pie,
+            "folio": next_folio(),
+        }
+        partes.append(_extract_body(tmpl_cierre.render(cierre=cierre_ctx)))
 
         # 06 · Transición hacia el siguiente capítulo
         if idx < len(manuscript.orden):
@@ -536,10 +439,6 @@ def _extract_body(page_html: str) -> str:
     return m.group(1).strip() if m else page_html
 
 
-def _arbol_vacio() -> dict:
-    return {"viewBox": "0 0 320 400", "ramas": [], "hojas": [], "nodos": []}
-
-
 # ── Entrada pública ───────────────────────────────────────────────────────────
 
 def run(
@@ -598,18 +497,28 @@ def run(
             except Exception:
                 pass
 
-    # QR de voz permanente por integrante
+    # Asegurar los sellos transparentes derivados (apertura / cierre con y sin QR).
+    ensure_derived_seals()
+
+    # Sello con QR de voz compuesto, por integrante que grabó su voz (Pregunta 18).
     qr_data: dict[str, str] = {}
+    citas_data: dict[str, list[str]] = {}
     for p in personas_meta:
+        nombre = p["nombre"]
+        perfil = p.get("perfil_voz") or {}
+        citas_data[nombre] = p.get("citas_directas") or perfil.get("citas_directas") or []
         voz_token = p.get("voz_token", "")
         if voz_token:
             try:
                 qr_url = f"{os.environ.get('BASE_URL', 'https://www.ethosbios.com')}/voz/{voz_token}"
-                qr_data[p["nombre"]] = _generar_qr_b64(qr_url)
+                qr_data[nombre] = _sello_con_qr_b64(qr_url)
             except Exception as e:
-                print(f"[layout] No se pudo generar QR para {p['nombre']}: {e}")
+                print(f"[layout] No se pudo componer sello+QR para {nombre}: {e}")
 
-    html_content = _render_libro(manuscript, nombre_familia, fotos, integrantes, rels, qr_data=qr_data)
+    html_content = _render_libro(
+        manuscript, nombre_familia, fotos, integrantes, rels,
+        qr_data=qr_data, citas_data=citas_data,
+    )
 
     if output_path is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -617,20 +526,6 @@ def run(
 
     HTML(string=html_content, base_url=str(TEMPLATES_DIR)).write_pdf(output_path)
     return output_path
-
-
-def _generar_qr_b64(url: str) -> str:
-    """Genera un QR PNG en base64 para la URL dada."""
-    import base64
-    import io
-    import qrcode
-    qr = qrcode.QRCode(version=1, box_size=6, border=3)
-    qr.add_data(url)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="#3d2512", back_color="white")
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    return base64.b64encode(buf.getvalue()).decode()
 
 
 def _download_gcs(gcs_uri: str, dest: str) -> None:

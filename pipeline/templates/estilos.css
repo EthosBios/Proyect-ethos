@@ -145,6 +145,7 @@
   --brown:#7B5E3A; --brown-deep:#5A4226; --brown-tint:#B69A72;
   --sage:#8B9A78; --sage-deep:#6C7A59; --sage-tint:#C2CBB4;
   --rule:#DBCFB9; --rule-soft:#E7DDCB;
+  --gold:#C49B18; --gold-deep:#8A6A0F; --ink-brown:#3D3226;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --sans:'Mulish',system-ui,-apple-system,sans-serif;
 }
@@ -222,15 +223,42 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .cover .sig{ position:absolute; left:78px; bottom:56px; }
 
 /* ============================================================
-   02 · APERTURA DE CAPÍTULO + ÁRBOL
+   02 · APERTURA DE CAPÍTULO (sello de marca + cita real)
    ============================================================ */
-.opener .head{ padding:48px 60px 0; text-align:center; }
-.opener .ch-num{ color:var(--sage-deep); }
-.opener .ch-name{ margin:14px 0 0; font-weight:500; font-size:48px; line-height:1.1; color:var(--ink); font-family:var(--serif); }
-.opener .ch-epi{ margin:12px auto 0; font-style:italic; font-size:16px; color:var(--brown);
-  max-width:300px; font-family:var(--serif); }
-.opener .tree{ position:absolute; bottom:0; left:0; right:0; height:580px; padding:0 80px 56px; overflow:hidden; }
-.opener .tree svg{ display:block; width:100%; height:100%; }
+.opener .op-inner{ position:absolute; top:0; left:0; width:100%; height:100%; padding:70px 60px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; }
+.opener .ch-num{ color:var(--gold); letter-spacing:.34em; }
+.opener .ch-name{ margin:12px 0 0; font-weight:500; font-size:46px; line-height:1.1;
+  color:var(--ink-brown); font-family:var(--serif); }
+.opener .op-seal{ margin:30px 0 26px; }
+.opener .op-seal img{ display:block; width:129px; height:auto; opacity:.32; }
+.opener .op-quote{ margin:0; max-width:320px; font-family:var(--serif); font-style:italic;
+  font-weight:500; font-size:17px; line-height:1.5; color:var(--ink-brown); }
+
+/* ============================================================
+   07 · CIERRE DE CAPÍTULO (sello + QR de voz)
+   ============================================================ */
+.closer .cl-inner{ position:absolute; top:0; left:0; width:100%; height:100%; padding:66px 58px 96px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; }
+.closer .brand-head{ display:flex; align-items:center; justify-content:center;
+  gap:14px; margin-bottom:34px; }
+.closer .brand-head .brand-line{ width:34px; height:1px; background:var(--gold); }
+.closer .brand-head .brand-name{ font-family:var(--serif); font-weight:500; font-size:14px;
+  white-space:nowrap; text-transform:uppercase; letter-spacing:.42em; padding-left:.42em;
+  color:var(--gold); }
+.closer .cl-seal img{ display:block; height:auto; }
+.closer .cl-seal.has-qr img{ width:300px; }
+.closer .cl-seal.no-qr img{ width:300px; opacity:.62; }
+.closer .cl-label{ margin-top:30px; font-family:var(--sans); font-weight:600; font-size:10.5px;
+  text-transform:uppercase; letter-spacing:.34em; color:var(--gold-deep); }
+.closer .cl-quote{ margin:16px auto 0; max-width:330px; font-family:var(--serif);
+  font-style:italic; font-weight:500; font-size:16px; line-height:1.5; color:var(--ink-brown); }
+.closer .cl-foot{ position:absolute; left:58px; right:58px; bottom:34px;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--sans); font-size:10px; font-weight:400; letter-spacing:.18em;
+  color:var(--brown-tint); }
 
 /* ============================================================
    03 · PÁGINA INTERIOR

@@ -6,10 +6,19 @@
 </head>
 <body>
   <div class="page opener">
-    <div class="head">
-      <div class="kicker ch-num">Capítulo {{ capitulo.numero }}</div>
-      <h1 class="ch-name">{{ capitulo.nombre }}</h1>
-      {% if capitulo.epigrafe %}<p class="ch-epi">«{{ capitulo.epigrafe }}»</p>{% endif %}
+    <div class="op-inner">
+      <div class="op-head">
+        <div class="kicker ch-num">Capítulo {{ capitulo.romano }}</div>
+        <h1 class="ch-name">{{ capitulo.nombre }}</h1>
+      </div>
+
+      <div class="op-seal">
+        <img src="assets/sello-completo_transp.png" alt="" />
+      </div>
+
+      {% if capitulo.cita %}
+      <p class="op-quote">“{{ capitulo.cita }}”</p>
+      {% endif %}
     </div>
 
     <div class="folio">{{ capitulo.folio | default(capitulo.numero) }}</div>

@@ -596,7 +596,17 @@ def _run_pipeline(
                 raise ValueError("No hay manuscrito disponible para el layout")
 
             # personas_meta for chapters (with rol/vive/fecha_fallec)
-            capitulo_personas = list(personas_meta)
+            capitulo_personas = [dict(pm) for pm in personas_meta]
+
+            # Adjuntar citas_directas del perfil de voz (para la cita de apertura del
+            # capítulo). _fs_integrantes viene refrescado post-voice con perfil_voz.
+            if _fs_integrantes:
+                citas_por_id = {
+                    p["id"]: (p.get("perfil_voz") or {}).get("citas_directas", [])
+                    for p in _fs_integrantes
+                }
+                for pm in capitulo_personas:
+                    pm["citas_directas"] = citas_por_id.get(pm.get("id"), [])
 
             # todos_integrantes = full family list for timeline
             todos_integrantes = [
