@@ -1,27 +1,29 @@
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap');
-.em3-wrap{max-width:560px;margin:0 auto;padding:1.5rem 0;font-family:'Lato',sans-serif}
-.em3-card{background:#ffffff;border:0.5px solid #e8d9b8;border-radius:12px;overflow:hidden}
-.em3-header{background:#2A1A30;padding:2rem 2rem 1.75rem;text-align:center}
-.em3-wordmark{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.18em;color:#B08FBF;text-transform:uppercase;margin-bottom:0.75rem}
-.em3-subject{font-family:'Playfair Display',serif;font-size:22px;color:#F5EFF8;line-height:1.35;margin:0}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Mulish:wght@300;400;600;700&display=swap');
+.em3-wrap{max-width:560px;margin:0 auto;padding:1.5rem 0;font-family:'Mulish',sans-serif}
+.em3-card{background:#ffffff;border:0.5px solid rgba(196,155,24,.25);border-radius:12px;overflow:hidden}
+.em3-stripe{height:5px;background:linear-gradient(90deg,#C49B18 0 34%,#12A594 34% 67%,#7C6BC4 67% 100%)}
+.em3-header{background:#2C2418;padding:2rem 2rem 1.75rem;text-align:center}
+.em3-wordmark{font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.16em;color:#C49B18;text-transform:uppercase;margin-bottom:0.9rem;font-weight:600}
+.em3-subject{font-family:'Cormorant Garamond',serif;font-size:22px;color:#FBF7F0;line-height:1.35;margin:0}
+.em3-subject em{color:#7AD9C9;font-style:italic}
 .em3-body{padding:2rem}
-.em3-body p{font-size:15px;line-height:1.7;color:#3d2b0a;margin:0 0 1rem}
-.em3-quote{border-left:3px solid #B08FBF;padding:0.75rem 1rem;margin:1.25rem 0;background:#F8F3FA}
-.em3-quote p{font-family:'Playfair Display',serif;font-style:italic;font-size:16px;color:#3d2b0a;margin:0;line-height:1.5}
-.em3-steps{margin:1.25rem 0;display:flex;flex-direction:column;gap:8px}
-.em3-step{display:flex;align-items:center;gap:12px;font-size:14px;color:#9a7b5a}
-.em3-step-num{width:24px;height:24px;border-radius:50%;background:#2A1A30;color:#F5EFF8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.em3-cta{display:block;background:#2A1A30;color:#F5EFF8;text-align:center;padding:0.9rem 1.5rem;border-radius:8px;font-size:14px;letter-spacing:0.06em;text-decoration:none;margin:1.5rem 0 0;cursor:pointer;border:none;width:100%;font-family:'Lato',sans-serif;font-weight:700;box-sizing:border-box}
-.em3-footer{padding:1rem 2rem;border-top:0.5px solid #e8d9b8;display:flex;justify-content:space-between;align-items:center}
-.em3-footer-brand{font-family:'Playfair Display',serif;font-size:12px;color:#9a7b5a}
-.em3-footer-links{font-size:12px;color:#9a7b5a}
+.em3-body p{font-size:15px;line-height:1.7;color:#2C2418;margin:0 0 1rem}
+.em3-quote{border-left:3px solid #7C6BC4;padding:0.9rem 1.1rem;margin:1.25rem 0;background:#F1EDF9;border-radius:0 8px 8px 0}
+.em3-quote p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#5A4A96;margin:0;line-height:1.5}
+.em3-steps{margin:1.25rem 0;display:flex;flex-direction:column;gap:10px}
+.em3-step{display:flex;align-items:center;gap:12px;font-size:14px;color:#2C2418}
+.em3-step-num{width:24px;height:24px;border-radius:50%;background:#12A594;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.em3-cta{display:block;background:#C49B18;color:#2C2418;text-align:center;padding:0.9rem 1.5rem;border-radius:8px;font-size:14px;letter-spacing:0.06em;text-decoration:none;margin:1.5rem 0 0;cursor:pointer;border:none;width:100%;font-family:'Mulish',sans-serif;font-weight:700;box-sizing:border-box}
+.em3-footer{padding:1rem 2rem;border-top:0.5px solid rgba(196,155,24,.2);display:flex;justify-content:space-between;align-items:center}
+.em3-footer-brand{font-family:'Cormorant Garamond',serif;font-size:12px;color:#C49B18}
+.em3-footer-links{font-size:12px;color:rgba(44,36,24,.55)}
 </style>
 <div class="em3-wrap">
 <div class="em3-card">
+  <div class="em3-stripe"></div>
   <div class="em3-header">
-    <div class="em3-wordmark">Raíces</div>
+    <div class="em3-wordmark">Ethos Bios</div>
     <h1 class="em3-subject">{{NOMBRE}}, tu historia<br><em>todavía no está escrita</em></h1>
   </div>
   <div class="em3-body">
@@ -38,7 +40,7 @@
     <a href="{{RECORDING_URL}}" class="em3-cta">Empezar a grabar mi historia →</a>
   </div>
   <div class="em3-footer">
-    <span class="em3-footer-brand">Raíces · Libros biográficos</span>
+    <span class="em3-footer-brand">Ethos Bios</span>
     <span class="em3-footer-links">Cancelar recordatorios</span>
   </div>
 </div>

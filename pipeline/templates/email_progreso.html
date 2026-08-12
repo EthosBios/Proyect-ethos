@@ -1,36 +1,38 @@
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap');
-.em4-wrap{max-width:560px;margin:0 auto;padding:1.5rem 0;font-family:'Lato',sans-serif}
-.em4-card{background:#ffffff;border:0.5px solid #e8d9b8;border-radius:12px;overflow:hidden}
-.em4-header{background:#1C2535;padding:2rem 2rem 1.75rem;text-align:center}
-.em4-wordmark{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.18em;color:#7A9CC4;text-transform:uppercase;margin-bottom:0.75rem}
-.em4-subject{font-family:'Playfair Display',serif;font-size:22px;color:#EEF2F8;line-height:1.35;margin:0 0 1.25rem}
-.em4-big-pct{font-family:'Playfair Display',serif;font-size:52px;color:#EEF2F8;line-height:1;margin:0}
-.em4-big-sub{font-size:13px;color:#7A9CC4;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Mulish:wght@300;400;600;700&display=swap');
+.em4-wrap{max-width:560px;margin:0 auto;padding:1.5rem 0;font-family:'Mulish',sans-serif}
+.em4-card{background:#ffffff;border:0.5px solid rgba(196,155,24,.25);border-radius:12px;overflow:hidden}
+.em4-stripe{height:5px;background:linear-gradient(90deg,#C49B18 0 34%,#12A594 34% 67%,#7C6BC4 67% 100%)}
+.em4-header{background:#2C2418;padding:2rem 2rem 1.75rem;text-align:center}
+.em4-wordmark{font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.16em;color:#C49B18;text-transform:uppercase;margin-bottom:0.9rem;font-weight:600}
+.em4-subject{font-family:'Cormorant Garamond',serif;font-size:22px;color:#FBF7F0;line-height:1.35;margin:0 0 1.25rem}
+.em4-subject em{color:#7AD9C9;font-style:italic}
+.em4-big-pct{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;color:#C49B18;line-height:1;margin:0}
+.em4-big-sub{font-size:13px;color:#FBF7F0;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;opacity:.85}
 .em4-body{padding:2rem}
-.em4-body p{font-size:15px;line-height:1.7;color:#3d2b0a;margin:0 0 1rem}
-.em4-progress-track{background:#f8f5f0;border-radius:100px;height:10px;margin:0.5rem 0 1.5rem;overflow:hidden}
-.em4-progress-fill{background:#1C2535;height:100%;border-radius:100px;width:{{PCT}}%}
-.em4-stat-box{background:#FAF5EE;border:0.5px solid #E8D8BE;border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;display:flex;align-items:center;gap:12px}
-.em4-stat-icon{font-size:22px;color:#C4956A}
-.em4-stat-text strong{font-size:15px;color:#3d2b0a;display:block;margin-bottom:2px}
-.em4-stat-text span{font-size:13px;color:#9a7b5a}
+.em4-body p{font-size:15px;line-height:1.7;color:#2C2418;margin:0 0 1rem}
+.em4-progress-track{background:#FBF7F0;border-radius:100px;height:10px;margin:0.5rem 0 1.5rem;overflow:hidden}
+.em4-progress-fill{background:#C49B18;height:100%;border-radius:100px;width:{{PCT}}%}
+.em4-stat-box{background:#F1EDF9;border:0.5px solid rgba(124,107,196,.3);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;display:flex;align-items:center;gap:12px}
+.em4-stat-icon{font-size:22px;color:#7C6BC4}
+.em4-stat-text strong{font-size:15px;color:#2C2418;display:block;margin-bottom:2px}
+.em4-stat-text span{font-size:13px;color:rgba(44,36,24,.55)}
 .em4-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:14px}
-.em4-table th{text-align:left;font-weight:400;color:#9a7b5a;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;padding:0 0 8px;border-bottom:0.5px solid #e8d9b8}
-.em4-table td{padding:10px 0;border-bottom:0.5px solid #e8d9b8;color:#3d2b0a;vertical-align:middle}
+.em4-table th{text-align:left;font-weight:400;color:rgba(44,36,24,.5);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;padding:0 0 8px;border-bottom:0.5px solid rgba(196,155,24,.25)}
+.em4-table td{padding:10px 0;border-bottom:0.5px solid rgba(196,155,24,.2);color:#2C2418;vertical-align:middle}
 .em4-table td:last-child{text-align:right}
-.em4-badge-done{background:#EAF3DE;color:#3B6D11;font-size:11px;padding:3px 10px;border-radius:100px;font-weight:700}
-.em4-badge-pend{background:#FFF3E0;color:#8B5E10;font-size:11px;padding:3px 10px;border-radius:100px}
-.em4-cta{display:block;background:#1C2535;color:#EEF2F8;text-align:center;padding:0.85rem 1.5rem;border-radius:8px;font-size:14px;letter-spacing:0.06em;text-decoration:none;cursor:pointer;border:none;width:100%;font-family:'Lato',sans-serif;margin-top:1rem;box-sizing:border-box}
-.em4-footer{padding:1rem 2rem;border-top:0.5px solid #e8d9b8;display:flex;justify-content:space-between;align-items:center}
-.em4-footer-brand{font-family:'Playfair Display',serif;font-size:12px;color:#9a7b5a}
-.em4-footer-links{font-size:12px;color:#9a7b5a}
+.em4-badge-done{background:#EAF6F3;color:#0d5c53;font-size:11px;padding:3px 10px;border-radius:100px;font-weight:700}
+.em4-badge-pend{background:#FBF0D8;color:#8a6a10;font-size:11px;padding:3px 10px;border-radius:100px}
+.em4-cta{display:block;background:#C49B18;color:#2C2418;text-align:center;padding:0.85rem 1.5rem;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:0.06em;text-decoration:none;cursor:pointer;border:none;width:100%;font-family:'Mulish',sans-serif;margin-top:1rem;box-sizing:border-box}
+.em4-footer{padding:1rem 2rem;border-top:0.5px solid rgba(196,155,24,.2);display:flex;justify-content:space-between;align-items:center}
+.em4-footer-brand{font-family:'Cormorant Garamond',serif;font-size:12px;color:#C49B18}
+.em4-footer-links{font-size:12px;color:rgba(44,36,24,.55)}
 </style>
 <div class="em4-wrap">
 <div class="em4-card">
+  <div class="em4-stripe"></div>
   <div class="em4-header">
-    <div class="em4-wordmark">Raíces</div>
+    <div class="em4-wordmark">Ethos Bios</div>
     <h1 class="em4-subject">Actualización del libro<br><em>{{FAMILIA_NOMBRE}}</em></h1>
     <div class="em4-big-pct">{{PCT}}%</div>
     <div class="em4-big-sub">completado · {{COMPLETADOS}} de {{TOTAL}} historias</div>
@@ -61,7 +63,7 @@
     <a href="{{DASHBOARD_URL}}" class="em4-cta">Ver panel completo ↗</a>
   </div>
   <div class="em4-footer">
-    <span class="em4-footer-brand">Raíces · Libros biográficos</span>
+    <span class="em4-footer-brand">Ethos Bios</span>
     <span class="em4-footer-links">Cancelar suscripción</span>
   </div>
 </div>

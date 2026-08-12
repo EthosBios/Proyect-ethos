@@ -6,46 +6,53 @@
 <title>Tu libro está listo — Ethos Bios</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Mulish:wght@400;600;700&display=swap');
-body{margin:0;padding:0;background:#fdf8f2;font-family:'Mulish',Arial,sans-serif}
+body{margin:0;padding:0;background:#FBF7F0;font-family:'Mulish',Arial,sans-serif}
 .wrap{max-width:560px;margin:0 auto;padding:32px 16px}
-.card{background:#ffffff;border:0.5px solid #e8d9b8;border-radius:12px;overflow:hidden}
-.header{background:#2C1A0E;padding:2.25rem 2rem 2rem;text-align:center}
-.wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:500;color:#F5EDD8;letter-spacing:0.04em;margin:0 0 10px}
-.header-badge{display:inline-block;background:rgba(196,149,106,.18);border:0.5px solid rgba(196,149,106,.4);color:#C4956A;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;padding:4px 14px;border-radius:100px;margin-bottom:14px;font-family:'Mulish',Arial,sans-serif;font-weight:700}
-.header-subject{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;color:#F5EDD8;line-height:1.3;margin:0;font-weight:400}
-.header-subject em{color:#C4956A}
+.card{background:#ffffff;border:0.5px solid rgba(196,155,24,.25);border-radius:12px;overflow:hidden}
+.stripe{height:5px;background:linear-gradient(90deg,#C49B18 0 34%,#12A594 34% 67%,#7C6BC4 67% 100%)}
+.header{background:#2C2418;padding:2.25rem 2rem 2rem;text-align:center}
+.wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;color:#C49B18;letter-spacing:0.04em;margin:0 0 10px}
+.header-badge{display:inline-block;background:#C49B18;border:none;color:#2C2418;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:14px;font-family:'Mulish',Arial,sans-serif;font-weight:800}
+.confetti{display:flex;justify-content:center;gap:10px;margin-bottom:14px}
+.confetti span{width:6px;height:6px;transform:rotate(45deg);display:inline-block}
+.confetti span:nth-child(1),.confetti span:nth-child(4){background:#C49B18}
+.confetti span:nth-child(2),.confetti span:nth-child(5){background:#12A594}
+.confetti span:nth-child(3){background:#7C6BC4}
+.header-subject{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;color:#FBF7F0;line-height:1.3;margin:0;font-weight:400}
+.header-subject em{color:#C49B18;font-style:italic}
 .body{padding:2rem}
-.body p{font-size:15px;line-height:1.7;color:#3d2b0a;margin:0 0 1rem;font-family:'Mulish',Arial,sans-serif}
-.book-box{background:#faf5ee;border:0.5px solid #e8d9b8;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;margin:1.25rem 0}
-.book-cover{width:52px;height:70px;background:#2C1A0E;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-.book-cover::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#1a0e07;border-radius:3px 0 0 3px}
-.book-cover-txt{font-family:'Cormorant Garamond',Georgia,serif;font-size:8px;color:#C4956A;text-align:center;padding:0 5px;line-height:1.4;letter-spacing:0.05em}
-.book-info p{margin:0;font-size:13px;color:#9a7b5a;font-family:'Mulish',Arial,sans-serif}
-.book-info strong{font-size:15px;color:#3d2b0a;font-weight:700;display:block;margin-bottom:3px;font-family:'Mulish',Arial,sans-serif}
-.expiry-note{display:flex;align-items:center;gap:8px;font-size:13px;color:#9a7b5a;margin:0 0 1.5rem;font-family:'Mulish',Arial,sans-serif}
+.body p{font-size:15px;line-height:1.7;color:#2C2418;margin:0 0 1rem;font-family:'Mulish',Arial,sans-serif}
+.book-box{background:#FBF7F0;border:0.5px solid rgba(196,155,24,.3);border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;margin:1.25rem 0}
+.book-cover{width:52px;height:70px;background:#2C2418;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;border:1px solid #C49B18}
+.book-cover-txt{font-family:'Cormorant Garamond',Georgia,serif;font-size:8px;color:#C49B18;text-align:center;padding:0 5px;line-height:1.4;letter-spacing:0.05em}
+.book-info p{margin:0;font-size:13px;color:rgba(44,36,24,.55);font-family:'Mulish',Arial,sans-serif}
+.book-info strong{font-size:15px;color:#2C2418;font-weight:700;display:block;margin-bottom:3px;font-family:'Mulish',Arial,sans-serif}
+.expiry-note{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(44,36,24,.55);margin:0 0 1.5rem;font-family:'Mulish',Arial,sans-serif}
 .cta{
-  display:block;background:#2C1A0E;color:#F5EDD8;text-align:center;
+  display:block;background:#C49B18;color:#2C2418;text-align:center;
   padding:0.9rem 1.5rem;border-radius:8px;font-family:'Mulish',Arial,sans-serif;
   font-size:14px;font-weight:700;letter-spacing:0.06em;text-decoration:none;
   margin:0 0 1.5rem
 }
-.divider{border:none;border-top:0.5px solid #e8d9b8;margin:1.5rem 0}
-.footnote{font-size:13px;color:#9a7b5a;line-height:1.6;margin:0;font-family:'Mulish',Arial,sans-serif}
-.footer{padding:1rem 2rem;border-top:0.5px solid #e8d9b8;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.footer-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:#9a7b5a}
-.footer-link{font-size:12px;color:#9a7b5a;font-family:'Mulish',Arial,sans-serif}
+.divider{border:none;border-top:0.5px solid rgba(196,155,24,.2);margin:1.5rem 0}
+.footnote{font-size:13px;color:rgba(44,36,24,.55);line-height:1.6;margin:0;font-family:'Mulish',Arial,sans-serif}
+.footer{padding:1rem 2rem;border-top:0.5px solid rgba(196,155,24,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:#C49B18}
+.footer-link{font-size:12px;color:rgba(44,36,24,.55);font-family:'Mulish',Arial,sans-serif}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
+    <div class="stripe"></div>
     <div class="header">
       <p class="wordmark">Ethos Bios</p>
-      <div class="header-badge">✓ Libro terminado</div>
-      <h1 class="header-subject">El libro de la<br><em>{{FAMILIA_NOMBRE}} está listo</em></h1>
+      <div class="confetti"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="header-badge">🎉 ¡Libro terminado!</div>
+      <h1 class="header-subject">Ya podés leer<br><em>el libro de los {{FAMILIA_NOMBRE}}</em></h1>
     </div>
     <div class="body">
-      <p>Hola, {{COMPRADOR_NOMBRE}}. Todas las historias fueron grabadas, procesadas y encuadernadas. El resultado es una historia única como tu familia — descubrila acá.</p>
+      <p>¡Hola, {{COMPRADOR_NOMBRE}}! Todas las historias fueron grabadas, procesadas y editadas. El resultado es una historia única como tu familia — y ya la podés abrir.</p>
 
       <div class="book-box">
         <div class="book-cover">
@@ -53,7 +60,7 @@ body{margin:0;padding:0;background:#fdf8f2;font-family:'Mulish',Arial,sans-serif
         </div>
         <div class="book-info">
           <strong>{{FAMILIA_NOMBRE}} — Libro biográfico</strong>
-          <p>{{TOTAL_HISTORIAS}} historias · árbol genealógico incluido</p>
+          <p>{{TOTAL_HISTORIAS}} historias · con la voz real de cada uno en QR</p>
           <p>Generado el {{FECHA_GENERACION}}</p>
         </div>
       </div>
@@ -63,7 +70,7 @@ body{margin:0;padding:0;background:#fdf8f2;font-family:'Mulish',Arial,sans-serif
         El link de descarga vence en 30 días.
       </p>
 
-      <a href="{{PDF_URL}}" class="cta">Descargar PDF →</a>
+      <a href="{{PDF_URL}}" class="cta">🎉 Descargar mi libro →</a>
 
       <hr class="divider">
 

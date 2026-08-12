@@ -68,7 +68,7 @@ def send_bienvenida(email_comprador: str, nombre_familia: str, tokens: list[dict
         .replace("{{FAMILIA_NOMBRE}}", nombre_familia)
         .replace("{{INTEGRANTE_NOMBRE}}", "")
         .replace("{{FECHA_HORA}}", "")
-        .replace('<a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia ↗</a>', tokens_html)
+        .replace('<a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia →</a>', tokens_html)
     )
 
     try:
@@ -89,7 +89,7 @@ def send_libro_listo(email_comprador: str, nombre_familia: str, signed_url: str)
     html = (
         html
         .replace("{{FAMILIA_NOMBRE}}", nombre_familia)
-        .replace("Hola, {{COMPRADOR_NOMBRE}}.", "Hola.")
+        .replace("¡Hola, {{COMPRADOR_NOMBRE}}!", "¡Hola!")
         .replace("{{PDF_URL}}", signed_url)
         .replace("{{DASHBOARD_URL}}", "https://ethosbios.com/mi-familia")
         .replace("{{AÑO}}", str(datetime.now().year))
