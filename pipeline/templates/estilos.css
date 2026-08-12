@@ -417,3 +417,24 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .tr-corner.bl{ bottom:22px; left:22px; } .tr-corner.br{ bottom:22px; right:22px; }
 .tr-seal{ width:34px; height:34px; margin-bottom:20px; }
 .tr-seal img{ width:100%; height:100%; display:block; }
+
+/* ============================================================
+   07 · CIERRE DE CAPÍTULO (sello de marca + QR de voz) — Ethos Bios
+   ============================================================ */
+.page.cierre{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; }
+.cl-corner{ position:absolute; width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+.cl-corner.tl{ top:22px; left:22px; } .cl-corner.tr{ top:22px; right:22px; }
+.cl-corner.bl{ bottom:22px; left:22px; } .cl-corner.br{ bottom:22px; right:22px; }
+.page.cierre::before{ content:''; position:absolute; inset:26px; border:1px solid var(--gold); pointer-events:none; }
+
+.cl-brand{ display:flex; align-items:center; gap:14px; margin-bottom:40px; }
+.cl-brand .line{ width:36px; height:1px; background:var(--rule); }
+.cl-brand .name{ font-family:var(--serif); font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--lavender); }
+
+.cl-seal{ width:180px; height:180px; margin-bottom:24px; }
+.cl-seal img{ width:100%; height:100%; object-fit:contain; }
+
+.cl-label{ font-family:var(--sans); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px; }
+.cl-quote{ font-family:var(--serif); font-style:italic; font-size:16px; color:var(--gold); max-width:340px; line-height:1.5; }
+
+.cl-foot{ position:absolute; bottom:40px; left:60px; right:60px; display:flex; justify-content:space-between; font-family:var(--sans); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }

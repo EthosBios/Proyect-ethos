@@ -5,26 +5,29 @@
 <link rel="stylesheet" href="estilos.css" />
 </head>
 <body>
-  <div class="page closer">
-    <div class="cl-inner">
-      <div class="brand-head">
-        <span class="brand-line"></span>
-        <span class="brand-name">Ethos Bios</span>
-        <span class="brand-line"></span>
-      </div>
+  <div class="page cierre">
+    <div class="cl-corner tl"></div>
+    <div class="cl-corner tr"></div>
+    <div class="cl-corner bl"></div>
+    <div class="cl-corner br"></div>
 
-      {% if cierre.con_qr %}
-      <div class="cl-seal has-qr">
-        <img src="data:image/png;base64,{{ cierre.seal_qr_b64 }}" alt="Sello Ethos Bios con código QR" />
-      </div>
-      <div class="cl-label">Escaneá para escuchar su voz</div>
-      <p class="cl-quote">Algunas palabras se entienden mejor cuando se escuchan.</p>
-      {% else %}
-      <div class="cl-seal no-qr">
-        <img src="assets/sello-completo_transp.png" alt="" />
-      </div>
-      {% endif %}
+    <div class="cl-brand">
+      <span class="line"></span>
+      <span class="name">Ethos Bios</span>
+      <span class="line"></span>
     </div>
+
+    {% if cierre.con_qr %}
+    <div class="cl-seal has-qr">
+      <img src="data:image/png;base64,{{ cierre.seal_qr_b64 }}" alt="Sello Ethos Bios con código QR" />
+    </div>
+    <div class="cl-label">Escaneá para escuchar su voz</div>
+    <p class="cl-quote">Algunas palabras se entienden mejor cuando se escuchan.</p>
+    {% else %}
+    <div class="cl-seal no-qr">
+      <img src="assets/sello-completo_transp.png" alt="" />
+    </div>
+    {% endif %}
 
     <div class="cl-foot">
       <span class="cl-apellido">{{ cierre.apellido }}</span>
