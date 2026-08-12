@@ -6,28 +6,39 @@
 </head>
 <body>
   <div class="page cover">
-    <div class="rail-v"></div>
+    <div class="cv-frame">
+      <div class="cv-corner tl"></div>
+      <div class="cv-corner tr"></div>
+      <div class="cv-corner bl"></div>
+      <div class="cv-corner br"></div>
 
-    <div class="year"><span>{{ libro.anio_label | default('MEMORIAS · 2026') }}</span></div>
+      <div class="cv-ornament"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
 
-    <div class="block">
-      <div class="kicker" style="color:var(--brown)">{{ libro.kicker | default('El libro de la familia') }}</div>
-      <h1 class="title serif">
-        {{ libro.apellido_1 }}{% if libro.apellido_2 %}<br /><span class="mid">·</span> {{ libro.apellido_2 }}{% endif %}
-      </h1>
-      <p class="body lede">{{ libro.lede | default('Cada voz, un capítulo. Cada capítulo, una rama nueva en el árbol de los que somos.') }}</p>
-    </div>
+      <div class="cv-middle">
+        <div class="cv-seal"><img src="img/sello-ethos-bios.svg" alt="Ethos Bios" /></div>
+        <div class="cv-kicker">{{ libro.kicker | default('Familia') }}</div>
+        <h1 class="cv-title">
+          {{ libro.apellido_1 }}{% if libro.apellido_2 %}<span class="mid"> · </span>{{ libro.apellido_2 }}{% endif %}
+        </h1>
+        <div class="cv-rule"></div>
+        <p class="cv-lede">{{ libro.lede | default('Cada voz, un capítulo. Cada capítulo, una rama nueva en el árbol de los que somos.') }}</p>
+        <div class="cv-yearline">{{ libro.anio_label | default('MEMORIAS · 2026') }}</div>
+      </div>
 
-    {% if libro.portada_img %}
-    <div class="pin">
-      <div class="polaroid">
-        <img class="ph-img" style="height:150px" src="{{ libro.portada_img }}" alt="" />
-        <div class="cap">{{ libro.portada_cap | default('la familia, hoy') }}</div>
+      {% if libro.portada_img %}
+      <div class="cv-pin">
+        <div class="polaroid">
+          <img class="ph-img" style="height:96px" src="{{ libro.portada_img }}" alt="" />
+          <div class="cap">{{ libro.portada_cap | default('la familia, hoy') }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="cv-sig">
+        <div class="kicker">{{ libro.firma }}</div>
+        <div class="cv-brand">Ethos Bios</div>
       </div>
     </div>
-    {% endif %}
-
-    <div class="sig"><span class="kicker">{{ libro.firma }}</span></div>
   </div>
 </body>
 </html>

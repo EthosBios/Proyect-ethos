@@ -140,12 +140,13 @@
 @page { size: 148mm 210mm; margin: 0; }
 
 :root{
-  --paper:#F5F0E8; --paper-deep:#EDE4D5; --cream:#FBF8F1;
-  --ink:#2C271F; --ink-soft:#5B5346; --ink-faint:#8C8270;
+  /* Marca Ethos Bios — paleta oficial (aprobada 11/08, única fuente de verdad) */
+  --gold:#C49B18; --teal:#12A594; --lavender:#7C6BC4;
+  --cream:#FBF7F0; --white:#FFFFFF;
+  --paper:#F5F0E8; --paper-deep:#EDE4D5;
+  --ink:#2C2418; --ink-soft:#5B5346; --ink-faint:#8C8270;
   --brown:#7B5E3A; --brown-deep:#5A4226; --brown-tint:#B69A72;
-  --sage:#8B9A78; --sage-deep:#6C7A59; --sage-tint:#C2CBB4;
   --rule:#DBCFB9; --rule-soft:#E7DDCB;
-  --gold:#C49B18; --gold-deep:#8A6A0F; --ink-brown:#3D3226;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --sans:'Mulish',system-ui,-apple-system,sans-serif;
 }
@@ -197,8 +198,8 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 /* ---------- separador de sección ---------- */
 .sep{ display:flex; align-items:center; gap:14px; }
 .sep .line{ flex:1; height:1px; background:var(--rule); }
-.sep .dot{ width:5px; height:5px; border-radius:50%; background:var(--sage); }
-.sep .dot.brown{ background:var(--brown-tint); }
+.sep .dot{ width:5px; height:5px; border-radius:0; background:var(--lavender); transform:rotate(45deg); }
+.sep .dot.brown{ width:7px; height:7px; background:var(--gold); }
 
 /* dropcap deshabilitado: initial-letter no es confiable en WeasyPrint */
 .dropcap::first-letter{ }
@@ -210,7 +211,7 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 /* ============================================================
    01 · PORTADA (keepsake)
    ============================================================ */
-.cover .rail-v{ position:absolute; left:54px; top:70px; bottom:70px; width:2px; background:var(--sage); }
+.cover .rail-v{ position:absolute; left:54px; top:70px; bottom:70px; width:2px; background:var(--gold); }
 .cover .year{ position:absolute; right:40px; top:0; bottom:0; display:flex; align-items:center; }
 .cover .year span{ writing-mode:vertical-lr;
   font-family:var(--sans); font-weight:600; font-size:12px; letter-spacing:.5em; color:var(--brown-tint); }
@@ -223,42 +224,15 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .cover .sig{ position:absolute; left:78px; bottom:56px; }
 
 /* ============================================================
-   02 · APERTURA DE CAPÍTULO (sello de marca + cita real)
+   02 · APERTURA DE CAPÍTULO + ÁRBOL
    ============================================================ */
-.opener .op-inner{ position:absolute; top:0; left:0; width:100%; height:100%; padding:70px 60px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; }
-.opener .ch-num{ color:var(--gold); letter-spacing:.34em; }
-.opener .ch-name{ margin:12px 0 0; font-weight:500; font-size:46px; line-height:1.1;
-  color:var(--ink-brown); font-family:var(--serif); }
-.opener .op-seal{ margin:30px 0 26px; }
-.opener .op-seal img{ display:block; width:129px; height:auto; opacity:.32; }
-.opener .op-quote{ margin:0; max-width:320px; font-family:var(--serif); font-style:italic;
-  font-weight:500; font-size:17px; line-height:1.5; color:var(--ink-brown); }
-
-/* ============================================================
-   07 · CIERRE DE CAPÍTULO (sello + QR de voz)
-   ============================================================ */
-.closer .cl-inner{ position:absolute; top:0; left:0; width:100%; height:100%; padding:66px 58px 96px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; }
-.closer .brand-head{ display:flex; align-items:center; justify-content:center;
-  gap:14px; margin-bottom:34px; }
-.closer .brand-head .brand-line{ width:34px; height:1px; background:var(--gold); }
-.closer .brand-head .brand-name{ font-family:var(--serif); font-weight:500; font-size:14px;
-  white-space:nowrap; text-transform:uppercase; letter-spacing:.42em; padding-left:.42em;
-  color:var(--gold); }
-.closer .cl-seal img{ display:block; height:auto; }
-.closer .cl-seal.has-qr img{ width:300px; }
-.closer .cl-seal.no-qr img{ width:300px; opacity:.62; }
-.closer .cl-label{ margin-top:30px; font-family:var(--sans); font-weight:600; font-size:10.5px;
-  text-transform:uppercase; letter-spacing:.34em; color:var(--gold-deep); }
-.closer .cl-quote{ margin:16px auto 0; max-width:330px; font-family:var(--serif);
-  font-style:italic; font-weight:500; font-size:16px; line-height:1.5; color:var(--ink-brown); }
-.closer .cl-foot{ position:absolute; left:58px; right:58px; bottom:34px;
-  display:flex; justify-content:space-between; align-items:baseline;
-  font-family:var(--sans); font-size:10px; font-weight:400; letter-spacing:.18em;
-  color:var(--brown-tint); }
+.opener .head{ padding:48px 60px 0; text-align:center; }
+.opener .ch-num{ color:var(--lavender); }
+.opener .ch-name{ margin:14px 0 0; font-weight:500; font-size:48px; line-height:1.1; color:var(--ink); font-family:var(--serif); }
+.opener .ch-epi{ margin:12px auto 0; font-style:italic; font-size:16px; color:var(--brown);
+  max-width:300px; font-family:var(--serif); }
+.opener .tree{ position:absolute; bottom:0; left:0; right:0; height:580px; padding:0 80px 56px; overflow:hidden; }
+.opener .tree svg{ display:block; width:100%; height:100%; }
 
 /* ============================================================
    03 · PÁGINA INTERIOR
@@ -305,14 +279,141 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .indice{ padding:70px 60px 56px; }
 .indice .head{ text-align:center; margin-bottom:14px; }
 .indice .head .ttl{ margin:12px 0 0; font-weight:500; font-size:44px; color:var(--ink); font-family:var(--serif); }
-.indice .head .rule{ width:44px; height:1px; background:var(--sage); margin:20px auto 0; }
+.indice .head .rule{ width:44px; height:1px; background:var(--gold); margin:20px auto 0; }
 .indice .list{ margin-top:18px; }
 .person{ text-align:center; padding:18px 0; }
 .person .num{ font-size:9px; color:var(--brown-tint); }
 .person .name{ font-family:var(--serif); font-size:30px; font-weight:500; color:var(--ink);
   margin:5px 0 6px; display:flex; align-items:center; justify-content:center; gap:12px; }
-.person .name .mark{ width:7px; height:7px; border-radius:50%; background:var(--sage); }
+.person .name .mark{ width:6px; height:6px; border-radius:0; background:var(--gold); transform:rotate(45deg); }
 .person .phrase{ font-family:var(--serif); font-style:italic; font-size:17px; color:var(--brown); }
 .person .div{ display:flex; align-items:center; gap:14px; justify-content:center; width:90px; margin:18px auto 0; }
 .person .div .line{ width:34px; height:1px; background:var(--rule); }
 .person .div .dot{ width:5px; height:5px; border-radius:50%; background:var(--brown-tint); }
+
+/* ============================================================
+   PRUEBA · Portada (01) rediseñada con el sistema Ethos Bios
+   (el mismo del mockup del libro que ya aprobamos): marco doble
+   dorado con rombos en las esquinas, ornamento línea–rombo–línea,
+   sello, antetítulo + apellido grande en cursiva dorada.
+   Clases nuevas — no reutiliza .rail-v/.year/.block/.title del
+   .cover original (esas quedan intactas por si se usan en otra
+   página más adelante).
+   ============================================================ */
+.cv-frame{
+  position:absolute; inset:26px; box-sizing:border-box;
+  border:2px solid var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  padding:40px 46px;
+}
+.cv-frame::before{ content:''; position:absolute; inset:6px; border:1px solid var(--gold); pointer-events:none; }
+.cv-corner{ position:absolute; width:7px; height:7px; background:var(--gold); transform:rotate(45deg); }
+.cv-corner.tl{ top:-4px; left:-4px; } .cv-corner.tr{ top:-4px; right:-4px; }
+.cv-corner.bl{ bottom:-4px; left:-4px; } .cv-corner.br{ bottom:-4px; right:-4px; }
+
+.cv-ornament{ display:flex; align-items:center; gap:8px; }
+.cv-ornament .line{ width:36px; height:1px; background:var(--gold); }
+.cv-ornament .dot{ width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+
+.cv-middle{ text-align:center; display:flex; flex-direction:column; align-items:center; }
+.cv-seal{ width:64px; height:64px; margin-bottom:22px; }
+.cv-seal img{ width:100%; height:100%; display:block; }
+.cv-kicker{ font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
+.cv-title{ font-family:var(--serif); font-style:italic; font-weight:600; font-size:46px;
+  line-height:1.05; color:var(--gold); margin:0 0 14px; }
+.cv-title .mid{ color:var(--ink-faint); font-size:.6em; }
+.cv-rule{ width:56px; height:2px; background:var(--gold); margin:0 0 16px; }
+.cv-lede{ font-family:var(--sans); font-size:12px; line-height:1.6; color:var(--ink-soft);
+  text-align:center; max-width:290px; margin:0 0 14px; }
+.cv-yearline{ font-family:var(--serif); font-size:12px; color:var(--gold); letter-spacing:.02em; }
+
+.cv-pin{ position:absolute; right:40px; bottom:60px; width:112px; transform:rotate(4deg); }
+.cv-pin .polaroid{ padding:7px 7px 24px; }
+.cv-pin .polaroid .ph{ height:96px; }
+.cv-pin .polaroid .cap{ bottom:7px; font-size:10px; }
+
+.cv-sig{ text-align:center; }
+.cv-sig .kicker{ color:var(--lavender); margin-bottom:4px; }
+.cv-brand{ font-family:var(--sans); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-faint); }
+
+/* ============================================================
+   PRUEBA · Apertura de capítulo (02) — sistema Ethos Bios
+   Sin árbol (esa función ya no existe). Solo recoloreamos y le
+   damos jerarquía tipográfica: kicker en lavanda (contenido de
+   una persona/ocasión), nombre grande serif, rombo dorado, cita
+   epígrafe en dorado cursiva, folio en lavanda.
+   ============================================================ */
+.opener .head{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:0 70px; text-align:center;
+}
+.opener .kicker.ch-num{ color:var(--lavender); font-size:12px; letter-spacing:.3em; margin-bottom:18px; }
+.opener .ch-name{ font-family:var(--serif); font-weight:600; font-size:56px; line-height:1.05; color:var(--ink); margin:0; }
+.opener .ch-name::after{ content:''; display:block; width:56px; height:2px; background:var(--gold); margin:22px auto 0; }
+.opener .ch-epi{ font-family:var(--serif); font-style:italic; font-size:18px; color:var(--gold); margin:26px auto 0; max-width:320px; }
+.opener .folio{ color:var(--lavender); }
+.page.opener::before{ content:''; position:absolute; inset:26px; border:1px solid var(--gold); pointer-events:none; }
+.page.opener .op-corner{ position:absolute; width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+.page.opener .op-corner.tl{ top:22px; left:22px; } .page.opener .op-corner.tr{ top:22px; right:22px; }
+.page.opener .op-corner.bl{ bottom:22px; left:22px; } .page.opener .op-corner.br{ bottom:22px; right:22px; }
+
+/* ============================================================
+   PRUEBA · Página interior (03) — sistema Ethos Bios
+   Encabezado corrido: nombre en lavanda / capítulo tenue.
+   Separador: línea + rombo dorado central (mismo motivo que
+   tapa y apertura) en vez de puntos circulares sage/marrón.
+   Cita en dorado cursiva, foto con marco fino dorado, folio lavanda.
+   ============================================================ */
+.interior .run-head{ border-bottom-color: rgba(196,155,24,.35); }
+.interior .run-head .kicker{ color:var(--lavender); white-space:nowrap; }
+.interior .run-head .kicker.r{ color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
+.interior .sep .dot{ border-radius:0; width:5px; height:5px; background:var(--lavender); transform:rotate(45deg); }
+.interior .sep .dot.brown{ width:7px; height:7px; background:var(--gold); }
+.interior .pull.quote{ color:var(--gold); }
+.interior .body em{ color:var(--gold); }
+.interior .polaroid{ border-color: rgba(196,155,24,.4); }
+.interior .polaroid .cap{ color:var(--ink-faint); }
+.interior .folio{ color:var(--lavender); }
+
+/* ============================================================
+   PRUEBA · Índice de la familia (04) — sistema Ethos Bios
+   Kicker superior lavanda, regla dorada bajo el título, número
+   de capítulo dorado, marca de destacado como rombo dorado,
+   frase en dorado cursiva, separadores con rombo dorado, folio lavanda.
+   ============================================================ */
+.indice .head .kicker{ color: var(--lavender); }
+.indice .head .rule{ background: var(--gold); }
+.person .num{ color: var(--gold); }
+.person .name .mark{ width:6px; height:6px; border-radius:0; background:var(--gold); transform:rotate(45deg); }
+.person .phrase{ color: var(--gold); }
+.person .div .dot{ border-radius:0; width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+.indice .folio{ color: var(--lavender); }
+
+/* ============================================================
+   PRUEBA · Prólogo / Epílogo (05) — sistema Ethos Bios
+   Mismo lenguaje que la interior: kicker lavanda, separador con
+   rombo dorado, cita dorada cursiva, folio lavanda.
+   ============================================================ */
+.seccion .seccion-kicker{ color: var(--lavender); }
+.seccion-cont-head .kicker{ color: var(--lavender); }
+.seccion .sep .dot{ border-radius:0; width:5px; height:5px; background:var(--lavender); transform:rotate(45deg); }
+.seccion .sep .dot.brown{ width:7px; height:7px; background:var(--gold); }
+.seccion .pull.quote{ color: var(--gold); }
+.seccion .body em{ color: var(--gold); }
+.seccion .folio{ color: var(--lavender); }
+
+/* ============================================================
+   PRUEBA · Transición entre capítulos (06) — sistema Ethos Bios
+   Rombo dorado en los separadores (mismo motivo de toda la
+   colección), folio lavanda.
+   ============================================================ */
+.transicion-sep .dot.brown{ border-radius:0; width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+.transicion-page .folio{ color: var(--lavender); }
+.transicion-page::before{ content:''; position:absolute; inset:26px; border:1px solid var(--gold); pointer-events:none; }
+.tr-corner{ position:absolute; width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+.tr-corner.tl{ top:22px; left:22px; } .tr-corner.tr{ top:22px; right:22px; }
+.tr-corner.bl{ bottom:22px; left:22px; } .tr-corner.br{ bottom:22px; right:22px; }
+.tr-seal{ width:34px; height:34px; margin-bottom:20px; }
+.tr-seal img{ width:100%; height:100%; display:block; }

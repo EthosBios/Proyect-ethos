@@ -340,7 +340,7 @@ def _render_libro(
             "numero": idx,
             "romano": _a_romano(idx),
             "nombre": nombre,
-            "cita": cita,
+            "epigrafe": cita,
             "folio": folio_apertura,
         }
         partes.append(_extract_body(tmpl_apertura.render(capitulo=cap_ctx)))
