@@ -438,3 +438,12 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .cl-quote{ font-family:var(--serif); font-style:italic; font-size:16px; color:var(--gold); max-width:340px; line-height:1.5; }
 
 .cl-foot{ position:absolute; bottom:40px; left:60px; right:60px; display:flex; justify-content:space-between; font-family:var(--sans); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }
+
+/* ============================================================
+   Anti-corte de citas entre páginas — evita que una cita se
+   parta a mitad de palabra en un salto de página. Aplica a las
+   citas interiores (.pull.quote, que fluyen con el texto) y, como
+   refuerzo, al epígrafe de apertura (.ch-epi, ya a salvo por su
+   posicionamiento absoluto).
+   ============================================================ */
+.pull.quote, .ch-epi{ break-inside: avoid; orphans: 2; widows: 2; }
