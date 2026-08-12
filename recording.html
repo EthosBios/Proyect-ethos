@@ -201,6 +201,13 @@ header .logo {
   font-weight: 500;
 }
 
+.bloque-intro {
+  margin-top: 14px;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
 /* Question card */
 .pregunta-card {
   background: var(--surface);
@@ -647,6 +654,140 @@ header .logo {
   color: var(--accent-light);
 }
 
+/* ── Gracias: próximos pasos (portado de pipeline/static) ── */
+.gracias-next {
+  background: #faf5ee;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+.gracias-next-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 14px;
+}
+.gracias-next-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gracias-next-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.45;
+}
+.gracias-step-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+  margin-top: 1px;
+}
+
+/* ── Compartir WhatsApp (portado de pipeline/static) ── */
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 28px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 16px;
+  letter-spacing: 0.2px;
+  transition: opacity .2s;
+}
+.btn-wa:hover { opacity: .88; }
+
+/* ── Confirmación / edición de nombre (portado de pipeline/static) ── */
+.nombre-confirm {
+  margin: 20px 0 0;
+  padding: 18px 20px;
+  background: #fdf6f0;
+  border: 1.5px solid var(--accent-light);
+  border-radius: 12px;
+  text-align: center;
+}
+.nombre-confirm-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin: 0 0 6px;
+}
+.nombre-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--text);
+  margin: 0 0 14px;
+}
+.nombre-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+.nombre-checkbox-label input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.btn-editar-nombre {
+  display: block;
+  margin: 10px auto 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.nombre-edit-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.nombre-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Playfair Display', serif;
+  color: var(--text);
+  background: white;
+}
+.btn-guardar-nombre {
+  padding: 10px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 /* ── Shared button ── */
 .btn-primary {
   display: inline-block;
@@ -883,8 +1024,24 @@ header .logo {
   <div class="container">
     <div class="welcome-card">
       <p id="saludo" class="saludo">Cargando…</p>
+
+      <!-- Confirmación / edición de nombre -->
+      <div id="nombre-confirm" class="nombre-confirm hidden">
+        <p class="nombre-confirm-label">Tu nombre en el libro</p>
+        <p class="nombre-display" id="nombre-display"></p>
+        <label class="nombre-checkbox-label">
+          <input type="checkbox" id="nombre-ok-checkbox" onchange="onNombreCheckChange()">
+          <span>Sí, así se escribe mi nombre</span>
+        </label>
+        <button class="btn-editar-nombre" id="btn-editar-nombre" onclick="toggleEditNombre()">Cambiar</button>
+        <div id="nombre-edit-section" class="nombre-edit-row hidden">
+          <input type="text" id="nombre-input" class="nombre-input" maxlength="100" placeholder="Escribí tu nombre">
+          <button class="btn-guardar-nombre" onclick="guardarNombre()">Guardar</button>
+        </div>
+      </div>
+
       <p class="welcome-subtitle">
-        Preparamos 16 preguntas para ayudarte a contar tu historia.
+        Preparamos 17 preguntas para ayudarte a contar tu historia.
         Podés tomarte el tiempo que necesites — no hay apuro.
       </p>
 
@@ -958,7 +1115,7 @@ header .logo {
 
   <!-- Fixed progress bar -->
   <div class="progress-bar-wrap">
-    <span class="progress-count" id="prog-count">0 / 16</span>
+    <span class="progress-count" id="prog-count">0 / 17</span>
     <div class="progress-track">
       <div class="progress-fill" id="prog-fill"></div>
     </div>
@@ -970,7 +1127,7 @@ header .logo {
 <div id="screen-voz" class="screen voz-screen hidden">
   <div class="container" style="padding-top:40px;padding-bottom:80px">
     <div class="voz-card">
-      <p class="voz-eyebrow">Pregunta 17 · Opcional</p>
+      <p class="voz-eyebrow">Pregunta 18 · Opcional</p>
       <h2 class="voz-titulo">Esta es distinta.</h2>
       <p class="voz-intro">Tu voz va a quedar dentro del libro, para siempre. Los que lo lean van a poder escucharte.</p>
 
@@ -1015,6 +1172,30 @@ header .logo {
       <div id="gracias-nombre">¡Gracias!</div>
       <div class="gracias-divider"></div>
       <p class="gracias-msg">Tu historia ya es parte de algo más grande.</p>
+
+      <div class="gracias-next">
+        <p class="gracias-next-title">¿Qué pasa después?</p>
+        <div class="gracias-next-steps">
+          <div class="gracias-next-step">
+            <span class="gracias-step-icon">🎙</span>
+            <span>Transcribimos tus respuestas con inteligencia artificial.</span>
+          </div>
+          <div class="gracias-next-step">
+            <span class="gracias-step-icon">📖</span>
+            <span>Cuando todos los integrantes graben, generamos el libro automáticamente.</span>
+          </div>
+          <div class="gracias-next-step">
+            <span class="gracias-step-icon">✉️</span>
+            <span>El organizador de la familia recibe el PDF por email — listo para compartir o imprimir.</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-wa" onclick="compartirWhatsApp()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Compartir en WhatsApp
+      </button>
+
       <p class="gracias-firma">— Libro Familiar</p>
     </div>
   </div>
@@ -1025,34 +1206,36 @@ const TOKEN = new URLSearchParams(location.search).get('token');
 const API_BASE = 'https://familia-pipeline-776445604502.southamerica-east1.run.app';
 
 const BLOQUES = [
-  { titulo: 'De dónde venís',       sub: 'El punto de partida de tu historia', preguntas: [1,2,3] },
-  { titulo: 'Los que te formaron',  sub: 'La gente que estuvo antes que vos',  preguntas: [4,5,6] },
-  { titulo: 'Tus elecciones',       sub: 'El camino que construiste',           preguntas: [7,8,9] },
-  { titulo: 'Tu gente',             sub: 'Los que hacen que valga la pena',     preguntas: [10,11,12,13,14] },
-  { titulo: 'Lo que sabés ahora',   sub: 'Lo que se gana con el tiempo',        preguntas: [15,16] },
+  { titulo: 'De dónde venís',       sub: 'El punto de partida de tu historia', intro: 'Estamos armando tu capítulo. Empecemos por tus orígenes.', preguntas: [1,2,3] },
+  { titulo: 'Los que te formaron',  sub: 'La gente que estuvo antes que vos',  preguntas: [4,5,6,7] },
+  { titulo: 'Tus elecciones',       sub: 'El camino que construiste',           preguntas: [8,9,10] },
+  { titulo: 'Tu gente',             sub: 'Los que hacen que valga la pena',     preguntas: [11,12,13,14,15] },
+  { titulo: 'Lo que sabés ahora',   sub: 'Lo que se gana con el tiempo',        preguntas: [16,17] },
 ];
 
 const PREGUNTAS = {
-  1:  '¿Cómo te llaman en tu familia — y de dónde viene ese nombre o apodo?',
+  1:  '¿Cómo te llaman en tu familia? Si hay una historia detrás de tu nombre o de algún apodo, contámela.',
   2:  '¿Dónde naciste y cómo era ese lugar? Pintá la imagen.',
   3:  '¿Cómo eras de chico? ¿Qué te gustaba hacer?',
-  4:  '¿Cómo eran tus viejos? Describílos como si yo no los conociera.',
+  4:  '¿Cómo eran tus padres?',
   5:  '¿Cuál era el momento de la semana que más disfrutabas en casa?',
-  6:  '¿Hay alguien más que te acuerdes además de tus viejos que te haya marcado en tu vida?',
-  7:  '¿Cómo terminaste donde estás — trabajo, familia, dónde vivís?',
-  8:  '¿Qué hobbies tenés, qué cosas disfrutás, y cuál es el logro del que más orgulloso te sentís?',
-  9:  '¿Cuál es una decisión que tomaste y que quizás nadie vio, pero que cambió todo?',
-  10: '¿Hay alguien en tu familia a quien nunca le dijiste algo importante? ¿Qué le dirías hoy?',
-  11: '¿Cómo querés que te recuerden los que vienen después?',
-  12: '¿Hay alguien fuera de tu familia que haya marcado tu vida? ¿Qué tiene de especial esa persona?',
-  13: '¿Cuál es la anécdota que siempre contás cuando estás con tus amigos de siempre?',
-  14: '¿Cuál es la travesura que más recuerdan de vos?',
-  15: '¿Qué aprendiste con los años que ojalá hubieras sabido antes?',
-  16: 'Si pudieras volver atrás y hablarle a una versión más joven de vos, ¿qué le dirías?',
+  6:  '¿Hay alguien más, además de tus padres, que te haya marcado en tu vida?',
+  7:  '¿Cómo son — o eran — tus hermanos y tus hijos?',
+  8:  '¿Cómo terminaste donde estás — trabajo, familia, dónde vivís?',
+  9:  '¿Qué hobbies tenés, qué cosas disfrutás, y cuál es el logro del que más orgulloso te sentís?',
+  10: '¿Cuál es una decisión que tomaste y que quizás nadie vio, pero que cambió todo?',
+  11: '¿Hay alguien en tu familia a quien nunca le dijiste algo importante? ¿Qué le dirías hoy?',
+  12: '¿Qué es lo que más te gustaría haberle dejado a los demás?',
+  13: '¿Hay alguien fuera de tu familia que haya marcado tu vida? ¿Qué tiene de especial esa persona?',
+  14: '¿Hay alguna anécdota con algún familiar que se te venga a la mente ahora? Contala.',
+  15: '¿Cuál es la travesura que más recuerdan de vos?',
+  16: '¿Qué aprendiste con los años que ojalá hubieras sabido antes?',
+  17: 'Si pudieras volver atrás y hablarle a una versión más joven de vos, ¿qué le dirías?',
 };
 
 // ── State ──
 let nombreFamiliar = '';
+let nombreFamilia = '';
 let bloqueActual = 0;
 let state = {};          // state[pregId] = { sent, blob, mediaRecorder, timerInterval }
 let mediaRecorders = {}; // active MediaRecorder per question
@@ -1070,17 +1253,20 @@ async function init() {
     if (!res.ok) throw new Error('not found');
     const data = await res.json();
     nombreFamiliar = data.nombre || '';
+    nombreFamilia = data.nombre_familia || '';
     document.getElementById('consent-nombre').textContent = `Hola, ${nombreFamiliar}`;
     document.getElementById('saludo').textContent = `Hola, ${nombreFamiliar}.`;
     document.title = `Libro de Memorias — ${nombreFamiliar}`;
     document.getElementById('gracias-nombre').textContent = `¡Gracias, ${nombreFamiliar}!`;
     document.getElementById('btn-consent').disabled = false;
+    // Confirmación de nombre en bienvenida (btn-empezar queda disabled hasta confirmar)
+    _mostrarConfirmNombre(nombreFamiliar);
 
     const grabadas = data.preguntas_grabadas || [];
     grabadas.forEach(pid => { state[pid] = { sent: true }; });
     if (grabadas.length > 0) {
       const banner = document.getElementById('banner-progreso');
-      banner.textContent = `Hola ${nombreFamiliar}, ya grabaste ${grabadas.length} de 16 preguntas. Podés continuar desde donde quedaste.`;
+      banner.textContent = `Hola ${nombreFamiliar}, ya grabaste ${grabadas.length} de 17 preguntas. Podés continuar desde donde quedaste.`;
       banner.classList.remove('hidden');
     }
   } catch {
@@ -1098,7 +1284,49 @@ async function aceptarConsentimiento() {
   } catch(_) {}
   document.getElementById('screen-consentimiento').classList.add('hidden');
   document.getElementById('screen-bienvenida').classList.remove('hidden');
-  document.getElementById('btn-empezar').disabled = false;
+  // btn-empezar se habilita al confirmar el nombre (onNombreCheckChange), no acá.
+}
+
+// ── Confirmación / edición de nombre (portado de pipeline/static) ──
+function _mostrarConfirmNombre(nombre) {
+  document.getElementById('nombre-display').textContent = nombre;
+  document.getElementById('nombre-input').value = nombre;
+  document.getElementById('nombre-confirm').classList.remove('hidden');
+}
+
+function onNombreCheckChange() {
+  const checked = document.getElementById('nombre-ok-checkbox').checked;
+  document.getElementById('btn-empezar').disabled = !checked;
+  document.getElementById('btn-editar-nombre').style.display = checked ? 'none' : 'block';
+  if (checked) {
+    document.getElementById('nombre-edit-section').classList.add('hidden');
+  }
+}
+
+function toggleEditNombre() {
+  document.getElementById('nombre-edit-section').classList.toggle('hidden');
+  const input = document.getElementById('nombre-input');
+  if (!document.getElementById('nombre-edit-section').classList.contains('hidden')) {
+    input.focus();
+    input.select();
+  }
+}
+
+async function guardarNombre() {
+  const nuevo = document.getElementById('nombre-input').value.trim();
+  if (!nuevo) return;
+  try {
+    await fetch(`${API_BASE}/token/${TOKEN}/nombre?nombre=${encodeURIComponent(nuevo)}`, {
+      method: 'PATCH',
+    });
+  } catch (_) {}
+  nombreFamiliar = nuevo;
+  document.getElementById('nombre-display').textContent = nuevo;
+  document.getElementById('saludo').textContent = `Hola, ${nuevo}.`;
+  document.getElementById('gracias-nombre').textContent = `¡Gracias, ${nuevo}!`;
+  document.getElementById('nombre-edit-section').classList.add('hidden');
+  document.getElementById('nombre-ok-checkbox').checked = true;
+  onNombreCheckChange();
 }
 
 // ── Foto opcional ──
@@ -1157,6 +1385,7 @@ function renderBloque(idx) {
       <p class="bloque-meta">Bloque ${idx + 1} de ${BLOQUES.length}</p>
       <h2 class="bloque-titulo">${bloque.titulo}</h2>
       <p class="bloque-sub">${bloque.sub}</p>
+      ${bloque.intro ? `<p class="bloque-intro">${bloque.intro}</p>` : ''}
     </div>
   `;
 
@@ -1322,7 +1551,7 @@ function completar() {
 // ── Progress bar ──
 function actualizarProgreso() {
   const enviadas = Object.values(state).filter(s => s?.sent).length;
-  const total = 16;
+  const total = 17;
   const pct = Math.round((enviadas / total) * 100);
   document.getElementById('prog-count').textContent = `${enviadas} / ${total}`;
   document.getElementById('prog-fill').style.width = `${pct}%`;
@@ -1467,6 +1696,13 @@ function setStatus(pid, msg, type) {
   const el = document.getElementById(`status-${pid}`);
   el.textContent = msg;
   el.className = `status-line${type ? ' ' + type : ''}`;
+}
+
+// ── Compartir WhatsApp (portado de pipeline/static) ──
+function compartirWhatsApp() {
+  const fam = nombreFamilia ? `del libro familiar de ${nombreFamilia}` : 'del libro familiar';
+  const msg = `¡Acabo de grabar mis recuerdos ${fam}! 📖 ¿Ya grabaste la tuya?`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ── Start ──

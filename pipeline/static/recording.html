@@ -201,6 +201,13 @@ header .logo {
   font-weight: 500;
 }
 
+.bloque-intro {
+  margin-top: 14px;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
 /* Question card */
 .pregunta-card {
   background: var(--surface);
@@ -307,18 +314,6 @@ header .logo {
 }
 
 .timer.hidden { display: none; }
-.timer.warning { color: #e67e22; }
-
-.aviso-tiempo {
-  font-size: 12px;
-  color: var(--accent);
-  background: #fdf6ed;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  text-align: center;
-}
 
 .btn-enviar {
   display: inline-flex;
@@ -427,54 +422,239 @@ header .logo {
 }
 
 /* ══════════════════════════════
+   SCREEN 4 — VOZ PERMANENTE (pregunta 17)
+══════════════════════════════ */
+.voz-screen {
+  background: #0F0A06;
+  min-height: calc(100vh - 57px);
+}
+
+.voz-card {
+  background: #1C1208;
+  border: 1px solid #3d2b1a;
+  border-radius: 16px;
+  padding: 40px 36px;
+  max-width: 620px;
+  margin: 0 auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+}
+
+.voz-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #B8924A;
+  margin-bottom: 10px;
+}
+
+.voz-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: #F0E8DC;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.voz-intro {
+  font-size: 14px;
+  color: #9a7b5a;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.voz-video-wrap {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #3d2b1a;
+  border-radius: 10px;
+  padding: 28px 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.voz-video-fallback {
+  font-size: 13px;
+  color: #6B3D1E;
+  line-height: 1.6;
+}
+
+.voz-pregunta {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: #F0E8DC;
+  line-height: 1.55;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(184,146,74,0.06);
+  border-left: 3px solid #B8924A;
+  border-radius: 0 8px 8px 0;
+}
+
+.voz-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.btn-voz-grabar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 2px solid #B8924A;
+  color: #B8924A;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-voz-grabar:hover:not(:disabled) {
+  background: #B8924A;
+  color: #0F0A06;
+}
+
+.btn-voz-grabar.grabando-btn {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: white;
+}
+
+.btn-voz-grabar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.voz-timer {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #B8924A;
+  min-width: 48px;
+}
+
+.voz-timer.urgente { color: #e74c3c; }
+.voz-timer.hidden { display: none; }
+
+.btn-voz-enviar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #B8924A;
+  color: #0F0A06;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-voz-enviar:hover:not(:disabled) { opacity: 0.85; }
+.btn-voz-enviar:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-voz-enviar.hidden { display: none; }
+
+.voz-status {
+  font-size: 12px;
+  color: #9a7b5a;
+  min-height: 18px;
+  margin-bottom: 16px;
+}
+.voz-status.ok { color: #4a9a2a; font-weight: 600; }
+.voz-status.err { color: #c0392b; }
+
+.voz-confirmacion {
+  background: rgba(184,146,74,0.08);
+  border: 1px solid #B8924A;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #B8924A;
+  line-height: 1.65;
+}
+
+.voz-confirmacion strong { color: #F0E8DC; }
+
+.btn-voz-omitir {
+  background: transparent;
+  border: none;
+  color: #6B3D1E;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.btn-voz-siguiente {
+  width: 100%;
+  background: #B8924A;
+  color: #0F0A06;
+  border: none;
+  border-radius: 999px;
+  padding: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-voz-siguiente:hover { opacity: 0.85; }
+
+/* ══════════════════════════════
    SCREEN 3 — GRACIAS
 ══════════════════════════════ */
 .gracias-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 48px 36px 40px;
+  padding: 64px 40px;
   box-shadow: var(--shadow);
   text-align: center;
   max-width: 520px;
   margin: 0 auto;
 }
 
-.gracias-check {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--success);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-  font-size: 28px;
-  color: #fff;
-}
-
 #gracias-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 8px;
-}
-
-.gracias-sub {
-  font-size: 16px;
-  color: var(--accent);
-  line-height: 1.6;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .gracias-divider {
-  width: 64px;
+  width: 80px;
   height: 1px;
   background: var(--accent-light);
-  margin: 0 auto 28px;
+  margin: 0 auto 24px;
 }
 
+.gracias-msg {
+  font-size: 16px;
+  color: var(--accent);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.gracias-firma {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent-light);
+}
+
+/* ── Gracias: próximos pasos (portado de pipeline/static) ── */
 .gracias-next {
   background: #faf5ee;
   border: 1px solid var(--border);
@@ -483,7 +663,6 @@ header .logo {
   margin-bottom: 24px;
   text-align: left;
 }
-
 .gracias-next-title {
   font-size: 11px;
   font-weight: 700;
@@ -492,13 +671,11 @@ header .logo {
   color: var(--accent-light);
   margin-bottom: 14px;
 }
-
 .gracias-next-steps {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .gracias-next-step {
   display: flex;
   align-items: flex-start;
@@ -507,13 +684,13 @@ header .logo {
   color: var(--text);
   line-height: 1.45;
 }
-
 .gracias-step-icon {
   flex-shrink: 0;
   font-size: 16px;
   margin-top: 1px;
 }
 
+/* ── Compartir WhatsApp (portado de pipeline/static) ── */
 .btn-wa {
   display: inline-flex;
   align-items: center;
@@ -533,90 +710,9 @@ header .logo {
   letter-spacing: 0.2px;
   transition: opacity .2s;
 }
-
 .btn-wa:hover { opacity: .88; }
 
-.gracias-firma {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 13px;
-  color: var(--accent-light);
-}
-
-/* ── Shared button ── */
-.btn-primary {
-  display: inline-block;
-  background: var(--text);
-  color: white;
-  border: none;
-  border-radius: 999px;
-  padding: 15px 32px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  width: 100%;
-  text-align: center;
-  letter-spacing: 0.3px;
-}
-
-.btn-primary:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.btn-primary:hover:not(:disabled) { opacity: 0.82; }
-
-.foto-section {
-  margin: 20px 0 0;
-  text-align: center;
-}
-
-.foto-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1.5px dashed var(--accent-light);
-  border-radius: 99px;
-  font-size: 13px;
-  color: var(--accent);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.foto-label:hover { border-style: solid; background: #fdf6f0; }
-
-/* ── Consent section ── */
-.consent-section {
-  margin: 24px 0 8px;
-  padding: 18px 20px;
-  background: #fdf6f0;
-  border: 1.5px solid var(--accent-light);
-  border-radius: 12px;
-}
-
-.consent-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.consent-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
-  flex-shrink: 0;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-/* ── Confirmación de nombre ── */
+/* ── Confirmación / edición de nombre (portado de pipeline/static) ── */
 .nombre-confirm {
   margin: 20px 0 0;
   padding: 18px 20px;
@@ -630,7 +726,7 @@ header .logo {
   font-weight: 600;
   letter-spacing: .15em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--accent-light);
   margin: 0 0 6px;
 }
 .nombre-display {
@@ -692,6 +788,192 @@ header .logo {
   white-space: nowrap;
 }
 
+/* ── Shared button ── */
+.btn-primary {
+  display: inline-block;
+  background: var(--text);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 32px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary:hover:not(:disabled) { opacity: 0.82; }
+
+.foto-section {
+  margin: 20px 0 0;
+  text-align: center;
+}
+
+.foto-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1.5px dashed var(--accent-light);
+  border-radius: 99px;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.foto-label:hover { border-style: solid; background: #fdf6f0; }
+
+/* ══════════════════════════════
+   SCREEN 0 — CONSENTIMIENTO
+══════════════════════════════ */
+.screen-consent {
+  background: #2C1A0E;
+  justify-content: center;
+  align-items: center;
+}
+.consent-card {
+  max-width: 580px;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 40px;
+}
+.consent-icon { font-size: 48px; margin-bottom: 20px; }
+.consent-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #F5EDD8;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.consent-subtitle {
+  font-size: 15px;
+  color: #C4956A;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.consent-box {
+  background: rgba(196, 149, 106, 0.08);
+  border: 1px solid #C4956A;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+.consent-text {
+  font-size: 14px;
+  color: #F5EDD8;
+  line-height: 1.75;
+  font-style: italic;
+}
+.consent-links {
+  font-size: 13px;
+  color: #9a7b5a;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.consent-links a { color: #C4956A; text-decoration: underline; }
+.btn-consent {
+  background: #C4956A;
+  color: #fff;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 100px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+  width: 100%;
+}
+.btn-consent:hover:not(:disabled) { background: #a87a52; }
+.btn-consent:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Banner de progreso previo ── */
+.banner-progreso {
+  background: #f0f7e8;
+  border: 1px solid #b5d98a;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--success);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Modal de confirmación de regrabar ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 28px 24px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+}
+
+.modal-msg {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.modal-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btns button {
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border: none;
+}
+
+.modal-btns button:first-child {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text);
+}
+
+.modal-btns button:last-child {
+  background: var(--text);
+  color: white;
+}
+
+.modal-btns button:hover { opacity: 0.82; }
+
 /* ── Responsive tweaks ── */
 @media (max-width: 480px) {
   .welcome-card { padding: 36px 22px 30px; }
@@ -707,16 +989,43 @@ header .logo {
 <body>
 
 <header>
-  <div class="logo">Ethos Bios</div>
+  <div class="logo">Libro de Memorias Familiar</div>
 </header>
 
+<!-- ══════════════════ SCREEN 0: CONSENTIMIENTO ══════════════════ -->
+<div id="screen-consentimiento" class="screen screen-consent">
+  <div class="container">
+    <div class="consent-card">
+      <div class="consent-icon">📖</div>
+      <h1 class="consent-title">Antes de comenzar</h1>
+      <p class="consent-subtitle" id="consent-nombre">Cargando…</p>
+      <div class="consent-box">
+        <p class="consent-text">
+          "Acepto que mis respuestas de voz sean grabadas, transcritas y procesadas por Ethos Bios
+          con el único fin de crear el libro biográfico familiar. Entiendo que mis grabaciones no
+          serán usadas para entrenar inteligencia artificial ni compartidas con terceros fuera de
+          los proveedores técnicos del servicio. Puedo revocar este consentimiento en cualquier
+          momento escribiendo a hola@ethosbios.com."
+        </p>
+      </div>
+      <p class="consent-links">
+        Leé nuestra <a href="/privacidad" target="_blank">Política de Privacidad</a>
+        y los <a href="/terminos" target="_blank">Términos y Condiciones</a>
+      </p>
+      <button class="btn-consent" id="btn-consent" onclick="aceptarConsentimiento()" disabled>
+        Acepto y comienzo mi historia →
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════ SCREEN 1: BIENVENIDA ══════════════════ -->
-<div id="screen-bienvenida" class="screen">
+<div id="screen-bienvenida" class="screen hidden">
   <div class="container">
     <div class="welcome-card">
       <p id="saludo" class="saludo">Cargando…</p>
 
-      <!-- Confirmación de nombre -->
+      <!-- Confirmación / edición de nombre -->
       <div id="nombre-confirm" class="nombre-confirm hidden">
         <p class="nombre-confirm-label">Tu nombre en el libro</p>
         <p class="nombre-display" id="nombre-display"></p>
@@ -732,7 +1041,7 @@ header .logo {
       </div>
 
       <p class="welcome-subtitle">
-        Preparamos 16 preguntas para ayudarte a contar tu historia.
+        Preparamos 17 preguntas para ayudarte a contar tu historia.
         Podés tomarte el tiempo que necesites — no hay apuro.
       </p>
 
@@ -781,9 +1090,21 @@ header .logo {
   </div>
 </div>
 
+<!-- ══════════════════ MODAL: CONFIRMAR REGRABAR ══════════════════ -->
+<div id="modal-regrabar" class="modal-overlay hidden">
+  <div class="modal-box">
+    <p class="modal-msg">Ya tenés una respuesta grabada para esta pregunta.<br>¿Querés reemplazarla con una nueva grabación?</p>
+    <div class="modal-btns">
+      <button onclick="cancelarRegrabar()">Cancelar</button>
+      <button onclick="confirmarRegrabar()">Sí, regrabar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════ SCREEN 2: PREGUNTAS ══════════════════ -->
 <div id="screen-preguntas" class="screen hidden">
   <div class="container">
+    <div id="banner-progreso" class="banner-progreso hidden"></div>
     <div id="bloque-container"></div>
     <div class="siguiente-wrap">
       <button class="btn-siguiente" id="btn-siguiente" onclick="siguienteBloque()" disabled>
@@ -794,7 +1115,7 @@ header .logo {
 
   <!-- Fixed progress bar -->
   <div class="progress-bar-wrap">
-    <span class="progress-count" id="prog-count">0 / 16</span>
+    <span class="progress-count" id="prog-count">0 / 17</span>
     <div class="progress-track">
       <div class="progress-fill" id="prog-fill"></div>
     </div>
@@ -802,14 +1123,55 @@ header .logo {
   </div>
 </div>
 
+<!-- ══════════════════ SCREEN 4: VOZ PERMANENTE ══════════════════ -->
+<div id="screen-voz" class="screen voz-screen hidden">
+  <div class="container" style="padding-top:40px;padding-bottom:80px">
+    <div class="voz-card">
+      <p class="voz-eyebrow">Pregunta 18 · Opcional</p>
+      <h2 class="voz-titulo">Esta es distinta.</h2>
+      <p class="voz-intro">Tu voz va a quedar dentro del libro, para siempre. Los que lo lean van a poder escucharte.</p>
+
+      <!-- TODO: video explicativo pregunta 17 - pendiente Fede -->
+      <div class="voz-video-wrap" id="voz-video-wrap">
+        <p class="voz-video-fallback">Un mensaje de voz tuyo se guardará en el libro mediante un código QR. Cualquiera que lo escanée podrá escucharte — sin límite de tiempo.</p>
+      </div>
+
+      <p class="voz-pregunta">"Si tuvieras que dejarle un mensaje a tu familia —a los que están y a los que vengan— para que lo escuchen siempre, ¿qué les dirías?"</p>
+
+      <div class="voz-controls">
+        <button class="btn-voz-grabar" id="btn-voz-grabar" onclick="vozToggleGrabar()">
+          <span class="dot"></span> ⏺ Grabar mensaje
+        </button>
+        <span class="voz-timer hidden" id="voz-timer">01:30</span>
+        <button class="btn-voz-enviar hidden" id="btn-voz-enviar" onclick="vozEnviar()">
+          Guardar para siempre ✓
+        </button>
+      </div>
+      <p class="voz-status" id="voz-status"></p>
+
+      <div class="voz-confirmacion hidden" id="voz-confirmacion">
+        <strong>¡Listo!</strong> Tu mensaje de voz quedó guardado permanentemente. A diferencia de las otras grabaciones (que eliminamos a los 90 días), <strong>este audio se preserva para siempre</strong> dentro del libro.
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px">
+        <button class="btn-voz-siguiente" id="btn-voz-siguiente" onclick="vozTerminar()">
+          Terminar →
+        </button>
+        <button class="btn-voz-omitir" id="btn-voz-omitir" onclick="vozOmitir()">
+          Omitir esta pregunta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════ SCREEN 3: GRACIAS ══════════════════ -->
 <div id="screen-gracias" class="screen hidden">
   <div class="container">
     <div class="gracias-card">
-      <div class="gracias-check">✓</div>
       <div id="gracias-nombre">¡Gracias!</div>
-      <p class="gracias-sub">Tu historia quedó guardada para siempre.</p>
       <div class="gracias-divider"></div>
+      <p class="gracias-msg">Tu historia ya es parte de algo más grande.</p>
 
       <div class="gracias-next">
         <p class="gracias-next-title">¿Qué pasa después?</p>
@@ -834,7 +1196,7 @@ header .logo {
         Compartir en WhatsApp
       </button>
 
-      <p class="gracias-firma">— Ethos Bios</p>
+      <p class="gracias-firma">— Libro Familiar</p>
     </div>
   </div>
 </div>
@@ -843,35 +1205,32 @@ header .logo {
 const TOKEN = new URLSearchParams(location.search).get('token');
 const API_BASE = 'https://familia-pipeline-776445604502.southamerica-east1.run.app';
 
-const LIMIT_SECS    = 300;                  // 5 minutos — backend rechaza archivos >25 MB
-const WARN_SECS     = 270;                  // 4:30 — cambia el contador a naranja
-const MAX_FOTO_BYTES = 10 * 1024 * 1024;   // 10 MB — backend rechaza fotos más grandes
-
 const BLOQUES = [
-  { titulo: 'De dónde venís',       sub: 'El punto de partida de tu historia', preguntas: [1,2,3] },
-  { titulo: 'Los que te formaron',  sub: 'La gente que estuvo antes que vos',  preguntas: [4,5,6] },
-  { titulo: 'Tus elecciones',       sub: 'El camino que construiste',           preguntas: [7,8,9] },
-  { titulo: 'Tu gente',             sub: 'Los que hacen que valga la pena',     preguntas: [10,11,12,13,14] },
-  { titulo: 'Lo que sabés ahora',   sub: 'Lo que se gana con el tiempo',        preguntas: [15,16] },
+  { titulo: 'De dónde venís',       sub: 'El punto de partida de tu historia', intro: 'Estamos armando tu capítulo. Empecemos por tus orígenes.', preguntas: [1,2,3] },
+  { titulo: 'Los que te formaron',  sub: 'La gente que estuvo antes que vos',  preguntas: [4,5,6,7] },
+  { titulo: 'Tus elecciones',       sub: 'El camino que construiste',           preguntas: [8,9,10] },
+  { titulo: 'Tu gente',             sub: 'Los que hacen que valga la pena',     preguntas: [11,12,13,14,15] },
+  { titulo: 'Lo que sabés ahora',   sub: 'Lo que se gana con el tiempo',        preguntas: [16,17] },
 ];
 
 const PREGUNTAS = {
-  1:  '¿Cómo te llaman en tu familia — y de dónde viene ese nombre o apodo?',
+  1:  '¿Cómo te llaman en tu familia? Si hay una historia detrás de tu nombre o de algún apodo, contámela.',
   2:  '¿Dónde naciste y cómo era ese lugar? Pintá la imagen.',
   3:  '¿Cómo eras de chico? ¿Qué te gustaba hacer?',
-  4:  '¿Cómo eran tus viejos? Describílos como si yo no los conociera.',
+  4:  '¿Cómo eran tus padres?',
   5:  '¿Cuál era el momento de la semana que más disfrutabas en casa?',
-  6:  '¿Hay alguien más que te acuerdes además de tus viejos que te haya marcado en tu vida?',
-  7:  '¿Cómo terminaste donde estás — trabajo, familia, dónde vivís?',
-  8:  '¿Qué hobbies tenés, qué cosas disfrutás, y cuál es el logro del que más orgulloso te sentís?',
-  9:  '¿Cuál es una decisión que tomaste y que quizás nadie vio, pero que cambió todo?',
-  10: '¿Hay alguien en tu familia a quien nunca le dijiste algo importante? ¿Qué le dirías hoy?',
-  11: '¿Cómo querés que te recuerden los que vienen después?',
-  12: '¿Hay alguien fuera de tu familia que haya marcado tu vida? ¿Qué tiene de especial esa persona?',
-  13: '¿Cuál es la anécdota que siempre contás cuando estás con tus amigos de siempre?',
-  14: '¿Cuál es la travesura que más recuerdan de vos?',
-  15: '¿Qué aprendiste con los años que ojalá hubieras sabido antes?',
-  16: 'Si pudieras volver atrás y hablarle a una versión más joven de vos, ¿qué le dirías?',
+  6:  '¿Hay alguien más, además de tus padres, que te haya marcado en tu vida?',
+  7:  '¿Cómo son — o eran — tus hermanos y tus hijos?',
+  8:  '¿Cómo terminaste donde estás — trabajo, familia, dónde vivís?',
+  9:  '¿Qué hobbies tenés, qué cosas disfrutás, y cuál es el logro del que más orgulloso te sentís?',
+  10: '¿Cuál es una decisión que tomaste y que quizás nadie vio, pero que cambió todo?',
+  11: '¿Hay alguien en tu familia a quien nunca le dijiste algo importante? ¿Qué le dirías hoy?',
+  12: '¿Qué es lo que más te gustaría haberle dejado a los demás?',
+  13: '¿Hay alguien fuera de tu familia que haya marcado tu vida? ¿Qué tiene de especial esa persona?',
+  14: '¿Hay alguna anécdota con algún familiar que se te venga a la mente ahora? Contala.',
+  15: '¿Cuál es la travesura que más recuerdan de vos?',
+  16: '¿Qué aprendiste con los años que ojalá hubieras sabido antes?',
+  17: 'Si pudieras volver atrás y hablarle a una versión más joven de vos, ¿qué le dirías?',
 };
 
 // ── State ──
@@ -880,11 +1239,12 @@ let nombreFamilia = '';
 let bloqueActual = 0;
 let state = {};          // state[pregId] = { sent, blob, mediaRecorder, timerInterval }
 let mediaRecorders = {}; // active MediaRecorder per question
+let pidPendienteRegrabar = null;
 
 // ── Init ──
 async function init() {
   if (!TOKEN) {
-    document.getElementById('saludo').textContent = 'Este link no es válido.';
+    document.getElementById('consent-nombre').textContent = 'Este link no es válido.';
     return;
   }
 
@@ -894,18 +1254,40 @@ async function init() {
     const data = await res.json();
     nombreFamiliar = data.nombre || '';
     nombreFamilia = data.nombre_familia || '';
+    document.getElementById('consent-nombre').textContent = `Hola, ${nombreFamiliar}`;
     document.getElementById('saludo').textContent = `Hola, ${nombreFamiliar}.`;
-    document.title = `Ethos Bios — ${nombreFamiliar}`;
+    document.title = `Libro de Memorias — ${nombreFamiliar}`;
     document.getElementById('gracias-nombre').textContent = `¡Gracias, ${nombreFamiliar}!`;
-    // Mostrar confirmación de nombre; btn-empezar queda disabled hasta confirmar
+    document.getElementById('btn-consent').disabled = false;
+    // Confirmación de nombre en bienvenida (btn-empezar queda disabled hasta confirmar)
     _mostrarConfirmNombre(nombreFamiliar);
+
+    const grabadas = data.preguntas_grabadas || [];
+    grabadas.forEach(pid => { state[pid] = { sent: true }; });
+    if (grabadas.length > 0) {
+      const banner = document.getElementById('banner-progreso');
+      banner.textContent = `Hola ${nombreFamiliar}, ya grabaste ${grabadas.length} de 17 preguntas. Podés continuar desde donde quedaste.`;
+      banner.classList.remove('hidden');
+    }
   } catch {
-    document.getElementById('saludo').textContent = 'Este link no es válido.';
-    // btn-empezar stays disabled
+    document.getElementById('consent-nombre').textContent = 'Este link no es válido.';
   }
 }
 
-// ── Confirmación de nombre ──
+// ── Consentimiento ──
+async function aceptarConsentimiento() {
+  const btn = document.getElementById('btn-consent');
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+  try {
+    await fetch(`${API_BASE}/token/${TOKEN}/consentimiento`, { method: 'POST' });
+  } catch(_) {}
+  document.getElementById('screen-consentimiento').classList.add('hidden');
+  document.getElementById('screen-bienvenida').classList.remove('hidden');
+  // btn-empezar se habilita al confirmar el nombre (onNombreCheckChange), no acá.
+}
+
+// ── Confirmación / edición de nombre (portado de pipeline/static) ──
 function _mostrarConfirmNombre(nombre) {
   document.getElementById('nombre-display').textContent = nombre;
   document.getElementById('nombre-input').value = nombre;
@@ -951,20 +1333,11 @@ async function guardarNombre() {
 function onFotoSeleccionada(input) {
   const file = input.files && input.files[0];
   if (!file) return;
-  if (file.size > MAX_FOTO_BYTES) {
-    input.value = '';
-    const st = document.getElementById('foto-status');
-    st.textContent = 'La foto es muy grande. Usá una imagen menor a 10 MB.';
-    st.style.color = 'var(--error)';
-    return;
-  }
   const reader = new FileReader();
   reader.onload = e => {
     document.getElementById('foto-preview-img').src = e.target.result;
     document.getElementById('foto-preview-wrap').style.display = 'block';
-    const st = document.getElementById('foto-status');
-    st.textContent = file.name;
-    st.style.color = '';
+    document.getElementById('foto-status').textContent = file.name;
     document.getElementById('foto-label').style.opacity = '0.5';
   };
   reader.readAsDataURL(file);
@@ -989,15 +1362,11 @@ function empezar() {
   renderBloque(0);
 }
 
-async function siguienteBloque() {
+function siguienteBloque() {
   const esUltimo = bloqueActual === BLOQUES.length - 1;
   if (esUltimo) {
-    try {
-      await fetch(`${API_BASE}/token/${TOKEN}/consentimiento`, { method: 'POST' });
-    } catch (_) {}
-    completar();
     document.getElementById('screen-preguntas').classList.add('hidden');
-    document.getElementById('screen-gracias').classList.remove('hidden');
+    document.getElementById('screen-voz').classList.remove('hidden');
     window.scrollTo(0, 0);
   } else {
     bloqueActual++;
@@ -1016,39 +1385,29 @@ function renderBloque(idx) {
       <p class="bloque-meta">Bloque ${idx + 1} de ${BLOQUES.length}</p>
       <h2 class="bloque-titulo">${bloque.titulo}</h2>
       <p class="bloque-sub">${bloque.sub}</p>
+      ${bloque.intro ? `<p class="bloque-intro">${bloque.intro}</p>` : ''}
     </div>
-    <p class="aviso-tiempo">⏱ Tenés hasta 5 minutos por pregunta. Hablá tranquilo/a, no hay apuro.</p>
   `;
 
   bloque.preguntas.forEach((pid, i) => {
+    const yaSent = state[pid]?.sent === true;
     html += `
-      <div class="pregunta-card" id="card-${pid}">
+      <div class="pregunta-card ${yaSent ? 'enviada' : ''}" id="card-${pid}">
         <p class="pregunta-label">Pregunta ${pid}</p>
         <p class="pregunta-texto">${PREGUNTAS[pid]}</p>
         <div class="controls">
           <button class="btn-grabar" id="btn-grabar-${pid}" onclick="toggleGrabar(${pid})">
-            <span class="dot"></span> ⏺ Grabar respuesta
+            <span class="dot"></span> ${yaSent ? '✓ Regrabar' : '⏺ Grabar respuesta'}
           </button>
           <span class="timer hidden" id="timer-${pid}">00:00</span>
           <button class="btn-enviar hidden" id="btn-enviar-${pid}" onclick="enviarAudio(${pid})">
             Enviar ✓
           </button>
         </div>
-        <p class="status-line" id="status-${pid}"></p>
+        <p class="status-line ${yaSent ? 'ok' : ''}" id="status-${pid}">${yaSent ? '✓ Respuesta guardada' : ''}</p>
       </div>
     `;
   });
-
-  if (esUltimo) {
-    html += `
-      <div class="consent-section hidden" id="consent-section">
-        <label class="consent-label">
-          <input type="checkbox" id="consent-checkbox" onchange="onConsentChange()">
-          <span>Autorizo el uso de mis respuestas grabadas para la generación del libro familiar.</span>
-        </label>
-      </div>
-    `;
-  }
 
   container.innerHTML = html;
 
@@ -1059,12 +1418,15 @@ function renderBloque(idx) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
   actualizarProgreso();
+  checkBloqueCompleto();
 }
 
 // ── Recording ──
 async function toggleGrabar(pid) {
   if (state[pid]?.grabando) {
     stopGrabar(pid);
+  } else if (state[pid]?.sent) {
+    mostrarModalRegrabar(pid);
   } else {
     await startGrabar(pid);
   }
@@ -1113,19 +1475,12 @@ async function startGrabar(pid) {
     let secs = 0;
     const timerEl = document.getElementById(`timer-${pid}`);
     timerEl.classList.remove('hidden');
-    timerEl.classList.remove('warning');
     timerEl.textContent = '00:00';
     const interval = setInterval(() => {
       secs++;
       const m = String(Math.floor(secs / 60)).padStart(2, '0');
       const s = String(secs % 60).padStart(2, '0');
       timerEl.textContent = `${m}:${s}`;
-      if (secs >= WARN_SECS) timerEl.classList.add('warning');
-      if (secs >= LIMIT_SECS) {
-        clearInterval(interval);
-        stopGrabar(pid);
-        setStatus(pid, 'Grabación completada. Podés escucharla antes de enviar.', 'ok');
-      }
     }, 1000);
     state[pid].timerInterval = interval;
 
@@ -1185,20 +1540,7 @@ async function enviarAudio(pid) {
 function checkBloqueCompleto() {
   const bloque = BLOQUES[bloqueActual];
   const todas = bloque.preguntas.every(pid => state[pid]?.sent === true);
-  const esUltimo = bloqueActual === BLOQUES.length - 1;
-
-  if (esUltimo && todas) {
-    const consentSection = document.getElementById('consent-section');
-    if (consentSection) consentSection.classList.remove('hidden');
-    const consentChecked = document.getElementById('consent-checkbox')?.checked ?? false;
-    document.getElementById('btn-siguiente').disabled = !consentChecked;
-  } else {
-    document.getElementById('btn-siguiente').disabled = !todas;
-  }
-}
-
-function onConsentChange() {
-  checkBloqueCompleto();
+  document.getElementById('btn-siguiente').disabled = !todas;
 }
 
 // ── Completar (fire-and-forget) ──
@@ -1209,11 +1551,144 @@ function completar() {
 // ── Progress bar ──
 function actualizarProgreso() {
   const enviadas = Object.values(state).filter(s => s?.sent).length;
-  const total = 16;
+  const total = 17;
   const pct = Math.round((enviadas / total) * 100);
   document.getElementById('prog-count').textContent = `${enviadas} / ${total}`;
   document.getElementById('prog-fill').style.width = `${pct}%`;
   document.getElementById('prog-pct').textContent = `${pct}%`;
+}
+
+// ── Modal de regrabar ──
+function mostrarModalRegrabar(pid) {
+  pidPendienteRegrabar = pid;
+  document.getElementById('modal-regrabar').classList.remove('hidden');
+}
+
+function cancelarRegrabar() {
+  pidPendienteRegrabar = null;
+  document.getElementById('modal-regrabar').classList.add('hidden');
+}
+
+async function confirmarRegrabar() {
+  document.getElementById('modal-regrabar').classList.add('hidden');
+  const pid = pidPendienteRegrabar;
+  pidPendienteRegrabar = null;
+  state[pid] = { sent: false };
+  document.getElementById(`card-${pid}`).classList.remove('enviada');
+  document.getElementById(`status-${pid}`).textContent = '';
+  document.getElementById(`status-${pid}`).className = 'status-line';
+  const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
+  btnGrabar.innerHTML = '<span class="dot"></span> ⏺ Grabar respuesta';
+  await startGrabar(pid);
+}
+
+// ── Voz permanente (pregunta 17) ──
+let vozBlob = null;
+let vozMr = null;
+let vozTimerInterval = null;
+const VOZ_MAX_SECS = 90;
+
+function vozToggleGrabar() {
+  if (vozMr && vozMr.state === 'recording') {
+    vozMr.stop();
+  } else {
+    vozStartGrabar();
+  }
+}
+
+async function vozStartGrabar() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const chunks = [];
+    vozMr = new MediaRecorder(stream);
+    vozBlob = null;
+
+    vozMr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    vozMr.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      vozBlob = new Blob(chunks, { type: 'audio/webm' });
+      clearInterval(vozTimerInterval);
+      const btn = document.getElementById('btn-voz-grabar');
+      btn.classList.remove('grabando-btn');
+      btn.innerHTML = '<span class="dot"></span> ⏺ Grabar de nuevo';
+      document.getElementById('voz-timer').classList.add('hidden');
+      document.getElementById('btn-voz-enviar').classList.remove('hidden');
+      document.getElementById('btn-voz-omitir').textContent = 'Descartar y omitir';
+    };
+
+    vozMr.start();
+    const btn = document.getElementById('btn-voz-grabar');
+    btn.classList.add('grabando-btn');
+    btn.innerHTML = '<span class="dot"></span> ⏹ Grabando… (tocá para parar)';
+    document.getElementById('btn-voz-enviar').classList.add('hidden');
+    document.getElementById('voz-status').textContent = '';
+    document.getElementById('voz-status').className = 'voz-status';
+
+    let secs = 0;
+    const timerEl = document.getElementById('voz-timer');
+    timerEl.classList.remove('hidden');
+    vozTimerInterval = setInterval(() => {
+      secs++;
+      const rem = VOZ_MAX_SECS - secs;
+      const m = String(Math.floor(rem / 60)).padStart(2, '0');
+      const s = String(rem % 60).padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
+      if (rem <= 10) timerEl.classList.add('urgente');
+      if (rem <= 0) vozMr.stop(); // corte automático al llegar a 90s
+    }, 1000);
+
+  } catch (err) {
+    document.getElementById('voz-status').textContent = 'No se pudo acceder al micrófono.';
+    document.getElementById('voz-status').className = 'voz-status err';
+  }
+}
+
+async function vozEnviar() {
+  if (!vozBlob) return;
+  const btnEnviar = document.getElementById('btn-voz-enviar');
+  const btnGrabar = document.getElementById('btn-voz-grabar');
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Guardando…';
+  btnGrabar.disabled = true;
+  document.getElementById('voz-status').textContent = 'Guardando tu mensaje para siempre…';
+  document.getElementById('voz-status').className = 'voz-status';
+
+  try {
+    const fd = new FormData();
+    fd.append('audio', vozBlob, 'voz.webm');
+    const res = await fetch(`${API_BASE}/token/${TOKEN}/voz-permanente`, {
+      method: 'POST',
+      body: fd,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    document.getElementById('voz-status').textContent = '✓ Mensaje guardado para siempre';
+    document.getElementById('voz-status').className = 'voz-status ok';
+    btnEnviar.classList.add('hidden');
+    document.getElementById('voz-confirmacion').classList.remove('hidden');
+    document.getElementById('btn-voz-omitir').style.display = 'none';
+    document.getElementById('btn-voz-siguiente').textContent = 'Terminar →';
+  } catch (err) {
+    document.getElementById('voz-status').textContent = 'Error al guardar. Intentá de nuevo.';
+    document.getElementById('voz-status').className = 'voz-status err';
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Guardar para siempre ✓';
+    btnGrabar.disabled = false;
+  }
+}
+
+function vozOmitir() {
+  completar();
+  document.getElementById('screen-voz').classList.add('hidden');
+  document.getElementById('screen-gracias').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function vozTerminar() {
+  completar();
+  document.getElementById('screen-voz').classList.add('hidden');
+  document.getElementById('screen-gracias').classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
 // ── Helper ──
@@ -1223,7 +1698,7 @@ function setStatus(pid, msg, type) {
   el.className = `status-line${type ? ' ' + type : ''}`;
 }
 
-// ── Share ──
+// ── Compartir WhatsApp (portado de pipeline/static) ──
 function compartirWhatsApp() {
   const fam = nombreFamilia ? `del libro familiar de ${nombreFamilia}` : 'del libro familiar';
   const msg = `¡Acabo de grabar mis recuerdos ${fam}! 📖 ¿Ya grabaste la tuya?`;

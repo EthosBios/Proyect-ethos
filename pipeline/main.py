@@ -1047,7 +1047,7 @@ async def token_respuesta(
     fs.save_respuesta(familia_id, integrante_id, pregunta, gs_url)
     fs.update_familia_ultima_grabacion(familia_id)
     respuestas_guardadas = fs.get_respuestas(familia_id, integrante_id)
-    pct = round(len([r for r in respuestas_guardadas if r.get("audio_url")]) / 16 * 100)
+    pct = round(len([r for r in respuestas_guardadas if r.get("audio_url")]) / 17 * 100)
     fs.update_porcentaje_avance(familia_id, integrante_id, pct)
     if pct >= 100:
         fs.update_integrante_estado(familia_id, integrante_id, "completo")
@@ -1060,7 +1060,7 @@ async def token_respuesta(
 @app.post("/token/{token}/voz-permanente")
 async def token_voz_permanente(token: str, audio: UploadFile = File(...)):
     """
-    Recibe el mensaje de voz de la pregunta 17, lo copia al bucket permanente,
+    Recibe el mensaje de voz de la pregunta 18, lo copia al bucket permanente,
     genera un token de 64 bits y lo persiste en Firestore.
     """
     from pipeline.utils import firestore as fs, storage as st
@@ -1737,7 +1737,7 @@ def familia_progreso(familia_id: str, request: Request):
         integrantes_progreso.append({
             "nombre": i.get("nombre", ""),
             "preguntas_respondidas": preguntas_respondidas,
-            "preguntas_total": 16,
+            "preguntas_total": 17,
             "estado": estado,
         })
 
