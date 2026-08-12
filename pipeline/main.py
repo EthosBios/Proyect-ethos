@@ -62,6 +62,13 @@ def _enviar_alerta_pipeline_fallido(job_id: str, familia_id: str, errores: list[
 
 def _run_pipeline_job(job_id: str, req_dict: dict) -> None:
     from pipeline.utils import firestore as fs
+    # Idempotencia a nivel job: si el job ya se completó (típicamente un reintento
+    # de Cloud Tasks tras un intento previo que no ackeó a tiempo), no reprocesar el
+    # pipeline completo (voice→chapters→quality→editor→layout) ni reenviar el email.
+    existing = fs.get_job(job_id)
+    if existing and existing.get("status") == "done":
+        logger.info("[pipeline-job] job=%s ya está done, skip idempotente", job_id)
+        return
     fs.update_job_status(job_id, "running")
     familia_id_job = req_dict.get("familia_id")
     try:
@@ -102,10 +109,13 @@ def _run_pipeline_job(job_id: str, req_dict: dict) -> None:
                 comprador_email = comprador.get('email', '')
                 nombre_familia = familia.get('nombre', 'tu familia')
                 if comprador_email and layout_url:
-                    signed = st.get_signed_url(layout_url, expiration_hours=168)
-                    send_libro_listo(email_comprador=comprador_email, nombre_familia=nombre_familia, signed_url=signed)
-                    _fs_email.set_entregado_at(familia_id_job)
-                    logger.info('[email-libro-listo] enviado a %s', comprador_email)
+                    if familia.get('entregado_at'):
+                        logger.info('[email-libro-listo] ya enviado (entregado_at) familia=%s, skip', familia_id_job)
+                    else:
+                        signed = st.get_signed_url(layout_url, expiration_hours=168)
+                        send_libro_listo(email_comprador=comprador_email, nombre_familia=nombre_familia, signed_url=signed)
+                        _fs_email.set_entregado_at(familia_id_job)
+                        logger.info('[email-libro-listo] enviado a %s', comprador_email)
             except Exception as exc:  # noqa: BLE001
                 logger.warning('[email-libro-listo] error: %s', exc)
         elif familia_id_job and not result.ok:
