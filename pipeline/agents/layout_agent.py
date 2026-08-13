@@ -45,6 +45,25 @@ QR_BOX_TARGET = 360
 # Caracteres por página interior (ajuste empírico para A5, 11px Mulish)
 CHARS_PER_PAGE = 2400
 
+# ── Presupuesto de altura de una cita ────────────────────────────────────────
+# El presupuesto de página cuenta "caracteres" (~0.225px de alto por char de
+# párrafo). Una cita se renderiza en itálica 25px (blockquote .pull.quote) flanqueada
+# por dos separadores: el trío ocupa 154–352px REALES según su largo, muchísimo más
+# que los ~81px que sugería su conteo de caracteres. Si el presupuesto la subestima,
+# la página supera los 794px fijos y el `overflow:hidden` recorta el texto (ver
+# Briefing #48: cita cortada a mitad de palabra). Por eso el trío recibe un costo
+# equivalente calibrado empíricamente (WeasyPrint) contra la densidad de párrafo.
+CITA_CHARS_PER_LINE = 30      # a 25px itálica, max-width 380px
+CITA_COST_BASE      = 530     # overhead fijo del trío sep+cita+sep (~120px reales)
+CITA_COST_PER_LINE  = 107     # ~24px reales por línea de cita
+
+
+def _costo_cita(texto: str) -> int:
+    """Costo de altura (en caracteres-equivalentes) del trío separador+cita+separador."""
+    import math as _math
+    lineas = max(1, _math.ceil(len(texto) / CITA_CHARS_PER_LINE))
+    return CITA_COST_BASE + lineas * CITA_COST_PER_LINE
+
 
 # ── Sello de marca: transparencia + composición del QR ────────────────────────
 
@@ -200,15 +219,20 @@ def _texto_a_bloques(
     all_blocks: list[dict] = []
     for i, p in enumerate(raw):
         if p.startswith("—"):
-            all_blocks.append({"tipo": "separador"})
-            all_blocks.append({"tipo": "cita", "texto": _md_a_html(p.lstrip("—").strip())})
-            all_blocks.append({"tipo": "separador"})
+            cita_txt = p.lstrip("—").strip()
+            # El costo real del trío completo se atribuye al separador LÍDER: así el
+            # corte de página se dispara ANTES del trío y lo mantiene junto en la
+            # misma página (cita + sus dos separadores), sin recortes por overflow.
+            all_blocks.append({"tipo": "separador", "cost": _costo_cita(cita_txt)})
+            all_blocks.append({"tipo": "cita", "texto": _md_a_html(cita_txt), "cost": 0})
+            all_blocks.append({"tipo": "separador", "cost": 0})
         else:
             all_blocks.append({
                 "tipo": "parrafo",
                 "texto": _md_a_html(p),
                 "dropcap": (i == 0),
                 "serif": False,
+                "cost": len(p),
             })
 
     # Insertar foto después del cuarto bloque de párrafo
@@ -229,14 +253,12 @@ def _texto_a_bloques(
     char_count = 0
 
     for b in all_blocks:
-        if b["tipo"] == "parrafo":
-            cost = len(b["texto"])
-        elif b["tipo"] == "foto":
+        if b["tipo"] == "foto":
             cost = CHARS_PER_PAGE // 2
-        elif b["tipo"] in ("separador", "cita"):
-            cost = 120
         else:
-            cost = 0
+            # parrafo/separador/cita ya traen su costo calibrado desde all_blocks;
+            # el trío de cita concentra su altura real en el separador líder.
+            cost = b.get("cost", 0)
 
         if current_page and (char_count + cost) > CHARS_PER_PAGE:
             pages.append(current_page)
