@@ -712,14 +712,11 @@ def _escalar(
     except Exception as e:
         logger.warning("[quality] No se pudo marcar escalación humana: %s", e)
 
-    # Alerta por email en el momento de la escalación (best-effort, no romper el pipeline).
-    # Checklist A → alucinaciones específicas; B agotado → violaciones editoriales.
-    try:
-        from pipeline.utils.email import send_alerta_escalacion_humana
-        violaciones = (
-            ev.checklist_a.violaciones if motivo == "checklist_a"
-            else ev.checklist_b.violaciones
-        )
-        send_alerta_escalacion_humana(familia_id, nombre, motivo, violaciones)
-    except Exception as e:  # noqa: BLE001
-        logger.warning("[quality] No se pudo enviar email de escalación para %s: %s", nombre, e)
+    # Alerta por email SOLO para Checklist A (factual/alucinaciones). Checklist B agotado
+    # escala en silencio. Best-effort: un fallo de email nunca corta el pipeline.
+    if motivo == "checklist_a":
+        try:
+            from pipeline.utils.email import send_alerta_escalacion_humana
+            send_alerta_escalacion_humana(familia_id, nombre, motivo, ev.checklist_a.violaciones)
+        except Exception as e:  # noqa: BLE001
+            logger.warning("[quality] No se pudo enviar email de escalación para %s: %s", nombre, e)
