@@ -2,6 +2,7 @@ import logging
 import os
 import re
 from datetime import datetime
+from html import escape as _escape
 from pathlib import Path
 
 import httpx
@@ -192,6 +193,72 @@ def send_alerta_admin(familia_id: str, job_id: str, etapa: str, error: str) -> N
         _send(key, admin_email, f"[Pipeline fallido] familia={familia_id} etapa={etapa}", html)
     except Exception as exc:  # noqa: BLE001
         logger.error("Error enviando alerta admin: %s", exc)
+
+
+def send_alerta_escalacion_humana(
+    familia_id: str,
+    nombre_integrante: str,
+    motivo: str,
+    violaciones: list[str],
+    nombre_familia: str | None = None,
+) -> None:
+    """
+    Alerta a admin cuando el quality_agent escala un capítulo a revisión humana.
+    Se dispara en el momento de la escalación e incluye qué familia, qué integrante
+    y qué se detectó (las alucinaciones específicas de Checklist A, o las violaciones
+    editoriales de Checklist B agotado). Mismo transporte Postmark que el resto.
+    """
+    key = _get_key()
+    if not key:
+        return
+    admin_email = os.environ.get("ADMIN_EMAIL", "hola@ethosbios.com")
+
+    # Nombre legible de la familia (best-effort desde Firestore; cae a familia_id).
+    if not nombre_familia:
+        try:
+            from pipeline.utils import firestore as fs
+            fam = fs.get_familia(familia_id) or {}
+            nombre_familia = fam.get("nombre") or familia_id
+        except Exception:  # noqa: BLE001
+            nombre_familia = familia_id
+
+    es_checklist_a = motivo == "checklist_a"
+    if es_checklist_a:
+        titulo = "Alucinación detectada — revisión humana"
+        tipo = "Checklist A (factual, bloqueante) — invenciones / mezcla de datos"
+        detalle_label = "Se detectó (alucinaciones específicas):"
+    else:
+        titulo = "Escalación a revisión humana"
+        tipo = "Checklist B (editorial) — agotó los reintentos sin pasar"
+        detalle_label = "Se detectó (violaciones editoriales):"
+
+    items = "".join(
+        f'<li style="margin-bottom:6px">{_escape(str(v))}</li>'
+        for v in (violaciones or [])
+    ) or "<li>(sin detalle disponible en la evaluación)</li>"
+
+    html = f"""<html><body style="font-family:sans-serif;color:#3d2b0a;max-width:560px;margin:0 auto;padding:24px">
+<p style="font-family:Georgia,serif;font-size:22px;margin-bottom:16px">Ethos Bios</p>
+<h2 style="font-weight:400;margin-bottom:8px;color:#c0392b">{titulo}</h2>
+<table style="border-collapse:collapse;width:100%;margin-bottom:20px">
+<tr><td style="padding:8px;background:#fdf0f0;font-weight:700;width:120px">Familia</td><td style="padding:8px;background:#fdf0f0">{_escape(str(nombre_familia))} <code style="color:#9a7b5a">({_escape(familia_id)})</code></td></tr>
+<tr><td style="padding:8px;font-weight:700">Integrante</td><td style="padding:8px"><strong>{_escape(nombre_integrante)}</strong></td></tr>
+<tr><td style="padding:8px;background:#fdf0f0;font-weight:700">Motivo</td><td style="padding:8px;background:#fdf0f0">{_escape(tipo)}</td></tr>
+</table>
+<p style="margin-bottom:8px;font-weight:700">{detalle_label}</p>
+<ul style="background:#f5f5f5;padding:12px 12px 12px 30px;border-radius:4px;font-size:13px;line-height:1.5">{items}</ul>
+<p style="margin-top:24px;font-size:13px;color:#9a7b5a">El capítulo se generó igual y quedó marcado para revisión humana en el dashboard.</p>
+<p style="margin-top:32px;font-size:12px;color:#b89a7a">Ethos Bios · hola@ethosbios.com</p>
+</body></html>"""
+
+    subject = f"[Revisión humana] {nombre_integrante} — {nombre_familia}"
+    if es_checklist_a:
+        subject += " · alucinación"
+    try:
+        _send(key, admin_email, subject, html)
+        logger.info("[quality] alerta de escalación enviada a %s (%s / %s)", admin_email, nombre_familia, nombre_integrante)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Error enviando alerta de escalación humana: %s", exc)
 
 
 def send_generando(email_comprador: str, nombre_familia: str, familia_id: str) -> None:
