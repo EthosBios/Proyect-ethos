@@ -170,7 +170,12 @@ html,body{ margin:0; padding:0; background:var(--paper); }
   letter-spacing:.18em; color:var(--brown-tint); }
 
 .body{ font-family:var(--sans); font-weight:300; font-size:11px;
-  line-height:1.85; color:var(--ink-soft); text-align:justify; hyphens:auto; margin:0; }
+  line-height:1.85; color:var(--ink-soft); text-align:justify; hyphens:auto;
+  /* Forzar guión de corte U+002D (hyphen-minus): las fuentes embebidas (Mulish,
+     Cormorant Garamond) NO tienen glifo para U+2010 (HYPHEN, el char por defecto
+     de WeasyPrint). En sans se resolvía por font-fallback, pero en serif fallaba y
+     el guión salía como tofu (□). U+002D sí está en todas las fuentes. Ver #48. */
+  hyphenate-character:"-"; margin:0; }
 .body.serif{ font-family:var(--serif); font-weight:400; font-size:13.5px; line-height:1.7; }
 
 /* ---------- foto: placeholder rayado ---------- */
@@ -428,7 +433,10 @@ html,body{ margin:0; padding:0; background:var(--paper); }
 .page.cierre::before{ content:''; position:absolute; inset:26px; border:1px solid var(--gold); pointer-events:none; }
 
 .cl-brand{ display:flex; align-items:center; gap:14px; margin-bottom:40px; }
-.cl-brand .line{ width:36px; height:1px; background:var(--rule); }
+/* display:block evita que WeasyPrint pinte el fondo sobre la line-box inline del
+   <span> vacío (alto = line-height heredado), que dibujaba un trazo VERTICAL espurio
+   colgando de cada guión del separador «—— Ethos Bios ——». Ver #48. */
+.cl-brand .line{ display:block; width:36px; height:1px; background:var(--rule); }
 .cl-brand .name{ font-family:var(--serif); font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--lavender); }
 
 .cl-seal{ width:180px; height:180px; margin-bottom:24px; }
