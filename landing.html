@@ -3,282 +3,1083 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name='description' content='Convertí las historias de tu familia en un libro biográfico único. Cada integrante graba desde el celular, nosotros escribimos y diseñamos el libro.'>
-<meta property='og:title' content='Ethos Bios — El libro biográfico de tu familia'>
-<meta property='og:description' content='Convertí las historias de tu familia en un libro biográfico único. Cada integrante graba desde el celular, nosotros escribimos y diseñamos el libro.'>
-<meta property='og:type' content='website'>
-<meta property='og:url' content='https://ethosbios.com'>
-<link rel='canonical' href='https://ethosbios.com'>
+<meta name="description" content="Ethos Bios convierte las grabaciones de tu familia en un libro biográfico digital de calidad, con la voz real de cada uno guardada para siempre detrás de un QR.">
+<meta property="og:title" content="Ethos Bios — El libro biográfico de tu familia">
+<meta property="og:description" content="Convertí las historias de tu familia en un libro biográfico único. Cada integrante graba desde el celular, nosotros escribimos y diseñamos el libro.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ethosbios.com">
+<link rel="canonical" href="https://ethosbios.com">
 <title>Ethos Bios — El libro biográfico de tu familia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Mulish',sans-serif;color:#3d2b0a;background:#fdf8f2}
+:root {
+  --gold: #C49B18;
+  --teal: #12A594;
+  --lavender: #7C6BC4;
+  --cream: #FBF7F0;
+  --ink: #2C2418;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.5; overflow-x: hidden; }
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(253,248,242,0.92);backdrop-filter:blur(8px);border-bottom:0.5px solid #e8d9b8;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px}
-.nav-brand{font-family:'Cormorant Garamond',serif;font-size:18px;color:#3d2b0a;letter-spacing:0.05em}
-.nav-cta{background:#2C1A0E;color:#F5EDD8;border:none;padding:8px 20px;border-radius:100px;font-family:'Mulish',sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.04em;text-decoration:none}
+#nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  padding: 16px clamp(20px,5vw,56px);
+  background: rgba(251,247,240,0.92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(44,36,24,0.08);
+}
+#nav .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+#nav .brand-name { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 22px; letter-spacing: 0.02em; color: var(--gold); }
+#nav .links { display: flex; align-items: center; gap: clamp(16px,3vw,40px); flex-wrap: wrap; }
+#nav .links a { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 600; }
+#nav .links a:hover { color: var(--gold); }
+.btn-ink {
+  background: var(--ink); color: var(--cream); text-decoration: none;
+  font-size: 14px; font-weight: 700; padding: 12px 24px; border-radius: 2px;
+  border: none; cursor: pointer; display: inline-block; transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.btn-ink:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); box-shadow: 0 10px 20px -8px rgba(196,155,24,0.5); }
+.btn-gold {
+  background: var(--gold); color: var(--ink); text-decoration: none;
+  font-weight: 800; font-size: 16px; padding: 17px 32px; border-radius: 2px;
+  border: none; cursor: pointer; display: inline-block; transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.btn-gold:hover { background: #b08c14; transform: translateY(-3px); box-shadow: 0 14px 28px -10px rgba(196,155,24,0.55); }
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;background:linear-gradient(180deg,#2C1A0E 0%,#3d2b0a 60%,#fdf8f2 100%)}
-.hero-eyebrow{font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#C4956A;margin-bottom:1.5rem}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,64px);color:#F5EDD8;line-height:1.15;margin-bottom:1.5rem;max-width:760px}
-.hero h1 em{color:#C4956A;font-style:italic}
-.hero-sub{font-size:18px;color:#c4a882;line-height:1.6;max-width:520px;margin:0 auto 2.5rem}
-.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-primary{background:#C4956A;color:#fff;border:none;padding:14px 32px;border-radius:100px;font-family:'Mulish',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.04em;text-decoration:none;transition:background 0.2s}
-.btn-primary:hover{background:#a87a52}
-.btn-ghost{background:transparent;color:#F5EDD8;border:1px solid rgba(244,237,216,0.4);padding:14px 32px;border-radius:100px;font-family:'Mulish',sans-serif;font-size:15px;cursor:pointer;letter-spacing:0.04em;text-decoration:none;transition:border-color 0.2s}
-.btn-ghost:hover{border-color:#F5EDD8}
-.hero-nota{font-size:12px;color:#9a7b5a;margin-top:1rem}
+#hero {
+  max-width: 1180px; margin: 0 auto;
+  padding: clamp(48px,8vw,88px) clamp(20px,5vw,56px) clamp(56px,8vw,96px);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr));
+  gap: clamp(40px,6vw,72px); align-items: center;
+}
+#hero h1 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(38px,6vw,76px); line-height: 1.05; margin: 0 0 28px; letter-spacing: -0.01em;
+}
+#hero h1 em { font-style: italic; color: var(--lavender); }
+#hero p.sub {
+  font-size: clamp(16px,2vw,19px); line-height: 1.6; color: rgba(44,36,24,0.75);
+  max-width: 460px; margin: 0 0 36px;
+}
+#hero .ctas { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
+#hero .link-underline {
+  color: var(--ink); text-decoration: none; font-weight: 700; font-size: 16px;
+  border-bottom: 2px solid var(--ink);
+}
+#hero .trust { display: flex; gap: 28px; flex-wrap: wrap; }
+#hero .trust span { font-size: 13px; font-weight: 600; color: rgba(44,36,24,0.6); }
+.hero-book-wrap { position: relative; }
+.hero-book-shadow {
+  position: absolute; inset: 24px -20px -20px 24px;
+  background: var(--lavender); opacity: 0.16; border-radius: 4px;
+}
+.hero-book {
+  position: relative; background: #fff; border-radius: 4px;
+  box-shadow: 0 30px 60px -20px rgba(44,36,24,0.25); padding: 20px;
+  transform: rotate(-1.5deg); max-width: 420px; margin: 0 auto;
+}
+.hero-book-inner { border: 2px solid var(--gold); padding: 28px 22px; background: #fff; }
+.hero-book-label { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
+.hero-book-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; line-height: 1.4; margin-bottom: 16px; }
+.hero-book-text { font-size: 12px; line-height: 1.75; color: rgba(44,36,24,0.8); }
 
-/* ── SECCIÓN BASE ── */
-section{padding:80px 24px}
-.container{max-width:960px;margin:0 auto}
-.section-eyebrow{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C4956A;margin-bottom:0.75rem;text-align:center}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,42px);text-align:center;line-height:1.25;margin-bottom:1rem}
-.section-sub{font-size:16px;color:#9a7b5a;text-align:center;line-height:1.7;max-width:560px;margin:0 auto 3rem}
+/* ── QR / VOICE DEMO ── */
+#qr { background: #EAF6F3; padding: clamp(56px,10vw,96px) clamp(20px,5vw,56px); }
+#qr .inner { max-width: 1180px; margin: 0 auto; }
+#qr .header { text-align: center; margin-bottom: 56px; }
+.eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 18px; }
+.eyebrow.teal { color: var(--teal); }
+.eyebrow.lavender { color: var(--lavender); }
+.eyebrow.gold { color: var(--gold); }
+#qr h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,52px); margin: 0 0 16px; letter-spacing: -0.01em;
+}
+#qr h2 em { font-style: italic; color: var(--teal); }
+#qr .sub { font-size: clamp(15px,2vw,18px); color: rgba(44,36,24,0.7); max-width: 560px; margin: 0 auto 8px; }
+#qr .sub.accent { color: var(--teal); }
+.cards-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 24px; }
+.card {
+  background: #fff; border-radius: 4px; padding: 32px 24px; text-align: center;
+  box-shadow: 0 12px 30px -16px rgba(44,36,24,0.18); display: flex; flex-direction: column;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--teal);
+  color: #fff; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
+}
+.card-label { font-weight: 800; font-size: 15px; margin-top: auto; text-align: center; }
 
-/* ── CÓMO FUNCIONA ── */
-#como-funciona{background:#fff}
-.pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem}
-.paso{text-align:center;padding:2rem 1.5rem;border-radius:12px;border:0.5px solid #e8d9b8;background:#fdf8f2}
-.paso-num{width:40px;height:40px;border-radius:50%;background:#2C1A0E;color:#F5EDD8;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;margin:0 auto 1rem}
-.paso h3{font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:0.5rem}
-.paso p{font-size:14px;color:#9a7b5a;line-height:1.6}
+/* scrollable chapter card */
+.chapter-scroll-wrap {
+  width: 100%; height: 224px; border-radius: 4px; overflow: hidden; border: 2px solid var(--gold);
+  margin-bottom: 14px; text-align: left;
+}
+.chapter-scroll {
+  height: 100%; width: calc(100% + 18px); overflow-y: scroll;
+  padding: 18px 16px; padding-right: 34px; box-sizing: border-box; background: #fff;
+}
+.chapter-scroll-label { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.chapter-scroll-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; line-height: 1.4; margin-bottom: 10px; }
+.chapter-scroll-text { font-size: 11px; line-height: 1.7; color: rgba(44,36,24,0.8); }
 
-/* ── PREVIEW DEL LIBRO ── */
-#preview{background:#2C1A0E}
-#preview .section-title{color:#F5EDD8}
-#preview .section-eyebrow{color:#C4956A}
-#preview .section-sub{color:#c4a882;max-width:640px}
-.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem}
-.preview-img{width:100%;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.4);display:block}
+/* QR cell */
+.qr-box {
+  width: 100%; height: 240px; border-radius: 4px; border: 2px solid var(--gold);
+  background: #fafafa; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px; margin-bottom: 20px;
+}
+.qr-ring { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+.qr-ring img { width: 100%; height: 100%; display: block; }
+.qr-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 68px; height: 68px; background: var(--cream); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.qr-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); grid-template-rows: repeat(7,1fr);
+  gap: 1px; width: 52px; height: 52px;
+}
+.qr-cell-on { background: var(--gold); }
+.qr-cell-off { background: transparent; }
+
+/* audio box */
+.audio-box {
+  width: 100%; height: 240px; border-radius: 4px; border: 2px solid var(--gold);
+  background: rgba(18,165,148,0.08); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px; margin-bottom: 20px;
+}
+#play-btn {
+  width: 62px; height: 62px; border-radius: 50%; background: var(--lavender);
+  color: #fff; border: none; cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;
+}
+#play-btn:hover { opacity: 0.85; }
+.audio-hint { font-size: 12px; font-weight: 700; color: var(--teal); cursor: pointer; }
+
+/* ── COMO FUNCIONA ── */
+#como {
+  max-width: 860px; margin: 0 auto;
+  padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px);
+}
+#como .header { text-align: center; margin-bottom: 64px; }
+#como h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,48px); margin: 0 0 16px; line-height: 1.1;
+}
+#como h2 em { font-style: italic; color: var(--teal); }
+#como p.sub { font-size: 16px; color: rgba(44,36,24,0.65); max-width: 480px; margin: 0 auto; }
+.steps { position: relative; display: flex; flex-direction: column; gap: 44px; }
+.steps::before {
+  content: ''; position: absolute; left: 27px; top: 16px; bottom: 16px;
+  width: 2px; background: rgba(18,165,148,0.22);
+}
+.step-row { display: flex; gap: 28px; align-items: flex-start; position: relative; }
+.step-circle {
+  width: 56px; height: 56px; border-radius: 50%; background: #fff;
+  border: 2px solid var(--teal); display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 22px;
+  color: var(--teal); flex-shrink: 0; z-index: 1;
+}
+.step-body { padding-top: 6px; }
+.step-title { font-weight: 800; font-size: 18px; margin-bottom: 8px; }
+.step-desc { font-size: 15px; color: rgba(44,36,24,0.68); max-width: 560px; }
+.privacy-box {
+  margin-top: 56px; background: #fff; border-radius: 6px; padding: 28px 32px;
+  display: flex; align-items: center; gap: 22px;
+  box-shadow: 0 10px 24px -18px rgba(44,36,24,0.15);
+}
+.privacy-icon {
+  width: 44px; height: 44px; border-radius: 8px; border: 2px solid var(--lavender);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  color: var(--lavender); font-weight: 800; font-size: 18px;
+}
+.privacy-title { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
+.privacy-desc { font-size: 14px; color: rgba(44,36,24,0.65); }
+
+/* ── BOOK PREVIEW ── */
+#libro-preview {
+  background: #fff; padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px);
+}
+#libro-preview .inner { max-width: 1180px; margin: 0 auto; }
+#libro-preview .header { text-align: center; margin-bottom: 56px; }
+#libro-preview h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,48px); margin: 0;
+}
+#libro-preview h2 em { font-style: italic; color: var(--lavender); }
+.book-viewer { position: relative; max-width: 680px; margin: 0 auto; }
+.book-pages { overflow: hidden; border-radius: 4px; box-shadow: 0 30px 60px -20px rgba(44,36,24,0.22); }
+.book-page-wrap { display: none; }
+.book-page-wrap.active { display: block; }
+
+/* Cover page */
+.book-cover {
+  background: var(--cream); padding: clamp(24px,4vw,40px);
+  aspect-ratio: 8.5/11; position: relative; display: flex; flex-direction: column;
+}
+.book-cover-inner {
+  flex: 1; border: 2.5px solid var(--gold); position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  padding: clamp(24px,4vw,48px) clamp(20px,4vw,56px);
+}
+.book-cover-inner::before {
+  content: ''; position: absolute; inset: 7px; border: 1px solid var(--gold); pointer-events: none;
+}
+.corner {
+  position: absolute; width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg);
+}
+.corner.tl { top: -4px; left: -4px; }
+.corner.tr { top: -4px; right: -4px; }
+.corner.bl { bottom: -4px; left: -4px; }
+.corner.br { bottom: -4px; right: -4px; }
+.cover-deco-line { display: flex; align-items: center; gap: 10px; }
+.cover-deco-line span:first-child,
+.cover-deco-line span:last-child { display: block; width: 44px; height: 1px; background: var(--gold); }
+.cover-deco-line span.diamond { display: block; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); }
+.cover-center { text-align: center; }
+.cover-center img { width: clamp(60px,10vw,90px); height: clamp(60px,10vw,90px); margin-bottom: clamp(20px,4vw,48px); }
+.cover-familia { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(12px,2vw,22px); letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,36,24,0.55); margin-bottom: 2px; }
+.cover-apellido { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: clamp(32px,7vw,76px); line-height: 1; color: var(--gold); margin-bottom: clamp(10px,2vw,22px); }
+.cover-rule { width: 80px; height: 2px; background: var(--gold); margin: 0 auto clamp(10px,2vw,20px); }
+.cover-tagline { font-size: clamp(10px,1.5vw,14px); color: rgba(44,36,24,0.65); letter-spacing: 0.02em; max-width: 3.6in; line-height: 1.6; margin-bottom: clamp(8px,1.5vw,16px); }
+.cover-years { font-family: 'Cormorant Garamond', serif; color: var(--gold); display: flex; align-items: baseline; justify-content: center; gap: 10px; }
+.cover-year-from { font-size: clamp(14px,2.5vw,20px); font-weight: 800; letter-spacing: 0.04em; }
+.cover-year-dash { font-size: clamp(11px,1.8vw,15px); font-weight: 500; }
+.cover-year-inf { font-size: clamp(18px,3vw,26px); font-weight: 600; }
+.cover-footer { text-align: center; }
+.cover-footer-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(10px,1.5vw,15px); color: rgba(44,36,24,0.55); margin-bottom: 8px; }
+.cover-footer-brand { font-size: clamp(8px,1.2vw,11px); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(44,36,24,0.4); font-weight: 700; }
+
+/* Chapter page */
+.book-chapter {
+  background: #fff; padding: clamp(20px,5vw,72px);
+  aspect-ratio: 8.5/11; display: flex; flex-direction: column;
+}
+.chapter-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: clamp(16px,4vw,40px);
+  padding-bottom: clamp(10px,2vw,20px); border-bottom: 1.5px solid rgba(196,155,24,0.35);
+}
+.chapter-header-label { font-size: clamp(7px,1.2vw,11px); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); }
+.chapter-header-brand { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: clamp(10px,1.5vw,15px); color: var(--gold); }
+.chapter-quote {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(13px,2.5vw,26px); line-height: 1.4; color: var(--ink);
+  margin-bottom: clamp(12px,3vw,36px);
+}
+.chapter-body {
+  font-size: clamp(9px,1.4vw,16px); line-height: 1.85;
+  color: rgba(44,36,24,0.85); flex: 1; overflow: hidden;
+}
+.chapter-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: clamp(10px,2vw,28px); margin-top: clamp(10px,2vw,28px);
+  border-top: 1px solid rgba(44,36,24,0.12);
+}
+.chapter-qr { display: flex; align-items: center; gap: 14px; }
+.chapter-qr-ring { position: relative; width: clamp(32px,5vw,56px); height: clamp(32px,5vw,56px); flex-shrink: 0; }
+.chapter-qr-ring img { width: 100%; height: 100%; display: block; }
+.chapter-qr-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 42%; height: 42%; background: var(--cream); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.chapter-qr-grid { display: grid; grid-template-columns: repeat(7,1fr); grid-template-rows: repeat(7,1fr); gap: 0.5px; width: 78%; height: 78%; }
+.chapter-qr-cell-on { background: var(--gold); }
+.chapter-qr-cell-off { background: transparent; }
+.chapter-qr-text { font-size: clamp(7px,1vw,11px); font-family: monospace; color: rgba(44,36,24,0.5); max-width: clamp(80px,12vw,130px); }
+.chapter-page-num { font-size: clamp(8px,1.2vw,12px); color: rgba(44,36,24,0.4); }
+
+.book-nav {
+  display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px;
+}
+.book-nav-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(44,36,24,0.15); background: #fff;
+  color: var(--ink); font-size: 16px; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
+}
+.book-nav-btn:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+.book-page-dots { display: flex; gap: 8px; }
+.book-dot {
+  width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+  background: rgba(44,36,24,0.2); transition: background 0.2s;
+}
+.book-dot.active { background: var(--lavender); }
+
+/* ── FRAGMENTOS ── */
+#fragmentos { padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px); }
+#fragmentos .inner { max-width: 1180px; margin: 0 auto; }
+#fragmentos .header { text-align: center; margin-bottom: 56px; }
+#fragmentos h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,48px); margin: 0;
+}
+#fragmentos h2 em { font-style: italic; color: var(--lavender); }
+.fragment-carousel-wrap { position: relative; max-width: 680px; margin: 0 auto; display: flex; align-items: center; gap: 20px; }
+.carousel-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(44,36,24,0.15);
+  background: #fff; color: var(--ink); font-size: 16px; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
+}
+.carousel-btn:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
+.fragment-panel {
+  background: var(--cream); border-radius: 4px; padding: clamp(28px,4vw,44px) clamp(24px,4vw,48px);
+  flex: 1; min-height: 200px; box-sizing: border-box; transition: opacity 0.3s;
+}
+.fragment-chapter { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lavender); margin-bottom: 16px; }
+.fragment-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 23px; line-height: 1.4; margin-bottom: 18px; }
+.fragment-author { font-size: 14px; font-weight: 700; color: rgba(44,36,24,0.6); }
+.carousel-dots { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 24px; }
+.cdot {
+  width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+  background: rgba(44,36,24,0.2); transition: background 0.2s;
+}
+.cdot.active { background: var(--lavender); }
 
 /* ── PRECIOS ── */
-#precios{background:#fdf8f2}
-.precios-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem}
-.precio-card{background:#fff;border:0.5px solid #e8d9b8;border-radius:16px;padding:2rem;position:relative}
-.precio-card.destacado{border-color:#C4956A;box-shadow:0 0 0 2px #C4956A}
-.precio-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#C4956A;color:#fff;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 16px;border-radius:100px;white-space:nowrap}
-.precio-pack{font-size:12px;letter-spacing:0.15em;text-transform:uppercase;color:#9a7b5a;margin-bottom:0.5rem}
-.precio-monto{font-family:'Cormorant Garamond',serif;font-size:48px;color:#2C1A0E;line-height:1;margin-bottom:0.25rem}
-.precio-monto sup{font-size:24px;vertical-align:top;margin-top:10px;display:inline-block}
-.precio-antes{font-size:13px;color:#9a7b5a;margin-bottom:0.75rem}
-.precio-antes s{text-decoration:line-through}
-.precio-desc{font-size:13px;color:#9a7b5a;margin-bottom:1.5rem}
-.precio-features{list-style:none;margin-bottom:1.5rem}
-.precio-features li{font-size:14px;padding:6px 0;border-bottom:0.5px solid #f0e8d8;color:#3d2b0a}
-.precio-features li:last-child{border:none}
-.precio-features li::before{content:"✓ ";color:#C4956A;font-weight:700}
-.btn-comprar{display:block;width:100%;background:#2C1A0E;color:#F5EDD8;border:none;padding:14px;border-radius:8px;font-family:'Mulish',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.04em;transition:background 0.2s;text-align:center;text-decoration:none;min-height:48px;display:flex;align-items:center;justify-content:center}
-.btn-comprar:hover{background:#3d2b0a}
+#precios {
+  max-width: 1180px; margin: 0 auto;
+  padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px);
+}
+#precios .header { text-align: center; margin-bottom: 64px; }
+#precios h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,48px); margin: 0;
+}
+#precios h2 em { font-style: italic; color: var(--gold); }
+.plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 28px; }
+.plan-card {
+  background: #fff; border-radius: 6px; padding: 40px 32px;
+  border: 1px solid rgba(44,36,24,0.08); box-shadow: 0 10px 24px -18px rgba(44,36,24,0.1);
+  position: relative;
+}
+.plan-card.highlighted {
+  background: linear-gradient(180deg, rgba(196,155,24,0.07), #fff 160px);
+  border: 2px solid var(--gold); box-shadow: 0 24px 48px -20px rgba(196,155,24,0.35);
+  transform: scale(1.03);
+}
+.plan-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: var(--ink); font-size: 11px; font-weight: 800;
+  letter-spacing: 0.04em; padding: 6px 18px; border-radius: 20px; white-space: nowrap;
+}
+.plan-name { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 26px; margin-bottom: 4px; }
+.plan-members { font-size: 14px; color: rgba(44,36,24,0.6); margin-bottom: 22px; }
+.plan-price { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+.plan-price-main { font-family: 'Mulish', sans-serif; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: baseline; }
+.plan-price-sym { font-size: 20px; }
+.plan-price-amt { font-size: 44px; }
+.plan-was { font-size: 15px; color: rgba(44,36,24,0.4); text-decoration: line-through; }
+.plan-rule { height: 1px; background: rgba(44,36,24,0.1); margin-bottom: 24px; }
+.plan-features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+.plan-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: rgba(44,36,24,0.75); }
+.plan-feature .check { font-weight: 800; flex-shrink: 0; }
+.plan-feature.teal-check .check { color: var(--teal); }
+.plan-feature.gold-check .check { color: var(--gold); }
+.plan-cta {
+  display: block; text-align: center; background: var(--ink); color: var(--cream);
+  text-decoration: none; font-weight: 700; font-size: 15px; padding: 15px; border-radius: 2px;
+  transition: all 0.2s;
+}
+.plan-cta:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); box-shadow: 0 12px 24px -10px rgba(196,155,24,0.5); }
+
+/* ── TESTIMONIOS ── */
+#familias { background: #F1EDF9; padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px); }
+#familias .inner { max-width: 1180px; margin: 0 auto; }
+#familias .header { text-align: center; margin-bottom: 56px; }
+#familias h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(30px,5vw,48px); margin: 0;
+}
+#familias h2 em { font-style: italic; color: var(--lavender); }
+.testimonios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 28px; }
+.testimonio-card { position: relative; border-radius: 6px; overflow: hidden; aspect-ratio: 4/5; cursor: default; }
+.testimonio-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.testimonio-footer {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 20px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.6), transparent 70%);
+}
+.testimonio-name { font-weight: 800; font-size: 16px; color: #fff; }
+.testimonio-place { font-size: 12px; color: #fff; opacity: 0.85; font-weight: 700; }
+.testimonio-overlay {
+  position: absolute; inset: 0; background: rgba(44,36,24,0.9);
+  display: flex; align-items: center; justify-content: center; padding: 32px;
+  opacity: 0; transition: opacity 0.25s;
+}
+.testimonio-card:hover .testimonio-overlay { opacity: 1; }
+.testimonio-quote {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 19px;
+  line-height: 1.45; color: #fff; text-align: center;
+}
+
+/* ── FINAL CTA ── */
+#cta-final {
+  background: var(--cream);
+  padding: clamp(80px,12vw,120px) clamp(20px,5vw,56px) clamp(48px,8vw,72px);
+  text-align: center;
+}
+#cta-final .inner { max-width: 600px; margin: 0 auto; }
+.gold-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 32px; }
+.gold-divider span.line { display: block; width: min(160px, 28vw); height: 1px; background: var(--gold); }
+.gold-divider span.diamond { display: block; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+#cta-final h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(30px,5vw,48px); color: var(--ink); margin: 0 0 40px; line-height: 1.25;
+}
+#cta-final .btn-gold { font-size: 16px; padding: 18px 40px; }
+#cta-final .btn-gold:hover { background: var(--ink); color: var(--cream); box-shadow: 0 16px 30px -10px rgba(44,36,24,0.25); }
+
+/* gold gradient separator */
+.gold-sep { display: flex; justify-content: center; }
+.gold-sep-line { width: min(560px, 80vw); height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
 
 /* ── FAQ ── */
-#faq{background:#fff}
-.faq-list{max-width:680px;margin:2rem auto 0}
-.faq-item{border-bottom:0.5px solid #e8d9b8;padding:1.25rem 0}
-.faq-q{font-family:'Cormorant Garamond',serif;font-size:17px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem}
-.faq-q::after{content:"↓";font-family:'Mulish',sans-serif;font-size:14px;color:#9a7b5a;flex-shrink:0;transition:transform 0.2s}
-.faq-item.open .faq-q::after{transform:rotate(180deg)}
-.faq-a{font-size:14px;color:#9a7b5a;line-height:1.7;margin-top:0.75rem;display:none}
-.faq-item.open .faq-a{display:block}
+#faq { max-width: 800px; margin: 0 auto; padding: clamp(48px,8vw,80px) clamp(20px,5vw,56px); }
+#faq .header { text-align: center; margin-bottom: 56px; }
+#faq h2 {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(28px,5vw,44px); margin: 0;
+}
+#faq h2 em { font-style: italic; color: var(--teal); }
+.faq-list { display: flex; flex-direction: column; gap: 2px; }
+.faq-item { background: #fff; border-radius: 4px; overflow: hidden; }
+.faq-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 22px 26px; cursor: pointer; user-select: none; list-style: none;
+}
+.faq-q { font-weight: 700; font-size: 16px; }
+.faq-icon { font-size: 20px; color: var(--teal); font-weight: 700; flex-shrink: 0; transition: transform 0.2s; }
+.faq-a { padding: 0 26px 24px; font-size: 15px; color: rgba(44,36,24,0.7); line-height: 1.6; display: none; }
+.faq-item.open .faq-a { display: block; }
 
 /* ── FOOTER ── */
-footer{background:#2C1A0E;padding:48px 24px;text-align:center}
-.footer-brand{font-family:'Cormorant Garamond',serif;font-size:22px;color:#F5EDD8;margin-bottom:0.5rem}
-.footer-sub{font-size:13px;color:#9a7b5a}
-.footer-links{margin-top:1.5rem;display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
-.footer-links a{font-size:13px;color:#9a7b5a;text-decoration:none}
+#footer { padding: clamp(40px,6vw,56px) clamp(20px,5vw,56px) clamp(24px,4vw,32px); border-top: 1px solid rgba(44,36,24,0.1); }
+#footer .top { display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; margin-bottom: 32px; }
+.footer-brand-block { max-width: 320px; }
+.footer-brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.footer-brand-name { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 20px; color: var(--gold); }
+.footer-tagline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: rgba(44,36,24,0.6); margin-bottom: 10px; }
+.footer-desc { font-size: 13px; color: rgba(44,36,24,0.55); line-height: 1.6; }
+.footer-cols { display: flex; gap: 56px; flex-wrap: wrap; }
+.footer-col-head { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(44,36,24,0.4); margin-bottom: 14px; }
+.footer-col-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-col-links a, .footer-col-links span { color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600; }
+.footer-col-links a:hover { color: var(--gold); }
+.footer-col-links span { color: rgba(44,36,24,0.6); font-weight: 400; }
+#footer .bottom {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 12px; padding-top: 24px; border-top: 1px solid rgba(44,36,24,0.08);
+}
+#footer .bottom span { font-size: 13px; color: rgba(44,36,24,0.5); }
 
-@media(max-width:600px){
-  .precios-grid{grid-template-columns:1fr}
-  .preview-grid{grid-template-columns:1fr}
-  .hero-actions{flex-direction:column;align-items:stretch}
-  .btn-primary,.btn-ghost{min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center}
-  .pasos{grid-template-columns:1fr}
-  section{padding:60px 20px}
+@media (max-width: 600px) {
+  .plans-grid { grid-template-columns: 1fr; }
+  .plan-card.highlighted { transform: none; }
+  .testimonios-grid { grid-template-columns: 1fr; }
+  .cards-3 { grid-template-columns: 1fr; }
+  .footer-cols { gap: 32px; }
 }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <span class="nav-brand">Ethos Bios</span>
-  <div style="display:flex;gap:12px;align-items:center">
-    <a href="/mi-familia" style="font-size:13px;color:#9a7b5a;text-decoration:none">Mi libro</a>
-    <a href="#precios" class="nav-cta">Ver precios</a>
+<nav id="nav">
+  <a href="/" class="brand">
+    <img src="assets/sello-completo.svg" alt="Ethos Bios" style="width:40px;height:40px;flex-shrink:0;">
+    <span class="brand-name">Ethos Bios</span>
+  </a>
+  <div class="links">
+    <a href="#como">Cómo funciona</a>
+    <a href="#precios">Precios</a>
+    <a href="#familias">Familias</a>
+    <a href="#precios" class="btn-ink">Empezar →</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
+<div id="hero">
   <div>
-    <p class="hero-eyebrow">Ethos Bios · Libros biográficos</p>
-    <h1>El libro que<br><em>tu familia</em><br>merece tener</h1>
-    <p class="hero-sub">Cada integrante graba sus historias hablando, desde el celular. Nosotros las convertimos en un libro biográfico único, diseñado y escrito por nosotros. Vos lo recibís para siempre.</p>
-    <div class="hero-actions">
-      <a href="#precios" class="btn-primary">Quiero mi libro</a>
-      <a href="#como-funciona" class="btn-ghost">Cómo funciona</a>
+    <h1>Nunca le preguntaste todo. <em>Todavía puedes.</em></h1>
+    <p class="sub">Ethos Bios convierte las grabaciones de tu familia en un libro biográfico digital de calidad como si un escritor profesional les dedicara un libro, con la voz real de cada uno guardada para siempre detrás de un QR al final de cada capítulo.</p>
+    <div class="ctas">
+      <a href="#precios" class="btn-gold">Empezar ahora</a>
+      <a href="#qr" class="link-underline">Ver cómo funciona ↓</a>
     </div>
-    <p class="hero-nota">Sin instalaciones · Desde el celular · 100% digital · Para toda la familia</p>
+    <div class="trust">
+      <span>Entrega en 24 hs</span>
+      <span>Pago único · desde US$29</span>
+    </div>
+  </div>
+  <div class="hero-book-wrap">
+    <div class="hero-book-shadow"></div>
+    <div class="hero-book">
+      <div class="hero-book-inner">
+        <div class="hero-book-label">Capítulo · Federico</div>
+        <div class="hero-book-quote">"Él me enseñó las emociones, me enseñó a llorar, me enseñó a poder expresarme. Es un pedacito de mi corazón que siempre voy a extrañar."</div>
+        <div class="hero-book-text">Vitto le enseñó cosas que hasta entonces nadie le había enseñado. O bien que nadie había logrado, le enseñó a llorar, por ejemplo. A reconocer las emociones cuando le pasaban por adentro en vez de empujarlas para el costado. A expresar lo que sentía sin sentirse ridículo. Federico, criado en una casa donde el padre demostraba haciendo y no diciendo, donde lo masculino era seriedad y trabajo, encontró en un labrador la pedagogía afectiva que le faltaba. Su madurez en el amor, repite, la marcaron Vito y Gina juntos. Una novia que se queda once años. Un perro que se mete en el ADN. Una vida que se arma despacio, hasta el día en que uno descubre que eso es una vida.</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- CÓMO FUNCIONA -->
-<section id="como-funciona">
-  <div class="container">
-    <p class="section-eyebrow">El proceso</p>
-    <h2 class="section-title">Cuatro pasos.<br>Un libro para siempre.</h2>
-    <p class="section-sub">Todo el trabajo técnico lo hacemos nosotros. Vos solo grabás.</p>
-    <div class="pasos">
-      <div class="paso">
-        <div class="paso-num">1</div>
-        <h3>Elegís el pack</h3>
-        <p>Seleccionás cuántos integrantes querés incluir y completás los datos de cada uno.</p>
-      </div>
-      <div class="paso">
-        <div class="paso-num">2</div>
-        <h3>Cada uno graba</h3>
-        <p>Cada integrante recibe un link único. Responde 16 preguntas con su voz, desde el celular.</p>
-      </div>
-      <div class="paso">
-        <div class="paso-num">3</div>
-        <h3>Procesamos todo</h3>
-        <p>Transcribimos, redactamos y armamos cada capítulo. El árbol genealógico se genera solo.</p>
-      </div>
-      <div class="paso">
-        <div class="paso-num">4</div>
-        <h3>Recibís tu libro</h3>
-        <p>Un PDF de alta calidad, diseñado como un libro de verdad. Llega a tu email, listo para leer y compartir con toda la familia. No se pierde, no se rompe, lo tienen todos.</p>
-      </div>
+<!-- QR / VOICE DEMO -->
+<div id="qr">
+  <div class="inner">
+    <div class="header">
+      <p class="eyebrow teal">EL CORAZÓN DEL LIBRO NO ES SOLO LECTURA, ES LA VOZ DE TU FAMILIA</p>
+      <h2>Cada capítulo se lee y&nbsp;<em>se escucha.</em></h2>
+      <p class="sub">Detrás de cada capítulo hay un QR permanente con la grabación de voz original donde cada integrante puede registrar un mensaje para su familia, y escucharlo para siempre.</p>
+      <p class="sub accent" style="margin-top:8px;">Ethos se lee. Y también se escucha.</p>
     </div>
-  </div>
-</section>
+    <div class="cards-3">
 
-<!-- PREVIEW DEL LIBRO -->
-<section id="preview">
-  <div class="container">
-    <p class="section-eyebrow">El producto</p>
-    <h2 class="section-title">Así llega tu libro</h2>
-    <p class="section-sub">No es un PDF cualquiera ni un documento de Word. Es un libro diseñado de verdad: portada, capítulos, tipografía cuidada y el árbol genealógico de tu familia generado automáticamente. Lo recibís en alta calidad, listo para leer en el celular, la compu o la tablet, y para compartir con toda la familia al instante.</p>
-    <div class="preview-grid">
-      <img src="assets/portada.png" alt="Portada del libro biográfico Ethos Bios" class="preview-img">
-      <img src="assets/interior.png" alt="Página interior del libro biográfico Ethos Bios" class="preview-img">
+      <!-- Card 1: lees -->
+      <div class="card">
+        <div class="step-num">1</div>
+        <div class="chapter-scroll-wrap" title="Deslizá para leer más ↓">
+          <div class="chapter-scroll">
+            <div class="chapter-scroll-label">Capítulo · Papá</div>
+            <div class="chapter-scroll-quote">"No soy tan expresivo, ni tan de mostrar tanto, advierte. Soy medio amargo para esas cosas."</div>
+            <div class="chapter-scroll-text">Y enseguida aclara, casi pidiendo perdón: eso sí, que soy más demostrativo que mi papá, que mi tío. La comparación es reveladora. Mide su capacidad de mostrar afecto contra dos hombres que mostraban todavía menos. Frente a ellos, él es un volcán. Frente a otros padres, quizás, es un señor callado. Pero ninguno tiene que dudar del amor y del cariño que tengo por cada uno de toda la familia, dice, y se nota el esfuerzo que le cuesta poner esa frase en palabras, como si estuviera traduciéndose a sí mismo a un idioma que no es el suyo.<br><br>Lo que les diría a los hijos, si pudiera dejarles un mensaje, es algo parecido a esto: Traté de mostrar con mi proceder cómo soy. Tengo errores, tengo, y más ahora que estoy viejo, a veces más chinchudo. Pero traté de darles los mejores ejemplos para que puedan seguir el camino ustedes. Estoy orgulloso y volvería a hacer todo lo mismo. No me arrepiento de nada. La palabra clave es proceder. No discurso, no sermón. Conducta. Lo que se hace, no lo que se dice. Lo aprendió de su padre, lo aprendió en la policía, lo confirmó en treinta años de oficio: el ejemplo es lo único que efectivamente educa. Las palabras son adorno.</div>
+          </div>
+        </div>
+        <div class="card-label">Lees el capítulo</div>
+      </div>
+
+      <!-- Card 2: QR -->
+      <div class="card">
+        <div class="step-num">2</div>
+        <div class="qr-box">
+          <div class="qr-ring">
+            <img src="assets/sello-vacio-transp.png" alt="QR Ethos Bios">
+            <div class="qr-center">
+              <div class="qr-grid" id="qr-demo-grid"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-label">Escaneas el QR</div>
+      </div>
+
+      <!-- Card 3: audio -->
+      <div class="card">
+        <div class="step-num">3</div>
+        <div class="audio-box">
+          <button id="play-btn" aria-label="Reproducir audio">▶</button>
+          <span class="audio-hint">Tocá para escuchar</span>
+          <audio id="eb-audio"></audio>
+        </div>
+        <div class="card-label">Escuchas su voz real</div>
+      </div>
+
     </div>
   </div>
-</section>
+</div>
+
+<!-- COMO FUNCIONA -->
+<div id="como">
+  <div class="header">
+    <p class="eyebrow teal">EL PROCESO ES SIMPLE</p>
+    <h2>Cinco pasos, 5 minutos. <em>Un libro para siempre.</em></h2>
+    <p class="sub">Tú compras. Ellos graban cuando quieren. Nosotros hacemos todo lo demás.</p>
+  </div>
+  <div class="steps">
+    <div class="step-row">
+      <div class="step-circle">1</div>
+      <div class="step-body">
+        <div class="step-title">Agregas a tu familia</div>
+        <div class="step-desc">Apenas compras, sumas a cada integrante que va a contar su historia.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-circle">2</div>
+      <div class="step-body">
+        <div class="step-title">Les mandás el link</div>
+        <div class="step-desc">Cada uno recibe su propio link por WhatsApp o mail. Lo abren desde el celular, cuando quieran.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-circle">3</div>
+      <div class="step-body">
+        <div class="step-title">Seguís el progreso en tiempo real</div>
+        <div class="step-desc">Un panel te muestra quién grabó, quién falta y en qué etapa está el libro.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-circle">4</div>
+      <div class="step-body">
+        <div class="step-title">Generás el libro</div>
+        <div class="step-desc">Un sistema de IA con orquestación de agentes entrenados por escritores redacta cada capítulo con calidad editorial: toma frases textuales de cada persona y las enlaza con el contexto histórico de su época, sus vivencias y les da una narrativa que te mantendrá atrapado.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-circle">5</div>
+      <div class="step-body">
+        <div class="step-title">Te llega el PDF a tu mail</div>
+        <div class="step-desc">Desde que el último integrante termina de grabar, tenés el libro en menos de 24 hs en diferentes formatos para disfrutar.</div>
+      </div>
+    </div>
+  </div>
+  <div class="privacy-box">
+    <div class="privacy-icon">✓</div>
+    <div>
+      <div class="privacy-title">Tu familia, tus datos.</div>
+      <div class="privacy-desc">Tu audio se guarda de forma segura y nunca se comparte. El mensaje que dejes en el QR de voz queda disponible para siempre.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK PREVIEW -->
+<div id="libro-preview">
+  <div class="inner">
+    <div class="header">
+      <p class="eyebrow lavender">ASÍ SE VE TU LIBRO</p>
+      <h2>Páginas diseñadas <em>para quedarse.</em></h2>
+    </div>
+    <div class="book-viewer">
+      <div class="book-pages">
+
+        <!-- Cover page -->
+        <div class="book-page-wrap active" id="book-p0">
+          <div class="book-cover">
+            <div class="book-cover-inner">
+              <div class="corner tl"></div>
+              <div class="corner tr"></div>
+              <div class="corner bl"></div>
+              <div class="corner br"></div>
+              <div class="cover-deco-line">
+                <span></span><span class="diamond"></span><span></span>
+              </div>
+              <div class="cover-center">
+                <img src="assets/sello-completo.svg" alt="Ethos Bios">
+                <div class="cover-familia">Familia</div>
+                <div class="cover-apellido">Saraniti</div>
+                <div class="cover-rule"></div>
+                <div class="cover-tagline">Historias contadas por sus propias voces, para que queden para siempre grabadas en la familia.</div>
+                <div class="cover-years">
+                  <span class="cover-year-from">1948</span>
+                  <span class="cover-year-dash">—</span>
+                  <span class="cover-year-inf">∞</span>
+                </div>
+              </div>
+              <div class="cover-footer">
+                <div class="cover-footer-italic">Preservar es amar</div>
+                <div class="cover-footer-brand">Ethos Bios</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chapter page -->
+        <div class="book-page-wrap" id="book-p1">
+          <div class="book-chapter">
+            <div class="chapter-header">
+              <div class="chapter-header-label">Capítulo · Federico</div>
+              <div class="chapter-header-brand">Ethos Bios</div>
+            </div>
+            <div class="chapter-quote">"Él me enseñó las emociones, me enseñó a llorar, me enseñó a poder expresarme. Es un pedacito de mi corazón que siempre voy a extrañar."</div>
+            <div class="chapter-body">
+              <p>Vitto le enseñó cosas que hasta entonces nadie le había enseñado. O bien que nadie había logrado, le enseñó a llorar, por ejemplo. A reconocer las emociones cuando le pasaban por adentro en vez de empujarlas para el costado. A expresar lo que sentía sin sentirse ridículo. Federico, criado en una casa donde el padre demostraba haciendo y no diciendo, donde lo masculino era seriedad y trabajo, encontró en un labrador la pedagogía afectiva que le faltaba. Él me enseñó las emociones, me enseñó a llorar, me enseñó a poder expresarme. Es un pedacito de mi corazón que siempre voy a extrañar. Lo dice sin pudor, y eso ya es una conquista. Hay hombres de su generación, de su crianza, que no podrían decirlo en voz alta sin tropezarse. Él puede. Vito lo entrenó para eso. Su madurez en el amor, repite, la marcaron Vito y Gina juntos. Una novia que se queda once años. Un perro que se mete en el ADN. Una vida que se arma despacio y casi sin que uno se dé cuenta, hasta el día en que mira alrededor y descubre que eso es una vida.</p>
+            </div>
+            <div class="chapter-footer">
+              <div class="chapter-qr">
+                <div class="chapter-qr-ring">
+                  <img src="assets/sello-vacio-transp.png" alt="QR">
+                  <div class="chapter-qr-center">
+                    <div class="chapter-qr-grid" id="chapter-qr-grid"></div>
+                  </div>
+                </div>
+                <div class="chapter-qr-text">escaneá para escuchar la voz real de Federico</div>
+              </div>
+              <div class="chapter-page-num">02</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="book-nav">
+        <button class="book-nav-btn" id="book-prev" aria-label="Página anterior">←</button>
+        <div class="book-page-dots">
+          <button class="book-dot active" data-page="0" aria-label="Página 1"></button>
+          <button class="book-dot" data-page="1" aria-label="Página 2"></button>
+        </div>
+        <button class="book-nav-btn" id="book-next" aria-label="Página siguiente">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FRAGMENTOS CAROUSEL -->
+<div id="fragmentos">
+  <div class="inner">
+    <div class="header">
+      <p class="eyebrow lavender">BELLOS FRAGMENTOS QUE NUESTROS CLIENTES NOS COMPARTIERON</p>
+      <h2>Fragmentos de libros <em>ya entregados.</em></h2>
+    </div>
+    <div class="fragment-carousel-wrap">
+      <button class="carousel-btn" id="frag-prev" aria-label="Fragmento anterior">←</button>
+      <div class="fragment-panel" id="frag-panel">
+        <div class="fragment-chapter" id="frag-chapter"></div>
+        <div class="fragment-quote" id="frag-quote"></div>
+        <div class="fragment-author" id="frag-author"></div>
+      </div>
+      <button class="carousel-btn" id="frag-next" aria-label="Fragmento siguiente">→</button>
+    </div>
+    <div class="carousel-dots" id="frag-dots"></div>
+  </div>
+</div>
 
 <!-- PRECIOS -->
-<section id="precios">
-  <div class="container">
-    <p class="section-eyebrow">Planes</p>
-    <h2 class="section-title">Elegí tu pack</h2>
-    <p class="section-sub">Un precio único, sin suscripción. El libro es tuyo para siempre.</p>
-    <div class="precios-grid">
+<div id="precios">
+  <div class="header">
+    <p class="eyebrow gold">LOS PLANES IDEALES PARA VOS Y TU FAMILIA</p>
+    <h2>Un solo pago. <em>Sin suscripción.</em></h2>
+  </div>
+  <div class="plans-grid">
 
-      <div class="precio-card">
-        <p class="precio-pack">Recuerdo</p>
-        <p class="precio-monto"><sup>US$</sup>29</p>
-        <p class="precio-desc">Hasta 4 integrantes</p>
-        <ul class="precio-features">
-          <li>4 capítulos biográficos</li>
-          <li>16 preguntas por persona</li>
-          <li>Árbol genealógico incluido</li>
-          <li>PDF diseñado premium</li>
-        </ul>
-        <a href="https://pay.hotmart.com/M106470819T" class="btn-comprar" target="_blank" rel="noopener">Quiero mi libro →</a>
+    <div class="plan-card">
+      <div class="plan-name">Recuerdo</div>
+      <div class="plan-members">Hasta 4 integrantes</div>
+      <div class="plan-price">
+        <div class="plan-price-main"><span class="plan-price-sym">US$</span><span class="plan-price-amt">29</span></div>
+      </div>
+      <div class="plan-rule"></div>
+      <div class="plan-features">
+        <div class="plan-feature teal-check"><span class="check">✓</span>4 capítulos biográficos</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>18 preguntas por persona</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>QR con la voz de cada integrante — para siempre</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>PDF de alta calidad</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>Entrega en menos de 24 hs</div>
+      </div>
+      <a href="https://pay.hotmart.com/M106470819T" class="plan-cta" target="_blank" rel="noopener">Empezar →</a>
+    </div>
+
+    <div class="plan-card highlighted">
+      <div class="plan-badge">★ Más elegido</div>
+      <div class="plan-name">Legado</div>
+      <div class="plan-members">Hasta 6 integrantes</div>
+      <div class="plan-price">
+        <div class="plan-price-main"><span class="plan-price-sym">US$</span><span class="plan-price-amt">35</span></div>
+        <div class="plan-was">US$49</div>
+      </div>
+      <div class="plan-rule"></div>
+      <div class="plan-features">
+        <div class="plan-feature gold-check"><span class="check">✓</span>6 capítulos biográficos</div>
+        <div class="plan-feature gold-check"><span class="check">✓</span>Introducción y cierre editorial</div>
+        <div class="plan-feature gold-check"><span class="check">✓</span>QR con la voz de cada integrante — para siempre</div>
+        <div class="plan-feature gold-check"><span class="check">✓</span>PDF descargable</div>
+        <div class="plan-feature gold-check"><span class="check">✓</span>Entrega en menos de 24 hs</div>
+      </div>
+      <a href="https://pay.hotmart.com/D106470872S" class="plan-cta" target="_blank" rel="noopener">Empezar →</a>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-name">Bios</div>
+      <div class="plan-members">Hasta 10 integrantes</div>
+      <div class="plan-price">
+        <div class="plan-price-main"><span class="plan-price-sym">US$</span><span class="plan-price-amt">55</span></div>
+      </div>
+      <div class="plan-rule"></div>
+      <div class="plan-features">
+        <div class="plan-feature teal-check"><span class="check">✓</span>10 capítulos biográficos</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>Introducción y cierre editorial</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>QR con la voz de cada integrante — para siempre</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>PDF descargable</div>
+        <div class="plan-feature teal-check"><span class="check">✓</span>Entrega en menos de 24 hs</div>
+      </div>
+      <a href="https://pay.hotmart.com/E106470974U" class="plan-cta" target="_blank" rel="noopener">Empezar →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- TESTIMONIOS -->
+<div id="familias">
+  <div class="inner">
+    <div class="header">
+      <p class="eyebrow lavender">FAMILIAS, TESTIMONIOS Y FOTOGRAFÍAS QUE NOS ENVÍAN</p>
+      <h2>Cada libro es único <em>como quien la vive.</em></h2>
+    </div>
+    <div class="testimonios-grid">
+
+      <div class="testimonio-card">
+        <img src="assets/testimonio-eduardo.png" alt="Eduardo R.">
+        <div class="testimonio-footer">
+          <div class="testimonio-name">Eduardo R.</div>
+          <div class="testimonio-place">Ciudad de México · Aniversario 50 años</div>
+        </div>
+        <div class="testimonio-overlay">
+          <div class="testimonio-quote">"No pensé que íbamos a terminar llorando juntos leyéndolo. Cincuenta años de historia en un libro."</div>
+        </div>
       </div>
 
-      <div class="precio-card destacado">
-        <span class="precio-badge">Más elegido</span>
-        <p class="precio-pack">Legado ⭐</p>
-        <p class="precio-monto"><sup>US$</sup>35</p>
-        <p class="precio-antes">Antes: <s>US$49</s></p>
-        <p class="precio-desc">Hasta 6 integrantes</p>
-        <ul class="precio-features">
-          <li>6 capítulos biográficos</li>
-          <li>Árbol genealógico completo</li>
-          <li>Introducción y cierre editorial</li>
-          <li>PDF diseñado premium</li>
-        </ul>
-        <a href="https://pay.hotmart.com/D106470872S" class="btn-comprar" target="_blank" rel="noopener">Quiero mi libro →</a>
+      <div class="testimonio-card">
+        <img src="assets/testimonio-santiago.png" alt="Santiago R.">
+        <div class="testimonio-footer">
+          <div class="testimonio-name">Santiago R.</div>
+          <div class="testimonio-place">Buenos Aires · Cumpleaños 75</div>
+        </div>
+        <div class="testimonio-overlay">
+          <div class="testimonio-quote">"Mi mamá grabó sola desde el celular. Tardó dos semanas porque se emocionaba contando. Es lo más hermoso que tenemos de ella."</div>
+        </div>
       </div>
 
-      <div class="precio-card">
-        <p class="precio-pack">Bios</p>
-        <p class="precio-monto"><sup>US$</sup>55</p>
-        <p class="precio-desc">Hasta 10 integrantes</p>
-        <ul class="precio-features">
-          <li>10 capítulos biográficos</li>
-          <li>Árbol genealógico completo</li>
-          <li>Introducción y cierre editorial</li>
-          <li>PDF diseñado premium</li>
-        </ul>
-        <a href="https://pay.hotmart.com/E106470974U" class="btn-comprar" target="_blank" rel="noopener">Quiero mi libro →</a>
+      <div class="testimonio-card">
+        <img src="assets/testimonio-carolina.png" alt="Carolina V.">
+        <div class="testimonio-footer">
+          <div class="testimonio-name">Carolina V.</div>
+          <div class="testimonio-place">Bogotá · Para que nunca se olvide</div>
+        </div>
+        <div class="testimonio-overlay">
+          <div class="testimonio-quote">"Queríamos que nuestros hijos supieran de dónde vienen. El libro lo dice mejor que nosotros."</div>
+        </div>
       </div>
 
     </div>
   </div>
-</section>
+</div>
+
+<!-- FINAL CTA -->
+<div id="cta-final">
+  <div class="inner">
+    <div class="gold-divider">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    <h2>Antes de que sea<br>"ojalá lo hubiera hecho."</h2>
+    <a href="#precios" class="btn-gold">Empezar ahora →</a>
+  </div>
+</div>
+
+<div class="gold-sep"><div class="gold-sep-line"></div></div>
 
 <!-- FAQ -->
-<section id="faq">
-  <div class="container">
-    <p class="section-eyebrow">Preguntas</p>
-    <h2 class="section-title">Dudas frecuentes</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <p class="faq-q">¿Qué pasa si alguien no puede grabar?</p>
-        <p class="faq-a">Podés excluir a esa persona del libro sin problema. El libro se genera con las grabaciones que hayas recibido. También podés reenviar el link de grabación todas las veces que quieras.</p>
+<div id="faq">
+  <div class="header">
+    <p class="eyebrow teal">Preguntas</p>
+    <h2>Todo lo que <em>quieres saber.</em></h2>
+  </div>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Necesitan instalar algo?</span>
+        <span class="faq-icon">+</span>
       </div>
-      <div class="faq-item">
-        <p class="faq-q">¿Cuánto tiempo lleva grabar?</p>
-        <p class="faq-a">Entre 20 y 40 minutos por persona. Se puede hacer de corrido o en varias sesiones — el progreso queda guardado. No hace falta prepararse, solo hablar.</p>
+      <div class="faq-a">No. Cada integrante recibe un link, lo abre desde el celular y graba. Sin app, sin registro.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Cuánto tiempo lleva grabar?</span>
+        <span class="faq-icon">+</span>
       </div>
-      <div class="faq-item">
-        <p class="faq-q">¿En qué idioma se escribe el libro?</p>
-        <p class="faq-a">En el idioma en que grabe cada persona. Si mezclan idiomas, el capítulo se escribe en español neutro, que es lo más cómodo para toda la familia.</p>
+      <div class="faq-a">Entre 20 y 40 minutos por persona. Se puede hacer en varias sesiones.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Cuántas personas pueden grabar en el mismo libro?</span>
+        <span class="faq-icon">+</span>
       </div>
-      <div class="faq-item">
-        <p class="faq-q">¿El libro es digital o impreso?</p>
-        <p class="faq-a">Tu libro es 100% digital: un PDF de alta calidad, diseñado como un libro real, que recibís por email. Esto tiene una gran ventaja: lo puede tener toda la familia al mismo tiempo, en cualquier dispositivo, sin que se pierda ni se deteriore. Lo leés en el celular, lo guardás para siempre y lo compartís con quien quieras al instante.</p>
+      <div class="faq-a">Las que quieras según tu plan. Cada integrante recibe su propio link y graba cuando pueda.</div>
+    </div>
+
+    <div class="faq-item open">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Qué pasa con los audios?</span>
+        <span class="faq-icon">−</span>
       </div>
-      <div class="faq-item">
-        <p class="faq-q">¿Qué pasa con los audios y la privacidad?</p>
-        <p class="faq-a">Los audios se usan solo para transcribir y redactar el capítulo. No se comparten con terceros. Los guardamos encriptados durante el proceso y los eliminamos a los 90 días de la entrega.</p>
+      <div class="faq-a" style="display:block;">Los audios se usan solo para transcribir y redactar tu libro. Nunca se comparten con terceros. La única excepción es tu mensaje de voz del QR: esa grabación queda disponible de forma permanente para que tu familia pueda escucharla siempre que quiera.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Qué pasa si alguien no termina de grabar?</span>
+        <span class="faq-icon">+</span>
       </div>
-      <div class="faq-item">
-        <p class="faq-q">¿Puedo pagar en pesos argentinos?</p>
-        <p class="faq-a">Sí, Hotmart acepta pagos en pesos y con tarjetas locales. También podés pagar con tarjeta internacional desde cualquier país.</p>
+      <div class="faq-a">No hay problema. El libro se genera cuando todos terminan. Podés hacer seguimiento y recordarles desde tu panel.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-toggle">
+        <span class="faq-q">¿Puedo ver cómo queda el libro antes de comprar?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Sí. Más arriba en esta página hay páginas reales del libro y fragmentos de libros ya entregados.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="top">
+    <div class="footer-brand-block">
+      <div class="footer-brand-row">
+        <img src="assets/sello-completo.svg" alt="Ethos Bios" style="width:32px;height:32px;">
+        <span class="footer-brand-name">Ethos Bios</span>
+      </div>
+      <div class="footer-tagline">Preservar es amar.</div>
+      <div class="footer-desc">Convertimos las voces de tu familia en un libro biográfico digital, con la voz real guardada para siempre.</div>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <div class="footer-col-head">Producto</div>
+        <div class="footer-col-links">
+          <a href="#como">Cómo funciona</a>
+          <a href="#precios">Precios</a>
+          <a href="#familias">Familias</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-head">Contacto</div>
+        <div class="footer-col-links">
+          <a href="mailto:hola@ethosbios.com">hola@ethosbios.com</a>
+          <span>Hecho en América Latina</span>
+        </div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <p class="footer-brand">Ethos Bios</p>
-  <p class="footer-sub">Libros biográficos · Hecho con cuidado en Argentina</p>
-  <div class="footer-links">
-    <a href="mailto:hola@ethosbios.com">hola@ethosbios.com</a>
-    <a href="#faq">Preguntas frecuentes</a>
-    <a href="#precios">Precios</a>
-    <a href='/privacidad'>Privacidad</a><a href='/terminos'>Términos</a>
+  <div class="bottom">
+    <span>© 2026 Ethos Bios</span>
+    <span>Pago único · Sin suscripción</span>
   </div>
 </footer>
 
 <script>
-document.querySelectorAll('.faq-q').forEach(q => {
-  q.addEventListener('click', () => {
-    const item = q.parentElement;
-    item.classList.toggle('open');
+(function () {
+  'use strict';
+
+  /* ── QR pattern ── */
+  const QR = [1,1,1,0,1,1,1, 1,0,1,0,1,0,1, 1,1,1,0,1,1,1, 0,0,0,1,0,0,0, 1,1,1,0,1,1,1, 1,0,1,0,1,0,1, 1,1,1,0,1,1,1];
+
+  function buildQrGrid(container, onClass, offClass) {
+    if (!container) return;
+    QR.forEach(v => {
+      const d = document.createElement('div');
+      d.className = v ? onClass : offClass;
+      container.appendChild(d);
+    });
+  }
+
+  buildQrGrid(document.getElementById('qr-demo-grid'), 'qr-cell-on', 'qr-cell-off');
+  buildQrGrid(document.getElementById('chapter-qr-grid'), 'chapter-qr-cell-on', 'chapter-qr-cell-off');
+
+  /* ── Audio player ── */
+  const playBtn = document.getElementById('play-btn');
+  const audio = document.getElementById('eb-audio');
+  const AUDIO_SRC = 'assets/audio-anecdota-papa.mp3';
+  let playing = false;
+
+  if (playBtn && audio) {
+    audio.addEventListener('ended', () => {
+      playing = false;
+      playBtn.innerHTML = '▶';
+    });
+    playBtn.addEventListener('click', () => {
+      if (playing) {
+        audio.pause();
+        playing = false;
+        playBtn.innerHTML = '▶';
+      } else {
+        if (!audio.src || audio.src.indexOf(AUDIO_SRC) === -1) audio.src = AUDIO_SRC;
+        audio.play().catch(() => {});
+        playing = true;
+        playBtn.innerHTML = '❚❚';
+      }
+    });
+  }
+
+  /* ── Book page viewer ── */
+  const bookPages = document.querySelectorAll('.book-page-wrap');
+  const bookDots = document.querySelectorAll('.book-dot');
+  let bookPage = 0;
+
+  function gotoBook(n) {
+    bookPages[bookPage].classList.remove('active');
+    bookDots[bookPage].classList.remove('active');
+    bookPage = (n + bookPages.length) % bookPages.length;
+    bookPages[bookPage].classList.add('active');
+    bookDots[bookPage].classList.add('active');
+  }
+
+  document.getElementById('book-prev').addEventListener('click', () => gotoBook(bookPage - 1));
+  document.getElementById('book-next').addEventListener('click', () => gotoBook(bookPage + 1));
+  bookDots.forEach(d => d.addEventListener('click', () => gotoBook(+d.dataset.page)));
+
+  /* ── Fragment carousel ── */
+  const fragments = [
+    { chapter: 'Cap. I · De dónde vienes', quote: 'Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años.', author: 'Jorge M. · 74 años' },
+    { chapter: 'Cap. III · Tus elecciones', quote: 'Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice.', author: 'Valentina R. · 38 años' },
+    { chapter: 'Cap. II · Los que te formaron', quote: 'Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer.', author: 'Camila T. · 45 años' },
+    { chapter: 'Cap. V · Lo que sabes ahora', quote: 'No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres.', author: 'Alberto R. · 81 años' }
+  ];
+
+  const fragChapter = document.getElementById('frag-chapter');
+  const fragQuote = document.getElementById('frag-quote');
+  const fragAuthor = document.getElementById('frag-author');
+  const fragPanel = document.getElementById('frag-panel');
+  const fragDotsEl = document.getElementById('frag-dots');
+  let fragIdx = 0;
+  let fragTimer;
+
+  const fragDotBtns = fragments.map((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'cdot' + (i === 0 ? ' active' : '');
+    b.setAttribute('aria-label', 'Fragmento ' + (i + 1));
+    b.addEventListener('click', () => gotoFrag(i));
+    fragDotsEl.appendChild(b);
+    return b;
   });
-});
+
+  function renderFrag() {
+    const f = fragments[fragIdx];
+    fragChapter.textContent = f.chapter;
+    fragQuote.textContent = '“' + f.quote + '”';
+    fragAuthor.textContent = f.author;
+    fragDotBtns.forEach((b, i) => b.classList.toggle('active', i === fragIdx));
+  }
+
+  function gotoFrag(n) {
+    fragPanel.style.opacity = '0';
+    setTimeout(() => {
+      fragIdx = (n + fragments.length) % fragments.length;
+      renderFrag();
+      fragPanel.style.opacity = '1';
+    }, 150);
+    resetTimer();
+  }
+
+  function resetTimer() {
+    clearInterval(fragTimer);
+    fragTimer = setInterval(() => gotoFrag(fragIdx + 1), 5000);
+  }
+
+  document.getElementById('frag-prev').addEventListener('click', () => gotoFrag(fragIdx - 1));
+  document.getElementById('frag-next').addEventListener('click', () => gotoFrag(fragIdx + 1));
+
+  renderFrag();
+  resetTimer();
+
+  /* ── FAQ accordion ── */
+  document.querySelectorAll('.faq-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const item = toggle.parentElement;
+      const isOpen = item.classList.contains('open');
+      const icon = toggle.querySelector('.faq-icon');
+      item.classList.toggle('open', !isOpen);
+      icon.textContent = isOpen ? '+' : '−';
+    });
+  });
+
+})();
 </script>
 </body>
 </html>
