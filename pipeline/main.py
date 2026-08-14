@@ -578,6 +578,7 @@ class OnboardingRequest(BaseModel):
     nombre_familia: str
     email_comprador: str
     familia_id: str | None = None  # si viene, actualiza doc existente (Hotmart); si no, crea nuevo
+    buyer_token: str | None = None  # token de comprador (2h, Hotmart flow); alternativa a X-Admin-Key
     integrantes: list[OnboardingIntegranteRequest]
     relaciones: list = []
 
@@ -588,13 +589,25 @@ def _recording_base() -> str:
 
 @app.post("/onboarding", status_code=201)
 @limiter.limit("5/hour")
-async def onboarding(request: Request, req: OnboardingRequest, _: None = Depends(_admin_auth)):
+async def onboarding(request: Request, req: OnboardingRequest):
     """
     Crea o actualiza la familia en Firestore y devuelve tokens de grabación.
-    - Sin familia_id: crea familia nueva (flujo admin manual).
-    - Con familia_id: actualiza doc existente de Hotmart, preservando pack y email real.
+    - Sin familia_id: crea familia nueva (flujo admin manual, requiere X-Admin-Key).
+    - Con familia_id + buyer_token: actualiza doc existente (flujo comprador Hotmart).
+    - Con familia_id + X-Admin-Key: flujo admin con familia existente.
     Idempotente por nombre de integrante. Rate-limited: 5 req/hora.
     """
+    # Auth: X-Admin-Key (admin) o buyer_token válido para este familia_id (comprador)
+    x_admin_key = request.headers.get("x-admin-key", "")
+    pwd = os.environ.get("ADMIN_PASSWORD", "")
+    if pwd and x_admin_key == pwd:
+        pass  # admin autenticado
+    elif req.buyer_token and req.familia_id:
+        from pipeline.utils import firestore as _fs_bt
+        if not _fs_bt.validate_temp_token(req.buyer_token, req.familia_id):
+            raise HTTPException(status_code=401, detail="Token de comprador inválido o expirado")
+    else:
+        raise HTTPException(status_code=401, detail="No autorizado")
     from google.cloud import firestore as _firestore
     from pipeline.utils import firestore as fs
 
@@ -1221,8 +1234,17 @@ def _enviar_email_bienvenida(familia_id: str) -> None:
         logger.warning("[email-bienvenida] sin tokens para familia=%s", familia_id)
         return
 
+    # Si la familia tiene buyer_token (Hotmart flow), incluir link de onboarding en el email
+    buyer_token = familia.get("buyer_token", "")
+    onboarding_url = f"{base}/onboarding?familia_id={familia_id}&dt={buyer_token}" if buyer_token else None
+
     try:
-        send_bienvenida(email_comprador=email_comprador, nombre_familia=nombre_familia, tokens=tokens)
+        send_bienvenida(
+            email_comprador=email_comprador,
+            nombre_familia=nombre_familia,
+            tokens=tokens,
+            onboarding_url=onboarding_url,
+        )
         fs._db().collection("familias").document(familia_id).update({"email_bienvenida_enviado": True})
         logger.info("[email-bienvenida] enviado a %s para familia=%s", email_comprador, familia_id)
     except Exception as exc:  # noqa: BLE001
@@ -1466,6 +1488,13 @@ def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str)
         relacion_con_comprador="comprador",
         es_comprador=True,
     )
+
+    # Buyer token (2h) para self-service onboarding — guardado en familia doc
+    # para que _enviar_email_bienvenida lo incluya en el email de bienvenida.
+    buyer_token = uuid.uuid4().hex
+    fs.create_temp_token(buyer_token, familia_id, ttl_minutes=120)
+    fs._db().collection("familias").document(familia_id).update({"buyer_token": buyer_token})
+
     _generar_access_token_familia(familia_id)
     logger.info("[webhook-hotmart] familia=%s email=%s pack=%s transaction=%s", familia_id, email, pack, transaction)
     return familia_id
@@ -1683,6 +1712,34 @@ def familia_link_acceso(
 
     base = _recording_base()
     return {"disponible": True, "link": f"{base}/auth/{token}"}
+
+
+@app.get("/familia/by-hotmart-transaction")
+def familia_by_hotmart_transaction(hp_tx: str = Query(...)):
+    """
+    Lookup de familia por Hotmart transaction ID.
+    Devuelve familia_id + buyer_token (2h, multi-uso) para que gracias.html pueda:
+    - encuestar /familia/{id}/link-acceso con dt=buyer_token
+    - abrir /onboarding?familia_id={id}&dt=buyer_token
+    El hp_tx actúa como prueba de compra — no requiere auth adicional.
+    """
+    from pipeline.utils import firestore as fs
+
+    results = list(
+        fs._db().collection("familias")
+        .where("hotmart_transaction", "==", hp_tx)
+        .limit(1)
+        .stream()
+    )
+
+    if not results:
+        return {"ok": False}
+
+    familia_id = results[0].id
+    buyer_token = uuid.uuid4().hex
+    fs.create_temp_token(buyer_token, familia_id, ttl_minutes=120)
+
+    return {"ok": True, "familia_id": familia_id, "dt": buyer_token}
 
 
 # ─── Reenviar link de grabación ──────────────────────────────────────────────

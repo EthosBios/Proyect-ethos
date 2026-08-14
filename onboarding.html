@@ -275,7 +275,7 @@ h1 em { font-style: italic; color: var(--lavender); }
 // ─────────────────────────────────────────────────────────────────────
 // Config
 // ─────────────────────────────────────────────────────────────────────
-const BASE_URL       = 'https://familia-pipeline-776445604502.southamerica-east1.run.app';
+const BASE_URL       = 'https://familia-pipeline-rxvtynuftq-rj.a.run.app';
 const API_BASE       = BASE_URL;
 const MAX_FOTO_BYTES = 10 * 1024 * 1024;
 
@@ -299,6 +299,8 @@ let confirmedTokens = []; // [{nombre, link, token}] — desde backend
 let copiedId        = null;
 let familiaId       = null;
 let hotmartFamiliaId = null; // familia_id de URL (Hotmart), si viene
+let buyerToken      = null;  // dt de URL (buyer flow via gracias.html)
+let adminKey        = null;  // ?key= de URL (admin flow, enviado como X-Admin-Key)
 
 function cap() { return CAPS[plan] || CAPS.Legado; }
 
@@ -318,6 +320,7 @@ function load() {
       buyerEmail      = saved.buyerEmail      || '';
       confirmedTokens = saved.confirmedTokens || [];
       familiaId       = saved.familiaId       || null;
+      buyerToken      = saved.buyerToken      || null;
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -330,7 +333,7 @@ function persist() {
     const existing    = existingRaw ? JSON.parse(existingRaw) : null;
     const startedAt   = (existing && existing.startedAt) || Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      members, nextId, confirmed, familySurname, buyerEmail, confirmedTokens, familiaId, startedAt
+      members, nextId, confirmed, familySurname, buyerEmail, confirmedTokens, familiaId, buyerToken, startedAt
     }));
   } catch (e) {}
 }
@@ -464,6 +467,7 @@ async function confirmFamily() {
     nombre_familia:  'Familia ' + surname,
     email_comprador: buyerEmail.trim(),
     ...(hotmartFamiliaId ? { familia_id: hotmartFamiliaId } : {}),
+    ...(buyerToken       ? { buyer_token: buyerToken }      : {}),
     integrantes: members.map(m => ({
       nombre:    m.name.trim(),
       es_menor:  false,
@@ -475,10 +479,13 @@ async function confirmFamily() {
     relaciones: [],
   };
 
+  const fetchHeaders = { 'Content-Type': 'application/json' };
+  if (adminKey) fetchHeaders['X-Admin-Key'] = adminKey;
+
   try {
     const resp = await fetch(`${API_BASE}/onboarding`, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: fetchHeaders,
       body:    JSON.stringify(payload),
     });
 
@@ -683,20 +690,38 @@ const _origRender = render;
 render = function() { _origRender(); focusLastInput(); };
 
 // ─────────────────────────────────────────────────────────────────────
-// Gating admin + init
+// Gating + init
+// Flujo admin:    ?admin=1[&key=ADMIN_PASSWORD][&familia_id=xxx][&plan=Legado]
+// Flujo comprador: ?familia_id=xxx&dt=BUYER_TOKEN[&plan=Legado]
 // ─────────────────────────────────────────────────────────────────────
 (function() {
   const p = new URLSearchParams(location.search);
-  if (!p.has('admin')) {
+  const hasAdmin    = p.has('admin');
+  const urlFamiliaId = p.get('familia_id') || null;
+  const urlDt       = p.get('dt')          || null;
+
+  const isBuyerFlow = urlFamiliaId && urlDt;
+
+  if (!hasAdmin && !isBuyerFlow) {
     window.location.replace('/');
     return;
   }
-  // Plan desde URL: ?plan=Recuerdo|Legado|Bios
+
+  // Plan desde URL
   const urlPlan = p.get('plan');
   if (urlPlan && CAPS[urlPlan]) plan = urlPlan;
-  // familia_id desde URL (Hotmart flow): ?familia_id=xxx
-  const urlFamiliaId = p.get('familia_id');
+
+  // familia_id (ambos flujos)
   if (urlFamiliaId) hotmartFamiliaId = urlFamiliaId;
+
+  // Buyer flow: guardar dt para el POST
+  if (urlDt) buyerToken = urlDt;
+
+  // Admin flow: leer clave opcional de URL (?key=) para enviar como X-Admin-Key
+  if (hasAdmin) {
+    const urlKey = p.get('key');
+    if (urlKey) adminKey = urlKey;
+  }
 })();
 
 load();

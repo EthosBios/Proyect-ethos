@@ -48,12 +48,20 @@ h1{font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:0.5rem;fo
   <h1>¡Pago confirmado!</h1>
   <p class="sub">Gracias por tu compra. Este es tu link personal para acceder al libro familiar en cualquier momento.</p>
 
-  <!-- Loading state -->
-  <div id="loading" class="loading-wrap">
+  <!-- Loading state (solo flujo MercadoPago/directo con familia_id en URL) -->
+  <div id="loading" class="loading-wrap" style="display:none">
     <span class="spinner"></span>Preparando tu link de acceso…
   </div>
 
-  <!-- Link disponible -->
+  <!-- Hotmart / sin parámetros: instrucción de revisar email -->
+  <div id="email-state" style="display:none">
+    <p style="font-size:15px;color:#9a7b5a;line-height:1.7;margin-bottom:1.5rem">
+      En los próximos minutos te llegará un email con tu link personal para empezar a armar el libro de tu familia.<br><br>
+      Si no lo ves, revisá la carpeta de <strong>spam</strong> o solicitá un nuevo link desde <a href="/mi-familia" style="color:#C4956A">mi-familia</a>.
+    </p>
+  </div>
+
+  <!-- Link disponible (flujo MercadoPago/directo) -->
   <div id="link-section" style="display:none">
     <div class="link-box">
       <p class="link-box-label">Tu link de acceso</p>
@@ -68,7 +76,7 @@ h1{font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:0.5rem;fo
     </p>
   </div>
 
-  <!-- Error -->
+  <!-- Error (MercadoPago/directo: timeout o fallo) -->
   <div id="error-box" class="error-box">
     Tu link llegará en minutos. Si el pago ya fue procesado y el link no aparece,
     podés pedirlo desde <a href="/mi-familia" style="color:#854F0B">mi-familia</a>
@@ -80,13 +88,16 @@ h1{font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:0.5rem;fo
 const API = '';
 let _link = null;
 let _pollAttempts = 0;
-const MAX_ATTEMPTS = 15;  // 15 × 2s = 30 segundos máximo
+const MAX_ATTEMPTS = 15;  // 15 × 2s = 30s
 
+// Modo directo/MercadoPago: ?familia_id={id}&dt={token} o ?collection_id={id}
+// Sin parámetros (Hotmart): muestra instrucción de revisar email
 function getParams() {
-  const params = new URLSearchParams(location.search);
-  const familiaId = params.get('familia_id') || params.get('collection_id') || null;
-  const dt = params.get('dt') || null;
-  return { familiaId, dt };
+  const p = new URLSearchParams(location.search);
+  return {
+    familiaId: p.get('familia_id') || p.get('collection_id') || null,
+    dt:        p.get('dt') || null,
+  };
 }
 
 async function pollLink(familiaId, dt) {
@@ -96,22 +107,19 @@ async function pollLink(familiaId, dt) {
       ? `${API}/familia/${familiaId}/link-acceso?dt=${encodeURIComponent(dt)}`
       : `${API}/familia/${familiaId}/link-acceso`;
     const res = await fetch(url);
-    if (!res.ok) throw new Error('Error ' + res.status);
+    if (!res.ok) throw new Error();
     const data = await res.json();
     if (data.disponible && data.link) {
-      mostrarLink(data.link, familiaId);
+      mostrarLink(data.link, familiaId, dt);
       return;
     }
   } catch (_) {}
 
-  if (_pollAttempts >= MAX_ATTEMPTS) {
-    mostrarError();
-    return;
-  }
+  if (_pollAttempts >= MAX_ATTEMPTS) { mostrarError(); return; }
   setTimeout(() => pollLink(familiaId, dt), 2000);
 }
 
-function mostrarLink(link, familiaId) {
+function mostrarLink(link, familiaId, dt) {
   _link = link;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('link-display').textContent = link;
@@ -119,7 +127,9 @@ function mostrarLink(link, familiaId) {
 
   if (familiaId) {
     const btn = document.getElementById('btn-onboarding');
-    btn.href = `/onboarding?familia_id=${familiaId}`;
+    let href = `/onboarding?familia_id=${encodeURIComponent(familiaId)}`;
+    if (dt) href += `&dt=${encodeURIComponent(dt)}`;
+    btn.href = href;
   }
 }
 
@@ -150,14 +160,15 @@ async function copiarLink() {
   }
 }
 
-// Init
 (function() {
   const { familiaId, dt } = getParams();
-  if (!familiaId) {
-    mostrarError();
-    return;
+  if (familiaId) {
+    document.getElementById('loading').style.display = 'block';
+    pollLink(familiaId, dt);
+  } else {
+    // Hotmart: sin familia_id en URL — el link llega por email
+    document.getElementById('email-state').style.display = 'block';
   }
-  pollLink(familiaId, dt);
 })();
 </script>
 </body>

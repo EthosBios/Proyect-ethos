@@ -50,18 +50,29 @@ def _send(key: str, to: str, subject: str, html: str) -> None:
     resp.raise_for_status()
 
 
-def send_bienvenida(email_comprador: str, nombre_familia: str, tokens: list[dict]) -> None:
+def send_bienvenida(
+    email_comprador: str,
+    nombre_familia: str,
+    tokens: list[dict],
+    onboarding_url: str | None = None,
+) -> None:
     key = _get_key()
     if not key:
         return
 
     html = (_TEMPLATES_DIR / "email_completado.html").read_text()
 
-    tokens_html = "".join(
+    ctaes = "".join(
         f'<a href="{t["url"]}" class="em-cta" style="margin-bottom:0.5rem;display:block">'
         f'{t["nombre"]} — empezar a grabar ↗</a>'
         for t in tokens
     )
+    if onboarding_url:
+        ctaes += (
+            f'<a href="{onboarding_url}" class="em-cta" '
+            f'style="margin-bottom:0.5rem;display:block;background:#C49B18;">'
+            f'Configurar los integrantes de tu familia →</a>'
+        )
 
     html = (
         html
@@ -69,7 +80,7 @@ def send_bienvenida(email_comprador: str, nombre_familia: str, tokens: list[dict
         .replace("{{FAMILIA_NOMBRE}}", nombre_familia)
         .replace("{{INTEGRANTE_NOMBRE}}", "")
         .replace("{{FECHA_HORA}}", "")
-        .replace('<a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia →</a>', tokens_html)
+        .replace('<a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia →</a>', ctaes)
     )
 
     try:
