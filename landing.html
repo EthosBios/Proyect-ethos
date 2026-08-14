@@ -37,6 +37,8 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
 #nav .links { display: flex; align-items: center; gap: clamp(16px,3vw,40px); flex-wrap: wrap; }
 #nav .links a { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 600; }
 #nav .links a:hover { color: var(--gold); }
+#nav a.btn-ink { color: var(--cream); }
+#nav a.btn-ink:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); box-shadow: 0 10px 20px -8px rgba(196,155,24,0.5); }
 .btn-ink {
   background: var(--ink); color: var(--cream); text-decoration: none;
   font-size: 14px; font-weight: 700; padding: 12px 24px; border-radius: 2px;
@@ -321,25 +323,124 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
   font-size: clamp(30px,5vw,48px); margin: 0;
 }
 #fragmentos h2 em { font-style: italic; color: var(--lavender); }
-.fragment-carousel-wrap { position: relative; max-width: 680px; margin: 0 auto; display: flex; align-items: center; gap: 20px; }
+/* peek carousel */
+.frag-outer { overflow: hidden; }
+.frag-track {
+  display: flex; gap: 24px;
+  transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+  will-change: transform;
+  padding: 24px 4px; /* vertical padding preserves card shadows */
+}
+.frag-card {
+  flex: 0 0 clamp(260px, 48vw, 540px);
+  background: var(--cream); border-radius: 4px;
+  padding: clamp(28px,4vw,44px) clamp(24px,4vw,48px);
+  box-sizing: border-box; min-height: 200px;
+  opacity: 0.45; transition: opacity 0.35s ease;
+  box-shadow: 0 8px 28px -16px rgba(44,36,24,0.12);
+}
+.frag-card.active { opacity: 1; }
+.fragment-chapter { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lavender); margin-bottom: 16px; }
+.fragment-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 23px; line-height: 1.4; margin-bottom: 18px; }
+.fragment-author { font-size: 14px; font-weight: 700; color: rgba(44,36,24,0.6); }
+.frag-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
 .carousel-btn {
   width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(44,36,24,0.15);
   background: #fff; color: var(--ink); font-size: 16px; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
 }
 .carousel-btn:hover { background: var(--lavender); color: #fff; border-color: var(--lavender); }
-.fragment-panel {
-  background: var(--cream); border-radius: 4px; padding: clamp(28px,4vw,44px) clamp(24px,4vw,48px);
-  flex: 1; min-height: 200px; box-sizing: border-box; transition: opacity 0.3s;
-}
-.fragment-chapter { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lavender); margin-bottom: 16px; }
-.fragment-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 23px; line-height: 1.4; margin-bottom: 18px; }
-.fragment-author { font-size: 14px; font-weight: 700; color: rgba(44,36,24,0.6); }
-.carousel-dots { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 24px; }
+.carousel-dots { display: flex; align-items: center; gap: 10px; }
 .cdot {
   width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
   background: rgba(44,36,24,0.2); transition: background 0.2s;
 }
 .cdot.active { background: var(--lavender); }
+
+/* ── TRANSFORMACIÓN ANTES/DESPUÉS ── */
+#transformacion {
+  background: linear-gradient(180deg, #EAF6F3 0%, var(--cream) 100%);
+  padding: clamp(64px,10vw,104px) clamp(20px,5vw,56px);
+}
+#transformacion .inner { max-width: 1180px; margin: 0 auto; }
+#transformacion .header { text-align: center; margin-bottom: 56px; }
+#transformacion h2 { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(30px,5vw,48px); margin: 0; line-height: 1.1; }
+#transformacion h2 em { font-style: italic; color: var(--teal); }
+.transf-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(16px,3vw,32px); align-items: start;
+}
+.transf-raw {
+  background: #fff; border-radius: 8px; padding: clamp(24px,3vw,36px);
+  border-left: 4px solid var(--teal); box-shadow: 0 12px 32px -16px rgba(18,165,148,0.18);
+}
+.raw-top {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+  padding-bottom: 16px; border-bottom: 1px solid rgba(18,165,148,0.15);
+}
+.raw-mic {
+  width: 44px; height: 44px; background: rgba(18,165,148,0.1); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.raw-mic svg { width: 22px; height: 22px; fill: var(--teal); }
+.raw-tag { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 4px; }
+.raw-meta { font-size: 12px; color: rgba(44,36,24,0.5); font-family: monospace; }
+.raw-waveform { display: flex; align-items: center; gap: 3px; height: 32px; margin: 0 0 18px; }
+.raw-waveform span {
+  display: block; width: 3px; border-radius: 2px; background: var(--teal); opacity: 0.55;
+  animation: eb-wave 1.4s ease-in-out infinite;
+}
+.raw-waveform span:nth-child(1)  { height: 35%; animation-delay: 0.00s; }
+.raw-waveform span:nth-child(2)  { height: 70%; animation-delay: 0.10s; }
+.raw-waveform span:nth-child(3)  { height: 100%; animation-delay: 0.20s; }
+.raw-waveform span:nth-child(4)  { height: 55%; animation-delay: 0.30s; }
+.raw-waveform span:nth-child(5)  { height: 90%; animation-delay: 0.15s; }
+.raw-waveform span:nth-child(6)  { height: 40%; animation-delay: 0.25s; }
+.raw-waveform span:nth-child(7)  { height: 75%; animation-delay: 0.05s; }
+.raw-waveform span:nth-child(8)  { height: 60%; animation-delay: 0.35s; }
+.raw-waveform span:nth-child(9)  { height: 100%; animation-delay: 0.18s; }
+.raw-waveform span:nth-child(10) { height: 45%; animation-delay: 0.28s; }
+.raw-waveform span:nth-child(11) { height: 80%; animation-delay: 0.08s; }
+.raw-waveform span:nth-child(12) { height: 30%; animation-delay: 0.40s; }
+@keyframes eb-wave { 0%,100%{transform:scaleY(1);} 50%{transform:scaleY(0.3);} }
+.raw-transcript {
+  font-size: 15px; line-height: 1.7; color: rgba(44,36,24,0.78); font-style: italic;
+  border-left: 3px solid rgba(18,165,148,0.25); padding-left: 14px; margin-bottom: 16px;
+}
+.raw-footer {
+  font-size: 11px; font-family: monospace; color: rgba(44,36,24,0.42);
+  background: rgba(18,165,148,0.06); padding: 8px 12px; border-radius: 4px;
+}
+.transf-arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding-top: clamp(40px,6vw,80px);
+}
+.transf-arrow-label {
+  writing-mode: vertical-rl; text-orientation: mixed; font-size: 9px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--lavender); opacity: 0.7;
+}
+.transf-arrow-line { width: 2px; height: clamp(40px,5vw,72px); background: linear-gradient(180deg, transparent, var(--lavender)); }
+.transf-arrow-sym { font-size: 22px; color: var(--lavender); }
+.transf-polished {
+  background: #fff; border-radius: 8px; padding: clamp(24px,3vw,36px);
+  border: 2px solid var(--gold); box-shadow: 0 12px 32px -16px rgba(196,155,24,0.2);
+}
+.polished-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: clamp(16px,2vw,24px); padding-bottom: 14px; border-bottom: 1.5px solid rgba(196,155,24,0.3);
+}
+.polished-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); }
+.polished-brand { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 14px; color: var(--gold); }
+.polished-quote {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(16px,2.2vw,22px); line-height: 1.4; color: var(--ink); margin-bottom: 18px;
+}
+.polished-text { font-size: 14px; line-height: 1.8; color: rgba(44,36,24,0.82); }
+@media (max-width: 720px) {
+  .transf-grid { grid-template-columns: 1fr; }
+  .transf-arrow { flex-direction: row; padding-top: 0; justify-content: center; gap: 16px; }
+  .transf-arrow-label { writing-mode: horizontal-tb; }
+  .transf-arrow-line { width: clamp(32px,8vw,56px); height: 2px; background: linear-gradient(90deg, transparent, var(--lavender)); }
+  .transf-arrow-sym { transform: rotate(0deg); }
+}
 
 /* ── PRECIOS ── */
 #precios {
@@ -634,6 +735,58 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
   </div>
 </div>
 
+<!-- TRANSFORMACIÓN ANTES / DESPUÉS -->
+<div id="transformacion">
+  <div class="inner">
+    <div class="header">
+      <p class="eyebrow teal">DE TU VOZ A SU HISTORIA</p>
+      <h2>Hablás. Nosotros escribimos. <em>Así se hace.</em></h2>
+    </div>
+    <div class="transf-grid">
+
+      <!-- Lado izquierdo: grabación cruda -->
+      <div class="transf-raw">
+        <div class="raw-top">
+          <div class="raw-mic">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v7a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zm7 8a1 1 0 0 1 1 1 8 8 0 0 1-7 7.938V22h2a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2h2v-2.062A8 8 0 0 1 4 12a1 1 0 0 1 2 0 6 6 0 0 0 12 0 1 1 0 0 1 1-1z"/></svg>
+          </div>
+          <div>
+            <div class="raw-tag">Grabación de voz</div>
+            <div class="raw-meta">Federico · Pregunta 3 · 2 min 14 s</div>
+          </div>
+        </div>
+        <div class="raw-waveform">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span>
+        </div>
+        <div class="raw-transcript">
+          "...y bueno, mi papá era así, ¿no? Callado. Pero Vito —el perro— ese sí me enseñó cosas que... que él nunca pudo. Me enseñó a llorar, a expresarme. Es que yo no sé cómo explicarlo, fue como que... de golpe aprendí lo que era sentir y no empujar para el costado. [pausa] Es medio loco decirlo de un labrador, ¿no? [risas]"
+        </div>
+        <div class="raw-footer">🎙 Audio original · sin editar · transcripción automática</div>
+      </div>
+
+      <!-- Flecha central -->
+      <div class="transf-arrow">
+        <div class="transf-arrow-label">IA editorial</div>
+        <div class="transf-arrow-line"></div>
+        <div class="transf-arrow-sym">▼</div>
+      </div>
+
+      <!-- Lado derecho: capítulo editorial -->
+      <div class="transf-polished">
+        <div class="polished-top">
+          <span class="polished-label">Capítulo · Federico</span>
+          <span class="polished-brand">Ethos Bios</span>
+        </div>
+        <div class="polished-quote">"Él me enseñó las emociones, me enseñó a llorar, me enseñó a poder expresarme."</div>
+        <div class="polished-text">Federico, criado en una casa donde lo masculino era seriedad y trabajo, encontró en un labrador la pedagogía afectiva que le faltaba. Vitto le enseñó a llorar —a reconocer las emociones cuando le pasaban por adentro en vez de empujarlas para el costado. A expresar lo que sentía sin sentirse ridículo. Lo dice sin pudor, y eso ya es una conquista.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- BOOK PREVIEW -->
 <div id="libro-preview">
   <div class="inner">
@@ -721,16 +874,35 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
       <p class="eyebrow lavender">BELLOS FRAGMENTOS QUE NUESTROS CLIENTES NOS COMPARTIERON</p>
       <h2>Fragmentos de libros <em>ya entregados.</em></h2>
     </div>
-    <div class="fragment-carousel-wrap">
-      <button class="carousel-btn" id="frag-prev" aria-label="Fragmento anterior">←</button>
-      <div class="fragment-panel" id="frag-panel">
-        <div class="fragment-chapter" id="frag-chapter"></div>
-        <div class="fragment-quote" id="frag-quote"></div>
-        <div class="fragment-author" id="frag-author"></div>
+    <div class="frag-outer">
+      <div class="frag-track" id="frag-track">
+        <div class="frag-card active">
+          <div class="fragment-chapter">Cap. I · De dónde vienes</div>
+          <div class="fragment-quote">"Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años."</div>
+          <div class="fragment-author">Jorge M. · 74 años</div>
+        </div>
+        <div class="frag-card">
+          <div class="fragment-chapter">Cap. III · Tus elecciones</div>
+          <div class="fragment-quote">"Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice."</div>
+          <div class="fragment-author">Valentina R. · 38 años</div>
+        </div>
+        <div class="frag-card">
+          <div class="fragment-chapter">Cap. II · Los que te formaron</div>
+          <div class="fragment-quote">"Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer."</div>
+          <div class="fragment-author">Camila T. · 45 años</div>
+        </div>
+        <div class="frag-card">
+          <div class="fragment-chapter">Cap. V · Lo que sabes ahora</div>
+          <div class="fragment-quote">"No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres."</div>
+          <div class="fragment-author">Alberto R. · 81 años</div>
+        </div>
       </div>
+    </div>
+    <div class="frag-nav">
+      <button class="carousel-btn" id="frag-prev" aria-label="Fragmento anterior">←</button>
+      <div class="carousel-dots" id="frag-dots"></div>
       <button class="carousel-btn" id="frag-next" aria-label="Fragmento siguiente">→</button>
     </div>
-    <div class="carousel-dots" id="frag-dots"></div>
   </div>
 </div>
 
@@ -896,7 +1068,7 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
         <span class="faq-q">¿Qué pasa con los audios?</span>
         <span class="faq-icon">−</span>
       </div>
-      <div class="faq-a" style="display:block;">Los audios se usan solo para transcribir y redactar tu libro. Nunca se comparten con terceros. La única excepción es tu mensaje de voz del QR: esa grabación queda disponible de forma permanente para que tu familia pueda escucharla siempre que quiera.</div>
+      <div class="faq-a">Los audios se usan solo para transcribir y redactar tu libro. Nunca se comparten con terceros. La única excepción es tu mensaje de voz del QR: esa grabación queda disponible de forma permanente para que tu familia pueda escucharla siempre que quiera.</div>
     </div>
 
     <div class="faq-item">
@@ -1014,68 +1186,63 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
   document.getElementById('book-next').addEventListener('click', () => gotoBook(bookPage + 1));
   bookDots.forEach(d => d.addEventListener('click', () => gotoBook(+d.dataset.page)));
 
-  /* ── Fragment carousel ── */
-  const fragments = [
-    { chapter: 'Cap. I · De dónde vienes', quote: 'Llegué a Buenos Aires con una valija y las direcciones de dos parientes que casi no conocía. No sabía que me iba a quedar cuarenta años.', author: 'Jorge M. · 74 años' },
-    { chapter: 'Cap. III · Tus elecciones', quote: 'Renuncié a todo para empezar algo mío. Mi familia pensó que me había vuelto loca. Hoy es lo mejor que hice.', author: 'Valentina R. · 38 años' },
-    { chapter: 'Cap. II · Los que te formaron', quote: 'Mi papá era un hombre de pocas palabras. En el libro escribió tres páginas sobre mí. No lo podía creer.', author: 'Camila T. · 45 años' },
-    { chapter: 'Cap. V · Lo que sabes ahora', quote: 'No confundan rapidez con urgencia. Las cosas que importan siempre tardan más de lo que quieres.', author: 'Alberto R. · 81 años' }
-  ];
-
-  const fragChapter = document.getElementById('frag-chapter');
-  const fragQuote = document.getElementById('frag-quote');
-  const fragAuthor = document.getElementById('frag-author');
-  const fragPanel = document.getElementById('frag-panel');
+  /* ── Peek fragment carousel ── */
+  const fragTrack = document.getElementById('frag-track');
+  const fragCards = Array.from(document.querySelectorAll('.frag-card'));
+  const fragTotal = fragCards.length;
   const fragDotsEl = document.getElementById('frag-dots');
   let fragIdx = 0;
   let fragTimer;
 
-  const fragDotBtns = fragments.map((_, i) => {
+  const fragDotBtns = fragCards.map((_, i) => {
     const b = document.createElement('button');
     b.className = 'cdot' + (i === 0 ? ' active' : '');
     b.setAttribute('aria-label', 'Fragmento ' + (i + 1));
-    b.addEventListener('click', () => gotoFrag(i));
+    b.addEventListener('click', () => { gotoFrag(i); resetFragTimer(); });
     fragDotsEl.appendChild(b);
     return b;
   });
 
-  function renderFrag() {
-    const f = fragments[fragIdx];
-    fragChapter.textContent = f.chapter;
-    fragQuote.textContent = '“' + f.quote + '”';
-    fragAuthor.textContent = f.author;
-    fragDotBtns.forEach((b, i) => b.classList.toggle('active', i === fragIdx));
+  function getTranslate(i) {
+    const cardW = fragCards[0].offsetWidth;
+    const gap = 24;
+    const containerW = fragTrack.parentElement.offsetWidth;
+    const center = (containerW - cardW) / 2;
+    return center - i * (cardW + gap);
   }
 
   function gotoFrag(n) {
-    fragPanel.style.opacity = '0';
-    setTimeout(() => {
-      fragIdx = (n + fragments.length) % fragments.length;
-      renderFrag();
-      fragPanel.style.opacity = '1';
-    }, 150);
-    resetTimer();
+    fragIdx = (n + fragTotal) % fragTotal;
+    fragTrack.style.transform = 'translateX(' + getTranslate(fragIdx) + 'px)';
+    fragCards.forEach((c, i) => c.classList.toggle('active', i === fragIdx));
+    fragDotBtns.forEach((b, i) => b.classList.toggle('active', i === fragIdx));
   }
 
-  function resetTimer() {
+  function resetFragTimer() {
     clearInterval(fragTimer);
-    fragTimer = setInterval(() => gotoFrag(fragIdx + 1), 5000);
+    fragTimer = setInterval(() => gotoFrag(fragIdx + 1), 7000);
   }
 
-  document.getElementById('frag-prev').addEventListener('click', () => gotoFrag(fragIdx - 1));
-  document.getElementById('frag-next').addEventListener('click', () => gotoFrag(fragIdx + 1));
+  document.getElementById('frag-prev').addEventListener('click', () => { gotoFrag(fragIdx - 1); resetFragTimer(); });
+  document.getElementById('frag-next').addEventListener('click', () => { gotoFrag(fragIdx + 1); resetFragTimer(); });
 
-  renderFrag();
-  resetTimer();
+  requestAnimationFrame(() => { gotoFrag(0); resetFragTimer(); });
 
-  /* ── FAQ accordion ── */
+  /* ── FAQ accordion — one open at a time ── */
   document.querySelectorAll('.faq-toggle').forEach(toggle => {
     toggle.addEventListener('click', () => {
       const item = toggle.parentElement;
       const isOpen = item.classList.contains('open');
-      const icon = toggle.querySelector('.faq-icon');
-      item.classList.toggle('open', !isOpen);
-      icon.textContent = isOpen ? '+' : '−';
+      // close all
+      document.querySelectorAll('.faq-item').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-icon').textContent = '+';
+      });
+      // open clicked one if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        toggle.querySelector('.faq-icon').textContent = '−';
+      }
     });
   });
 
