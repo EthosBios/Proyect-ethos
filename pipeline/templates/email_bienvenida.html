@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu libro familiar está en marcha — Ethos Bios</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Mulish:wght@400;600;700&display=swap');
+body{margin:0;padding:0;background:#FBF7F0;font-family:'Mulish',Arial,sans-serif}
+.em-wrap{max-width:560px;margin:0 auto;padding:32px 16px}
+.em-card{background:#ffffff;border:0.5px solid rgba(196,155,24,.25);border-radius:12px;overflow:hidden}
+.em-stripe{height:5px;background:linear-gradient(90deg,#C49B18 0 34%,#12A594 34% 67%,#7C6BC4 67% 100%)}
+.em-header{background:#2C2418;padding:2.25rem 2rem 2rem;text-align:center}
+.em-wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;color:#C49B18;letter-spacing:0.04em;margin:0 0 12px}
+.em-subject{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;color:#FBF7F0;line-height:1.35;margin:0;font-weight:400}
+.em-subject em{color:#7AD9C9;font-style:italic}
+.em-body{padding:2rem}
+.em-eyebrow{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#12A594;margin:0 0 6px;font-family:'Mulish',Arial,sans-serif;font-weight:700}
+.em-family{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:500;color:#2C2418;margin:0 0 1.25rem}
+.em-body p{font-size:15px;line-height:1.7;color:#2C2418;margin:0 0 1rem;font-family:'Mulish',Arial,sans-serif}
+.em-steps{background:#F5EDD8;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.25rem}
+.em-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:0.75rem}
+.em-step:last-child{margin-bottom:0}
+.em-step-num{width:22px;min-width:22px;height:22px;border-radius:50%;background:#C49B18;color:#2C2418;font-size:11px;font-weight:700;text-align:center;line-height:22px;font-family:'Mulish',Arial,sans-serif}
+.em-step-text{font-size:14px;line-height:1.55;color:#2C2418;font-family:'Mulish',Arial,sans-serif;padding-top:2px}
+.em-divider{border:none;border-top:0.5px solid rgba(196,155,24,.2);margin:1.5rem 0}
+.em-cta{
+  display:block;background:#C49B18;color:#2C2418;text-align:center;
+  padding:0.9rem 1.5rem;border-radius:8px;font-family:'Mulish',Arial,sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:0.06em;text-decoration:none;
+  margin:1.5rem 0 0
+}
+.em-footer{padding:1rem 2rem;border-top:0.5px solid rgba(196,155,24,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.em-footer-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:#C49B18}
+.em-footer-link{font-size:12px;color:rgba(44,36,24,.55);font-family:'Mulish',Arial,sans-serif}
+</style>
+</head>
+<body>
+<div class="em-wrap">
+  <div class="em-card">
+    <div class="em-stripe"></div>
+    <div class="em-header">
+      <p class="em-wordmark">Ethos Bios</p>
+      <h1 class="em-subject">Tu libro familiar<br><em>está en marcha</em></h1>
+    </div>
+    <div class="em-body">
+      <p class="em-eyebrow">Hola</p>
+      <h2 class="em-family">{{FAMILIA_NOMBRE}}</h2>
+      <p>Tu compra está confirmada. Para arrancar, hay dos primeros pasos:</p>
+      <div class="em-steps">
+        <div class="em-step">
+          <div class="em-step-num">1</div>
+          <div class="em-step-text"><strong>Configurá los integrantes</strong> — definí quiénes van a grabar su historia en el libro.</div>
+        </div>
+        <div class="em-step">
+          <div class="em-step-num">2</div>
+          <div class="em-step-text"><strong>Compartí los links de grabación</strong> — cada uno responde las preguntas desde el celular, cuando quiera.</div>
+        </div>
+      </div>
+      <p>Cuando todos hayan grabado, el libro se genera automáticamente y te lo enviamos.</p>
+      <hr class="em-divider">
+      <a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia →</a>
+    </div>
+    <div class="em-footer">
+      <span class="em-footer-brand">Ethos Bios</span>
+      <span class="em-footer-link">© ethosbios.com</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1222,21 +1222,27 @@ def _enviar_email_bienvenida(familia_id: str) -> None:
         logger.warning("[email-bienvenida] sin email para familia=%s", familia_id)
         return
 
-    integrantes = fs.get_integrantes(familia_id)
     base = _recording_base()
+
+    # Botones de grabación (solo si ya existen integrantes — no en el momento del webhook)
+    integrantes = fs.get_integrantes(familia_id)
     tokens = [
         {"nombre": i.get("nombre", ""), "url": f"{base}/r/{i.get('token_unico', '')}"}
         for i in integrantes
         if i.get("token_unico") and not i.get("es_menor")
     ]
 
-    if not tokens:
-        logger.warning("[email-bienvenida] sin tokens para familia=%s", familia_id)
-        return
-
     # Si la familia tiene buyer_token (Hotmart flow), incluir link de onboarding en el email
     buyer_token = familia.get("buyer_token", "")
     onboarding_url = f"{base}/onboarding?familia_id={familia_id}&dt={buyer_token}" if buyer_token else None
+
+    # Magic link al panel /mi-familia — siempre presente si hay access_token
+    access_token = familia.get("access_token", "")
+    magic_link_url = f"{base}/auth/{access_token}" if access_token else None
+
+    if not tokens and not onboarding_url and not magic_link_url:
+        logger.warning("[email-bienvenida] sin contenido para familia=%s, omitiendo", familia_id)
+        return
 
     try:
         send_bienvenida(
@@ -1244,6 +1250,7 @@ def _enviar_email_bienvenida(familia_id: str) -> None:
             nombre_familia=nombre_familia,
             tokens=tokens,
             onboarding_url=onboarding_url,
+            magic_link_url=magic_link_url,
         )
         fs._db().collection("familias").document(familia_id).update({"email_bienvenida_enviado": True})
         logger.info("[email-bienvenida] enviado a %s para familia=%s", email_comprador, familia_id)
@@ -1482,13 +1489,6 @@ def _crear_familia_hotmart(email: str, nombre: str, pack: str, transaction: str)
         "origen": "hotmart",
         "hotmart_transaction": transaction,
     })
-    fs.add_integrante(
-        familia_id=familia_id,
-        nombre=nombre or email,
-        relacion_con_comprador="comprador",
-        es_comprador=True,
-    )
-
     # Buyer token (2h) para self-service onboarding — guardado en familia doc
     # para que _enviar_email_bienvenida lo incluya en el email de bienvenida.
     buyer_token = uuid.uuid4().hex

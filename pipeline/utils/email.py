@@ -55,12 +55,13 @@ def send_bienvenida(
     nombre_familia: str,
     tokens: list[dict],
     onboarding_url: str | None = None,
+    magic_link_url: str | None = None,
 ) -> None:
     key = _get_key()
     if not key:
         return
 
-    html = (_TEMPLATES_DIR / "email_completado.html").read_text()
+    html = (_TEMPLATES_DIR / "email_bienvenida.html").read_text()
 
     ctaes = "".join(
         f'<a href="{t["url"]}" class="em-cta" style="margin-bottom:0.5rem;display:block">'
@@ -70,21 +71,25 @@ def send_bienvenida(
     if onboarding_url:
         ctaes += (
             f'<a href="{onboarding_url}" class="em-cta" '
-            f'style="margin-bottom:0.5rem;display:block;background:#C49B18;">'
+            f'style="margin-bottom:0.5rem;display:block;">'
             f'Configurar los integrantes de tu familia →</a>'
+        )
+    if magic_link_url:
+        ctaes += (
+            f'<p style="text-align:center;margin-top:1.25rem;margin-bottom:0">'
+            f'<a href="{magic_link_url}" style="color:#C49B18;font-size:13px;'
+            f'font-family:Mulish,Arial,sans-serif;text-decoration:none">'
+            f'Accedé a tu panel familiar →</a></p>'
         )
 
     html = (
         html
-        .replace("Hola, {{COMPRADOR_NOMBRE}}", "Hola")
         .replace("{{FAMILIA_NOMBRE}}", nombre_familia)
-        .replace("{{INTEGRANTE_NOMBRE}}", "")
-        .replace("{{FECHA_HORA}}", "")
         .replace('<a href="{{DASHBOARD_URL}}" class="em-cta">Ver progreso de la familia →</a>', ctaes)
     )
 
     try:
-        _send(key, email_comprador, f"Ya podés empezar — {nombre_familia}", html)
+        _send(key, email_comprador, f"Tu compra está confirmada — {nombre_familia}", html)
     except Exception as exc:  # noqa: BLE001
         logger.warning("Error enviando bienvenida a %s: %s", email_comprador, exc)
 
