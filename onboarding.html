@@ -3,1463 +3,699 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Onboarding Familia — Libro de Memorias</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Arma tu familia — Ethos Bios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
 :root {
-  --bg: #FAF8F5;
-  --text: #2C2C2C;
-  --accent: #8B6F5E;
-  --accent-light: #c8a99a;
-  --border: #e0d6cf;
-  --white: #ffffff;
-  --success: #4a7c59;
-  --error: #a94442;
-  --shadow: 0 2px 12px rgba(139, 111, 94, 0.12);
+  --gold: #C49B18;
+  --teal: #12A594;
+  --lavender: #7C6BC4;
+  --cream: #FBF7F0;
+  --ink: #2C2418;
+  --error-red: #a33;
 }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.5; }
+h1, h2 { font-family: 'Cormorant Garamond', serif; }
+input::placeholder { color: rgba(44,36,24,0.35); }
 
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  color: var(--text);
+/* ── Nav ── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  padding: 16px clamp(20px,5vw,56px);
+  background: rgba(251,247,240,0.92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(44,36,24,0.08);
 }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand img { width: 36px; height: 36px; }
+.brand span { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 20px; letter-spacing: 0.02em; color: var(--gold); }
+.plan-pill { font-size: 13px; font-weight: 700; background: #fff; border: 1px solid rgba(44,36,24,0.12); border-radius: 2px; padding: 8px 14px; white-space: nowrap; flex-shrink: 0; }
 
-header {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 28px 24px;
-  text-align: center;
+/* ── Layout ── */
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 clamp(20px,5vw,56px); }
+
+/* ── Video slot ── */
+.video-slot {
+  border: 1px dashed rgba(44,36,24,0.25); border-radius: 6px;
+  background: repeating-linear-gradient(135deg, rgba(44,36,24,0.035) 0px, rgba(44,36,24,0.035) 10px, transparent 10px, transparent 20px);
+  aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  margin-top: clamp(32px,6vw,56px);
 }
+.video-slot .play { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid rgba(44,36,24,0.15); display: flex; align-items: center; justify-content: center; }
+.video-slot .play i { width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 14px solid var(--ink); margin-left: 3px; display: block; }
+.video-slot .caption { font-family: monospace; font-size: 12px; color: rgba(44,36,24,0.55); }
 
-header h1 {
-  font-family: 'Lora', serif;
-  font-size: 26px;
-  font-weight: 400;
-  color: var(--text);
-  letter-spacing: 0.3px;
+/* ── Header ── */
+.header { padding-top: clamp(32px,6vw,56px); }
+.eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
+h1 { font-weight: 600; font-size: clamp(30px,5vw,48px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.01em; }
+h1 em { font-style: italic; color: var(--lavender); }
+.lead { font-size: clamp(15px,2vw,17px); color: rgba(44,36,24,0.75); max-width: 600px; margin: 0 0 8px; }
+.session-note { font-size: 13px; color: rgba(44,36,24,0.5); margin: 0; }
+
+/* ── Card block ── */
+.card-block { background: #fff; border-radius: 4px; box-shadow: 0 10px 24px -18px rgba(44,36,24,0.18); }
+
+/* ── Cover block ── */
+.cover-block { margin-top: 28px; padding: 24px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.cover-photo {
+  width: 96px; height: 96px; border-radius: 4px;
+  border: 2px dashed rgba(196,155,24,0.45); background: var(--cream); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--gold); text-align: center;
+  cursor: pointer; overflow: hidden; position: relative;
 }
-
-header p {
-  font-size: 11px;
-  color: var(--accent);
-  margin-top: 6px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  font-weight: 500;
+.cover-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-photo input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.cover-fields { flex: 1; min-width: 220px; }
+.cover-fields .title { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
+.cover-fields .hint { font-size: 13px; color: rgba(44,36,24,0.6); margin: 0 0 12px; }
+.cover-fields label { display: block; font-size: 12px; font-weight: 700; color: rgba(44,36,24,0.6); margin-bottom: 6px; }
+.cover-fields input[type="text"] {
+  font-family: 'Mulish', sans-serif; font-size: 15px;
+  padding: 10px 12px; border: 1px solid rgba(44,36,24,0.2); border-radius: 2px;
+  width: 100%; max-width: 320px; outline: none;
 }
+.cover-fields input[type="text"]:focus { border-color: var(--gold); }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 40px 24px 80px;
+/* ── Progress ── */
+.progress-wrap { margin-top: 28px; }
+.progress-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.progress-track { height: 6px; background: rgba(44,36,24,0.08); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.3s ease; }
+
+/* ── Main section ── */
+.main { padding: 32px 0 40px; }
+
+/* ── Empty state ── */
+.empty-state { border: 2px dashed rgba(196,155,24,0.4); border-radius: 6px; padding: clamp(48px,8vw,72px) 24px; text-align: center; background: #fff; }
+.empty-state .icon { width: 64px; height: 64px; border-radius: 50%; background: #F1EDF9; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 26px; color: var(--lavender); }
+.empty-state h2 { font-weight: 600; font-size: 24px; margin-bottom: 10px; }
+.empty-state p { font-size: 15px; color: rgba(44,36,24,0.65); max-width: 400px; margin: 0 auto 28px; }
+
+/* ── Buttons ── */
+.btn { border: none; font-family: 'Mulish', sans-serif; font-weight: 800; font-size: 15px; padding: 15px 28px; border-radius: 2px; cursor: pointer; }
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-gold:hover:not(:disabled) { background: #b08a14; }
+.btn-gold:disabled { background: rgba(44,36,24,0.15); color: rgba(44,36,24,0.4); cursor: not-allowed; }
+.btn-secondary-outline { border: 1px solid rgba(44,36,24,0.2); background: #fff; color: var(--ink); font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 14px; padding: 13px 22px; border-radius: 2px; cursor: pointer; }
+
+/* ── Member grid ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 20px; }
+.member-card { padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; min-height: 200px; }
+.member-card .actions { display: flex; gap: 6px; position: absolute; top: 12px; right: 12px; }
+.member-card .actions button { width: 28px; height: 28px; border-radius: 2px; border: 1px solid rgba(44,36,24,0.15); background: #fff; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.member-card .actions button.remove { color: var(--error-red); }
+.member-card .avatar { width: 64px; height: 64px; border-radius: 50%; background: #F1EDF9; color: var(--lavender); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+.member-card input[type="text"] { font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 16px; text-align: center; border: 1px solid var(--gold); border-radius: 2px; padding: 8px 10px; width: 100%; margin-bottom: 6px; outline: none; }
+.member-card .name { font-weight: 700; font-size: 16px; margin-bottom: 6px; cursor: pointer; }
+.member-card .error { font-size: 12px; color: var(--error-red); font-weight: 700; }
+
+/* ── Add card ── */
+.add-card {
+  border: 2px dashed rgba(196,155,24,0.45); border-radius: 4px; background: transparent;
+  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; min-height: 200px; color: var(--gold); font-family: 'Mulish', sans-serif; font-weight: 800; font-size: 15px;
+  transition: border-color 0.2s, color 0.2s;
 }
+.add-card:hover { border-color: var(--gold); }
+.add-card span { font-size: 24px; }
+.add-card:disabled, .add-card[disabled] { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
-/* ── Secciones del formulario ── */
-.section {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow);
-}
+/* ── Cap message ── */
+.cap-msg { margin-top: 20px; background: #F1EDF9; border-radius: 4px; padding: 18px 20px; font-size: 14px; font-weight: 700; }
 
-.section-title {
-  font-family: 'Lora', serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
+/* ── Confirm bar ── */
+.confirm-bar { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(44,36,24,0.1); display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.confirm-bar .hint { font-size: 13px; color: rgba(44,36,24,0.6); }
+.confirm-bar .error-msg { font-size: 13px; color: var(--error-red); font-weight: 700; }
 
-/* ── Campos ── */
-.field {
-  margin-bottom: 18px;
-}
+/* ── Confirmed section ── */
+.banner { border: 1px solid rgba(196,155,24,0.35); border-radius: 4px; padding: 20px 24px; display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.banner .check { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.banner .title { font-weight: 800; font-size: 15px; margin-bottom: 2px; }
+.banner .sub { font-size: 14px; color: rgba(44,36,24,0.7); }
+.confirmed-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 20px; margin-bottom: 36px; }
+.confirmed-card { padding: 22px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.confirmed-card .avatar { width: 56px; height: 56px; border-radius: 50%; background: #F1EDF9; color: var(--lavender); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+.confirmed-card .name { font-weight: 700; font-size: 16px; margin-bottom: 14px; }
+.confirmed-card .row { display: flex; gap: 8px; width: 100%; }
+.btn-outline { flex: 1; border: 1px solid rgba(44,36,24,0.2); background: #fff; color: var(--ink); font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 13px; padding: 10px 8px; border-radius: 2px; cursor: pointer; transition: border-color 0.15s; }
+.btn-outline:hover { border-color: var(--gold); }
+.btn-outline.copied { border-color: var(--teal); color: var(--teal); }
+.btn-teal { flex: 1; border: none; background: var(--teal); color: #fff; font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 13px; padding: 10px 8px; border-radius: 2px; cursor: pointer; }
+.btn-teal:hover { background: #0e917f; }
 
-.field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 6px;
-}
+/* ── Exit CTA ── */
+.exit-cta { text-align: center; }
+.exit-cta a { display: inline-block; background: var(--ink); color: var(--cream); text-decoration: none; font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 15px; padding: 15px 28px; border-radius: 2px; }
+.exit-cta a:hover { background: #3d3120; }
 
-.field input,
-.field select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
-  transition: border-color 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
-}
+/* ── Modal ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(44,36,24,0.55); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+.modal { background: #fff; border-radius: 6px; max-width: 440px; width: 100%; padding: 32px; text-align: center; }
+.modal h2 { font-weight: 600; font-size: 24px; margin-bottom: 14px; }
+.modal p { font-size: 14px; line-height: 1.6; color: rgba(44,36,24,0.75); margin: 0 0 26px; }
+.modal .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-modal-confirm { border: none; background: var(--gold); color: var(--ink); font-family: 'Mulish', sans-serif; font-weight: 800; font-size: 14px; padding: 13px 22px; border-radius: 2px; cursor: pointer; }
+.btn-modal-confirm:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B6F5E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  cursor: pointer;
-}
-
-.field input:focus,
-.field select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.field-row-3 {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 12px;
-}
-
-@media (max-width: 560px) {
-  .field-row,
-  .field-row-3 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── Checkbox ── */
-.field-check {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.field-check input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.field-check label {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--text);
-  cursor: pointer;
-  margin-bottom: 0;
-}
-
-/* ── Cards de integrantes / relaciones ── */
-.card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 16px;
-  position: relative;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.card-num {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--accent-light);
-}
-
-.btn-remove {
-  background: none;
-  border: none;
-  color: var(--accent-light);
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-  padding: 0 4px;
-  transition: color 0.2s;
-}
-
-.btn-remove:hover {
-  color: var(--error);
-}
-
-/* ── Botones ── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.btn-secondary {
-  background: var(--bg);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-}
-
-.btn-secondary:hover {
-  background: var(--accent);
-  color: var(--white);
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: var(--white);
-  padding: 14px 36px;
-  font-size: 14px;
-}
-
-.btn-primary:hover {
-  background: #7a5f4f;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-add {
-  margin-top: 4px;
-}
-
-/* ── Mensajes ── */
-.msg {
-  padding: 14px 18px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 20px;
-  display: none;
-}
-
-.msg.show { display: block; }
-
-.msg-error {
-  background: #fdf0f0;
-  border: 1px solid #f5c6c6;
-  color: var(--error);
-}
-
-.msg-loading {
-  background: #fdf8f5;
-  border: 1px solid var(--border);
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  flex-shrink: 0;
-}
-
+/* ── Loading spinner (inside modal) ── */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(44,36,24,0.2); border-top-color: var(--ink); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.submit-area {
-  text-align: center;
-  padding-top: 8px;
-}
-
-/* ── Vista de resultado ── */
-#resultado {
-  display: none;
-}
-
-.resultado-header {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow);
-  text-align: center;
-}
-
-.resultado-header .checkmark {
-  width: 56px;
-  height: 56px;
-  background: #eaf3ec;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 26px;
-}
-
-.resultado-header h2 {
-  font-family: 'Lora', serif;
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.resultado-header p {
-  font-size: 13px;
-  color: var(--accent);
-  line-height: 1.6;
-}
-
-/* ── Tabla de tokens ── */
-.tokens-section {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: var(--shadow);
-}
-
-.tokens-section .section-title {
-  margin-bottom: 24px;
-}
-
-.token-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 16px;
-  background: var(--bg);
-}
-
-.token-card:last-child {
-  margin-bottom: 0;
-}
-
-.token-nombre {
-  font-family: 'Lora', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.token-code {
-  display: inline-block;
-  background: var(--text);
-  color: var(--white);
-  font-family: monospace;
-  font-size: 15px;
-  letter-spacing: 2px;
-  padding: 5px 12px;
-  border-radius: 6px;
-  margin-bottom: 14px;
-}
-
-.token-link {
-  font-size: 12px;
-  color: var(--accent);
-  word-break: break-all;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-.token-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.btn-copy {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-copy:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.btn-copy.copied {
-  background: #eaf3ec;
-  border-color: var(--success);
-  color: var(--success);
-}
-
-.btn-whatsapp {
-  background: #25d366;
-  color: var(--white);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.2s;
-}
-
-.btn-whatsapp:hover {
-  background: #1ebe5d;
-}
-
-.nueva-familia {
-  text-align: center;
-  margin-top: 32px;
-}
-
-.nueva-familia a {
-  color: var(--accent);
-  font-size: 13px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* ── Toggle regalo ── */
-.toggle-regalo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-  padding: 12px 16px;
-  background: #fdf8f5;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.toggle-regalo-wrap input[type="checkbox"] {
-  width: 0;
-  height: 0;
-  opacity: 0;
-  position: absolute;
-}
-
-.toggle-switch {
-  position: relative;
-  width: 40px;
-  height: 22px;
-  background: var(--border);
-  border-radius: 11px;
-  flex-shrink: 0;
-  transition: background 0.25s;
-}
-
-.toggle-switch::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  background: var(--white);
-  border-radius: 50%;
-  transition: transform 0.25s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-}
-
-input#es_regalo:checked + .toggle-regalo-wrap .toggle-switch,
-.toggle-switch.active {
-  background: var(--accent);
-}
-
-input#es_regalo:checked + .toggle-regalo-wrap .toggle-switch::after,
-.toggle-switch.active::after {
-  transform: translateX(18px);
-}
-
-.toggle-regalo-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  user-select: none;
-}
-
-.regalo-info {
-  display: none;
-  background: #fdf6f0;
-  border: 1px solid #e8c9b0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 13px;
-  color: var(--accent);
-  line-height: 1.5;
-  margin-top: 12px;
-}
-
-.regalo-info.show {
-  display: block;
-}
-
-/* ── Dashboard de resultado ── */
-.dashboard-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.dash-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-#dash-progreso-txt {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.dash-refresh-txt {
-  font-size: 11px;
-  color: var(--accent-light);
-  font-style: italic;
-}
-
-.dash-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--white);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.dash-nombre {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dash-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-  background: color-mix(in srgb, var(--estado-color) 12%, transparent);
-  color: var(--estado-color);
-  border: 1px solid color-mix(in srgb, var(--estado-color) 30%, transparent);
-}
-
-.dash-acciones {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn-sm {
-  padding: 6px 14px;
-  font-size: 12px;
-  border-radius: 6px;
-}
-
-@media (max-width: 560px) {
-  .dash-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── Foto de portada ── */
-.field-hint {
-  font-size: 12px;
-  color: var(--accent);
-  font-style: italic;
-  margin-top: 5px;
-  line-height: 1.5;
-}
-
-.field-variante-hint {
-  font-size: 11px;
-  color: #8B6F5E;
-  font-style: italic;
-  margin-top: 5px;
-  line-height: 1.5;
-}
-
-.foto-input-wrap {
-  position: relative;
-  border: 2px dashed var(--accent-light);
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  background: var(--bg);
-}
-
-.foto-input-wrap:hover {
-  border-color: var(--accent);
-  background: #fdf6f2;
-}
-
-.foto-input-wrap input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-}
-
-.foto-input-label {
-  font-size: 13px;
-  color: var(--accent);
-  pointer-events: none;
-}
-
-.foto-preview-wrap {
-  display: none;
-  margin-top: 12px;
-}
-
-.foto-preview-wrap img {
-  width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
-
-.btn-quitar-foto {
-  margin-top: 8px;
-  background: none;
-  border: 1px solid var(--accent-light);
-  color: var(--accent);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-quitar-foto:hover {
-  border-color: var(--error);
-  color: var(--error);
-}
-
-/* ── Checkbox legal ── */
-.legal-check { margin: 1.5rem 0; padding: 1rem; background: #fdf8f2; border: 0.5px solid #e8d9b8; border-radius: 8px; }
-.legal-check label { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 13px; color: #9a7b5a; line-height: 1.5; cursor: pointer; }
-.legal-check input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: #C4956A; width: 16px; height: 16px; }
-.legal-check a { color: #C4956A; text-decoration: underline; }
+/* ── Utilities ── */
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Libro de Memorias Familiar</h1>
-  <p>Panel de administración — Onboarding</p>
-</header>
+<div class="nav">
+  <div class="brand">
+    <img src="assets/sello-completo.svg" alt="Ethos Bios">
+    <span>Ethos Bios</span>
+  </div>
+  <div class="plan-pill" id="plan-pill">Plan Legado · hasta 6</div>
+</div>
 
-<div class="container">
+<div class="wrap">
+  <!-- Video instructivo (espacio reservado) -->
+  <div class="video-slot">
+    <div class="play"><i></i></div>
+    <div class="caption">video instructivo — cómo armar tu familia (pendiente de embeber)</div>
+  </div>
 
-  <!-- ══════════════════════ FORMULARIO ══════════════════════ -->
-  <div id="formulario">
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Arma tu familia</div>
+    <h1>Suma a quienes van a <em>contar su historia.</em></h1>
+    <p class="lead">Carga el nombre y apellido de cada integrante. Cuando confirmes, generamos un link individual para que cada uno grabe desde su celular, cuando quiera.</p>
+    <p class="session-note">Puedes cerrar esta pantalla y volver dentro de los próximos 60 minutos sin perder lo que cargaste.</p>
+  </div>
 
-    <!-- Datos de la familia -->
-    <div class="section">
-      <div class="section-title">Datos de la familia</div>
+  <!-- Portada: foto + apellido -->
+  <div class="card-block cover-block">
+    <div class="cover-photo" id="cover-photo-wrap" onclick="document.getElementById('cover-photo-input').click()">
+      <span id="cover-photo-placeholder" style="pointer-events:none">Foto de<br>portada</span>
+      <img id="cover-photo-img" class="hidden" alt="Portada">
+      <input type="file" id="cover-photo-input" accept="image/*" onchange="onCoverPhotoSelected(this)" onclick="event.stopPropagation()">
+    </div>
+    <div class="cover-fields">
+      <div class="title">Portada de tu libro</div>
+      <p class="hint">Esta es la única foto del libro, no una por integrante.</p>
+      <label for="family-surname">Apellido de la familia (para "Familia [Apellido]" en la portada)</label>
+      <input type="text" id="family-surname" placeholder="Ej. Saraniti" oninput="onSurnameChange(this.value)" style="margin-bottom:14px">
+      <label for="buyer-email">Email del comprador <span style="font-weight:400;font-size:11px;color:rgba(44,36,24,0.45)">(para notificaciones de entrega)</span></label>
+      <input type="email" id="buyer-email" placeholder="comprador@email.com" oninput="onBuyerEmailChange(this.value)">
+    </div>
+  </div>
 
-      <div class="field-row">
-        <div class="field">
-          <label for="nombre_familia">Nombre de la familia</label>
-          <input type="text" id="nombre_familia" placeholder="ej: Familia López García">
+  <!-- Barra de progreso -->
+  <div class="progress-wrap hidden" id="progress-wrap">
+    <div class="progress-label" id="progress-label"></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="main">
+
+    <!-- Estado vacío -->
+    <div class="empty-state" id="empty-state">
+      <div class="icon">＋</div>
+      <h2>Aún no agregaste a nadie de tu familia.</h2>
+      <p>Empieza por la primera persona. Puedes agregar hasta <span id="empty-cap">6</span> en tu plan <span id="empty-plan">Legado</span>.</p>
+      <button class="btn btn-gold" onclick="addMember()">Agregar el primer integrante</button>
+    </div>
+
+    <!-- Sección de armado -->
+    <div id="building-section" class="hidden">
+      <div class="grid" id="members-grid"></div>
+      <div class="cap-msg hidden" id="cap-msg"></div>
+      <div class="confirm-bar">
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(44,36,24,0.7);cursor:pointer;font-weight:500">
+          <input type="checkbox" id="acepta-tyc" style="margin-top:2px;flex-shrink:0;accent-color:var(--gold);width:15px;height:15px">
+          He leído y acepto los <a href="/terminos" target="_blank" style="color:var(--gold);text-decoration:underline;margin:0 2px">Términos y Condiciones</a> y la <a href="/privacidad" target="_blank" style="color:var(--gold);text-decoration:underline;margin:0 2px">Política de Privacidad</a>.
+        </label>
+        <button class="btn btn-gold" id="confirm-btn" onclick="openConfirmModal()">Confirmar y generar links</button>
+        <div class="hint hidden" id="confirm-hint"></div>
+        <div class="error-msg hidden" id="confirm-error"></div>
+      </div>
+    </div>
+
+    <!-- Sección confirmada -->
+    <div id="confirmed-section" class="hidden">
+      <div class="banner">
+        <div class="check">✓</div>
+        <div>
+          <div class="title">Links generados.</div>
+          <div class="sub">Comparte cada link con la persona correspondiente, cuando quieras.</div>
         </div>
       </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label for="nombre_comprador">Nombre del comprador</label>
-          <input type="text" id="nombre_comprador" placeholder="ej: Juan López" autocomplete="off">
-        </div>
-        <div class="field">
-          <label for="email_comprador" id="label_email_comprador">Email del comprador</label>
-          <input type="email" id="email_comprador" placeholder="comprador@email.com">
-        </div>
-      </div>
-
-      <label for="es_regalo" style="display:none" aria-hidden="true"></label>
-      <input type="checkbox" id="es_regalo" style="display:none">
-      <div class="toggle-regalo-wrap" onclick="toggleRegalo()" id="toggle-regalo-wrap">
-        <div class="toggle-switch" id="toggle-switch"></div>
-        <span class="toggle-regalo-label">Lo hago como regalo 🎁</span>
-      </div>
-
-      <div class="regalo-info" id="regalo-info">
-        El libro es para otra persona. Los integrantes son quienes van a grabar.
-      </div>
+      <div class="confirmed-grid" id="confirmed-grid"></div>
+      <div class="exit-cta"><a id="exit-link" href="mi-familia.html">Ir al panel de tu familia →</a></div>
     </div>
 
-    <!-- Foto de portada -->
-    <div class="section">
-      <div class="section-title">Foto de portada <span style="font-size:12px;font-weight:400;color:var(--accent-light)">(opcional)</span></div>
+  </div>
+</div><!-- /.wrap -->
 
-      <div class="field">
-        <label>Foto del preámbulo (opcional)</label>
-        <p class="field-hint">Una foto grupal de la familia para abrir el libro. Puede ser reciente o histórica — la que mejor los represente a todos.</p>
-        <div class="foto-input-wrap" id="foto-drop-zone" onclick="document.getElementById('foto-portada-input').click()">
-          <input type="file" id="foto-portada-input" accept="image/*" onchange="onFotoSeleccionada(this)" onclick="event.stopPropagation()">
-          <span class="foto-input-label" id="foto-input-label">Hacé clic para elegir una foto&hellip;</span>
-        </div>
-        <div class="foto-preview-wrap" id="foto-preview-wrap">
-          <img id="foto-preview-img" src="" alt="Preview foto de portada">
-          <button type="button" class="btn-quitar-foto" onclick="quitarFoto()">Quitar foto</button>
-        </div>
-      </div>
+<!-- Modal de confirmación -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <h2>¿Confirmar tu familia?</h2>
+    <p>Una vez que confirmes, no podrás modificar los nombres ni las fotos de tu familia. ¿Quieres continuar?</p>
+    <div class="actions">
+      <button class="btn-secondary-outline" id="modal-cancel-btn" onclick="closeConfirmModal()">Volver a revisar</button>
+      <button class="btn-modal-confirm" id="modal-confirm-btn" onclick="confirmFamily()">Confirmar</button>
     </div>
-
-    <!-- Integrantes -->
-    <div class="section">
-      <div class="section-title">Integrantes</div>
-
-      <div id="lista-integrantes"></div>
-
-      <button class="btn btn-secondary btn-add" onclick="agregarIntegrante()">
-        + Agregar integrante
-      </button>
-    </div>
-
-    <!-- Mensajes y submit -->
-    <div id="msg-error" class="msg msg-error"></div>
-    <div id="msg-loading" class="msg msg-loading" style="display:none">
-      <div class="spinner"></div>
-      <span>Creando familia y generando tokens de grabación&hellip;</span>
-    </div>
-
-    <div class="legal-check">
-      <label>
-        <input type="checkbox" id="acepta_tyc">
-        He leído y acepto los
-        <a href="/terminos" target="_blank">Términos y Condiciones</a>
-        y la
-        <a href="/privacidad" target="_blank">Política de Privacidad</a>
-        de Ethos Bios, incluyendo el tratamiento de datos personales y grabaciones de voz de los integrantes.
-      </label>
-    </div>
-
-    <div class="submit-area">
-      <button class="btn btn-primary" id="btn-submit" onclick="enviarOnboarding()">
-        Generar tokens de grabación
-      </button>
-    </div>
-
-  </div><!-- /#formulario -->
-
-  <!-- ══════════════════════ RESULTADO ══════════════════════ -->
-  <div id="resultado">
-
-    <div class="resultado-header">
-      <div class="checkmark">✓</div>
-      <h2 id="resultado-titulo">¡Familia creada!</h2>
-      <p id="resultado-subtitulo">Compartí cada link con la persona que corresponde. El estado se actualiza solo.</p>
-      <p style="font-size:0.8rem;color:#888;margin-top:4px">ID de familia: <code id="resultado-familia-id" style="user-select:all"></code></p>
-    </div>
-
-    <div class="section">
-      <div class="dashboard-top">
-        <div class="section-title">Progreso de grabaciones</div>
-        <div class="dash-meta">
-          <span id="dash-progreso-txt"></span>
-          <span id="dash-refresh-txt" class="dash-refresh-txt"></span>
-        </div>
-      </div>
-      <div id="dashboard-tabla"></div>
-    </div>
-
-    <div class="nueva-familia">
-      <a onclick="reiniciar()">Crear otra familia</a>
-    </div>
-
-  </div><!-- /#resultado -->
-
-</div><!-- /.container -->
+  </div>
+</div>
 
 <script>
 // ─────────────────────────────────────────────────────────────────────
 // Config
 // ─────────────────────────────────────────────────────────────────────
-
 const BASE_URL       = 'https://familia-pipeline-776445604502.southamerica-east1.run.app';
-const API_BASE       = BASE_URL; // mismo origen; puede cambiarse a '' para URL relativa
-const MAX_FOTO_BYTES = 10 * 1024 * 1024; // 10 MB — backend rechaza fotos más grandes
+const API_BASE       = BASE_URL;
+const MAX_FOTO_BYTES = 10 * 1024 * 1024;
+
+// ─────────────────────────────────────────────────────────────────────
+// Plan caps
+// ─────────────────────────────────────────────────────────────────────
+const CAPS = { Recuerdo: 4, Legado: 6, Bios: 10 };
+const STORAGE_KEY = 'eb-familia-session-v1';
+const SESSION_WINDOW_MS = 60 * 60 * 1000;
 
 // ─────────────────────────────────────────────────────────────────────
 // Estado
 // ─────────────────────────────────────────────────────────────────────
+let plan            = 'Legado';
+let members         = [];   // [{id, name, editing, showError}]
+let nextId          = 1;
+let confirmed       = false;
+let familySurname   = '';
+let buyerEmail      = '';
+let confirmedTokens = []; // [{nombre, link, token}] — desde backend
+let copiedId        = null;
+let familiaId       = null;
 
-let contIntegrantes = 0;
-let esRegalo        = false;  // toggle "Lo hago como regalo"
-
-// ─────────────────────────────────────────────────────────────────────
-// Toggle regalo
-// ─────────────────────────────────────────────────────────────────────
-
-function toggleRegalo() {
-  esRegalo = !esRegalo;
-  const sw    = document.getElementById('toggle-switch');
-  const info  = document.getElementById('regalo-info');
-  const label = document.getElementById('label_email_comprador');
-
-  if (esRegalo) {
-    sw.classList.add('active');
-    info.classList.add('show');
-    label.textContent = 'Tu email (para enviarte el libro)';
-    // Desvincular primera card si existía vínculo
-    desvincularPrimerCard();
-  } else {
-    sw.classList.remove('active');
-    info.classList.remove('show');
-    label.textContent = 'Email del comprador';
-    // Re-sincronizar primera card con datos del comprador
-    sincronizarPrimerCard();
-  }
-}
+function cap() { return CAPS[plan] || CAPS.Legado; }
 
 // ─────────────────────────────────────────────────────────────────────
-// Sincronización comprador ↔ primer integrante
+// Persistencia de sesión (60 min)
 // ─────────────────────────────────────────────────────────────────────
-
-function getPrimerCard() {
-  return document.querySelector('#lista-integrantes .card');
-}
-
-function sincronizarPrimerCard() {
-  if (esRegalo) return;
-  const card = getPrimerCard();
-  if (!card || card.dataset.desvinculado === 'true') return;
-
-  const nombreComp = document.getElementById('nombre_comprador').value;
-  const emailComp  = document.getElementById('email_comprador').value;
-  const nombreInput = card.querySelector('.ing-nombre');
-  const emailInput  = card.querySelector('.ing-email');
-
-  if (nombreInput) nombreInput.value = nombreComp;
-  if (emailInput)  emailInput.value  = emailComp;
-  actualizarBadge(card);
-}
-
-function desvincularPrimerCard() {
-  const card = getPrimerCard();
-  if (!card) return;
-  card.dataset.desvinculado = 'true';
-  actualizarBadge(card);
-}
-
-function actualizarBadge(card) {
-  // Actualiza el header de la card para mostrar el nombre si ya fue escrito
-  renumerar();
-}
-
-function renumerar() {
-  document.querySelectorAll('#lista-integrantes .card').forEach((card, i) => {
-    const span = card.querySelector('.card-num');
-    if (!span) return;
-    const nombre = card.querySelector('.ing-nombre')?.value.trim();
-    span.textContent = nombre || `Integrante ${i + 1}`;
-  });
-}
-
-function onCompradorInput() {
-  sincronizarPrimerCard();
-}
-
-function onPrimerIngInput(card) {
-  // Solo desvincula si la card es la primera
-  const primerCard = getPrimerCard();
-  if (card === primerCard) {
-    const nombreInput = card.querySelector('.ing-nombre');
-    const emailInput  = card.querySelector('.ing-email');
-    const nombreComp  = document.getElementById('nombre_comprador').value;
-    const emailComp   = document.getElementById('email_comprador').value;
-
-    // Desvincula solo si el usuario cambió algo respecto al valor del comprador
-    const nombreDiferente = nombreInput && nombreInput.value !== nombreComp;
-    const emailDiferente  = emailInput  && emailInput.value  !== emailComp;
-
-    if (nombreDiferente || emailDiferente) {
-      card.dataset.desvinculado = 'true';
-      actualizarBadge(card);
-    }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// HTML de un select de países (reutilizable por card)
-// ─────────────────────────────────────────────────────────────────────
-
-function paisSelectHTML(valorInicial = '', idAttr = '') {
-  const idPart = idAttr ? ` id="${idAttr}"` : '';
-  return `
-    <select class="ing-pais"${idPart}>
-      <option value="">— Variante del idioma —</option>
-      <optgroup label="América del Sur">
-        <option value="argentina"${valorInicial==='argentina'?' selected':''}>Argentina</option>
-        <option value="bolivia"${valorInicial==='bolivia'?' selected':''}>Bolivia</option>
-        <option value="brasil"${valorInicial==='brasil'?' selected':''}>Brasil</option>
-        <option value="chile"${valorInicial==='chile'?' selected':''}>Chile</option>
-        <option value="colombia"${valorInicial==='colombia'?' selected':''}>Colombia</option>
-        <option value="ecuador"${valorInicial==='ecuador'?' selected':''}>Ecuador</option>
-        <option value="guyana"${valorInicial==='guyana'?' selected':''}>Guyana</option>
-        <option value="paraguay"${valorInicial==='paraguay'?' selected':''}>Paraguay</option>
-        <option value="peru"${valorInicial==='peru'?' selected':''}>Perú</option>
-        <option value="surinam"${valorInicial==='surinam'?' selected':''}>Surinam</option>
-        <option value="uruguay"${valorInicial==='uruguay'?' selected':''}>Uruguay</option>
-        <option value="venezuela"${valorInicial==='venezuela'?' selected':''}>Venezuela</option>
-      </optgroup>
-      <optgroup label="América Central y Caribe">
-        <option value="costa rica"${valorInicial==='costa rica'?' selected':''}>Costa Rica</option>
-        <option value="cuba"${valorInicial==='cuba'?' selected':''}>Cuba</option>
-        <option value="el salvador"${valorInicial==='el salvador'?' selected':''}>El Salvador</option>
-        <option value="guatemala"${valorInicial==='guatemala'?' selected':''}>Guatemala</option>
-        <option value="haiti"${valorInicial==='haiti'?' selected':''}>Haití</option>
-        <option value="honduras"${valorInicial==='honduras'?' selected':''}>Honduras</option>
-        <option value="jamaica"${valorInicial==='jamaica'?' selected':''}>Jamaica</option>
-        <option value="mexico"${valorInicial==='mexico'?' selected':''}>México</option>
-        <option value="nicaragua"${valorInicial==='nicaragua'?' selected':''}>Nicaragua</option>
-        <option value="panama"${valorInicial==='panama'?' selected':''}>Panamá</option>
-        <option value="puerto rico"${valorInicial==='puerto rico'?' selected':''}>Puerto Rico</option>
-        <option value="republica dominicana"${valorInicial==='republica dominicana'?' selected':''}>República Dominicana</option>
-        <option value="trinidad"${valorInicial==='trinidad'?' selected':''}>Trinidad y Tobago</option>
-      </optgroup>
-      <optgroup label="América del Norte">
-        <option value="canada"${valorInicial==='canada'?' selected':''}>Canadá</option>
-        <option value="estados unidos"${valorInicial==='estados unidos'?' selected':''}>Estados Unidos</option>
-      </optgroup>
-      <optgroup label="Europa">
-        <option value="alemania"${valorInicial==='alemania'?' selected':''}>Alemania</option>
-        <option value="austria"${valorInicial==='austria'?' selected':''}>Austria</option>
-        <option value="belgica"${valorInicial==='belgica'?' selected':''}>Bélgica</option>
-        <option value="croacia"${valorInicial==='croacia'?' selected':''}>Croacia</option>
-        <option value="dinamarca"${valorInicial==='dinamarca'?' selected':''}>Dinamarca</option>
-        <option value="eslovaquia"${valorInicial==='eslovaquia'?' selected':''}>Eslovaquia</option>
-        <option value="eslovenia"${valorInicial==='eslovenia'?' selected':''}>Eslovenia</option>
-        <option value="espana"${valorInicial==='espana'?' selected':''}>España</option>
-        <option value="finlandia"${valorInicial==='finlandia'?' selected':''}>Finlandia</option>
-        <option value="francia"${valorInicial==='francia'?' selected':''}>Francia</option>
-        <option value="grecia"${valorInicial==='grecia'?' selected':''}>Grecia</option>
-        <option value="hungria"${valorInicial==='hungria'?' selected':''}>Hungría</option>
-        <option value="irlanda"${valorInicial==='irlanda'?' selected':''}>Irlanda</option>
-        <option value="italia"${valorInicial==='italia'?' selected':''}>Italia</option>
-        <option value="noruega"${valorInicial==='noruega'?' selected':''}>Noruega</option>
-        <option value="paises bajos"${valorInicial==='paises bajos'?' selected':''}>Países Bajos</option>
-        <option value="polonia"${valorInicial==='polonia'?' selected':''}>Polonia</option>
-        <option value="portugal"${valorInicial==='portugal'?' selected':''}>Portugal</option>
-        <option value="reino unido"${valorInicial==='reino unido'?' selected':''}>Reino Unido</option>
-        <option value="republica checa"${valorInicial==='republica checa'?' selected':''}>República Checa</option>
-        <option value="rumania"${valorInicial==='rumania'?' selected':''}>Rumanía</option>
-        <option value="rusia"${valorInicial==='rusia'?' selected':''}>Rusia</option>
-        <option value="suecia"${valorInicial==='suecia'?' selected':''}>Suecia</option>
-        <option value="suiza"${valorInicial==='suiza'?' selected':''}>Suiza</option>
-        <option value="ucrania"${valorInicial==='ucrania'?' selected':''}>Ucrania</option>
-      </optgroup>
-      <optgroup label="Asia y Oceanía">
-        <option value="australia"${valorInicial==='australia'?' selected':''}>Australia</option>
-        <option value="china"${valorInicial==='china'?' selected':''}>China</option>
-        <option value="corea del sur"${valorInicial==='corea del sur'?' selected':''}>Corea del Sur</option>
-        <option value="filipinas"${valorInicial==='filipinas'?' selected':''}>Filipinas</option>
-        <option value="india"${valorInicial==='india'?' selected':''}>India</option>
-        <option value="indonesia"${valorInicial==='indonesia'?' selected':''}>Indonesia</option>
-        <option value="japon"${valorInicial==='japon'?' selected':''}>Japón</option>
-        <option value="nueva zelanda"${valorInicial==='nueva zelanda'?' selected':''}>Nueva Zelanda</option>
-        <option value="tailandia"${valorInicial==='tailandia'?' selected':''}>Tailandia</option>
-        <option value="turquia"${valorInicial==='turquia'?' selected':''}>Turquía</option>
-        <option value="vietnam"${valorInicial==='vietnam'?' selected':''}>Vietnam</option>
-      </optgroup>
-      <optgroup label="África y Medio Oriente">
-        <option value="arabia saudita"${valorInicial==='arabia saudita'?' selected':''}>Arabia Saudita</option>
-        <option value="egipto"${valorInicial==='egipto'?' selected':''}>Egipto</option>
-        <option value="emiratos arabes"${valorInicial==='emiratos arabes'?' selected':''}>Emiratos Árabes</option>
-        <option value="israel"${valorInicial==='israel'?' selected':''}>Israel</option>
-        <option value="marruecos"${valorInicial==='marruecos'?' selected':''}>Marruecos</option>
-        <option value="nigeria"${valorInicial==='nigeria'?' selected':''}>Nigeria</option>
-        <option value="sudafrica"${valorInicial==='sudafrica'?' selected':''}>Sudáfrica</option>
-      </optgroup>
-    </select>`;
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Integrantes
-// ─────────────────────────────────────────────────────────────────────
-
-function agregarIntegrante() {
-  contIntegrantes++;
-  const idx = contIntegrantes;
-
-  // Copiar el país del último integrante para pre-seleccionarlo
-  let paisAnterior = '';
-  const ultimaCard = document.querySelector('#lista-integrantes .card:last-child');
-  if (ultimaCard) {
-    const selectPais = ultimaCard.querySelector('.ing-pais');
-    if (selectPais) paisAnterior = selectPais.value;
-  }
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.id = `ing-${idx}`;
-  card.innerHTML = `
-    <div class="card-header">
-      <span class="card-num">Integrante ${idx}</span>
-      <button class="btn-remove" onclick="eliminar('ing-${idx}')" title="Eliminar">&times;</button>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Nombre completo</label>
-        <input type="text" class="ing-nombre" placeholder="ej: Juan López">
-      </div>
-      <div class="field">
-        <label>Email <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--accent-light)">(opcional)</span></label>
-        <input type="email" class="ing-email" placeholder="juan@email.com">
-        <p class="field-variante-hint">No es necesario para menores ni adultos mayores.</p>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>País de esta persona</label>
-        ${paisSelectHTML(paisAnterior)}
-        <p class="field-variante-hint">Determina el vos/tú en su sección del libro, y ayuda a transcribir mejor el audio.</p>
-      </div>
-      <div class="field">
-        <label>Rol en la familia</label>
-        <select class="ing-rol">
-          <option value="">— Elegir —</option>
-          <option value="abuelo">Abuelo/a</option>
-          <option value="padre">Padre/Madre</option>
-          <option value="hijo">Hijo/a</option>
-          <option value="nieto">Nieto/a</option>
-          <option value="tio">Tío/a</option>
-          <option value="primo">Primo/a</option>
-          <option value="conyuge">Cónyuge</option>
-          <option value="otro">Otro</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Fecha de nac.</label>
-        <input type="date" class="ing-fecha_nac">
-      </div>
-      <div class="field" style="display:flex;align-items:flex-end;padding-bottom:2px">
-        <div class="field-check">
-          <input type="checkbox" class="ing-es_menor" id="menor-${idx}">
-          <label for="menor-${idx}">Es menor de edad</label>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('lista-integrantes').appendChild(card);
-
-  // Todos los cards: actualizar header al escribir nombre
-  const nombreInput = card.querySelector('.ing-nombre');
-  if (nombreInput) {
-    nombreInput.addEventListener('input', renumerar);
-  }
-
-  // Primer card: vincular con comprador
-  if (idx === 1) {
-    const emailInput = card.querySelector('.ing-email');
-    if (nombreInput) nombreInput.addEventListener('input', () => onPrimerIngInput(card));
-    if (emailInput)  emailInput.addEventListener('input',  () => onPrimerIngInput(card));
-    sincronizarPrimerCard();
-    actualizarBadge(card);
-  }
-
-  renumerar();
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Utilidades
-// ─────────────────────────────────────────────────────────────────────
-
-function eliminar(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-  renumerar();
-}
-
-function mostrarError(msg) {
-  const el = document.getElementById('msg-error');
-  el.textContent = msg;
-  el.classList.add('show');
-}
-
-function ocultarError() {
-  const el = document.getElementById('msg-error');
-  el.textContent = '';
-  el.classList.remove('show');
-}
-
-function setLoading(on) {
-  document.getElementById('msg-loading').style.display = on ? 'flex' : 'none';
-  document.getElementById('btn-submit').disabled = on;
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Recolectar datos del formulario
-// ─────────────────────────────────────────────────────────────────────
-
-function recolectarDatos() {
-  const nombreFam    = document.getElementById('nombre_familia').value.trim();
-  const emailComp    = document.getElementById('email_comprador').value.trim();
-
-  // Validaciones básicas
-  if (!nombreFam)    return { error: 'El nombre de la familia es obligatorio.' };
-  if (!emailComp)    return { error: 'El email del comprador es obligatorio.' };
-  if (!document.getElementById('acepta_tyc')?.checked) {
-    return { error: 'Debés aceptar los Términos y Condiciones y la Política de Privacidad para continuar.' };
-  }
-
-  // Integrantes
-  const ingCards = document.querySelectorAll('[id^="ing-"]');
-  if (ingCards.length === 0) return { error: 'Agregá al menos un integrante.' };
-
-  const integrantes = [];
-  for (const card of ingCards) {
-    const nombre = card.querySelector('.ing-nombre')?.value.trim() || '';
-    if (!nombre) return { error: 'Todos los integrantes deben tener nombre.' };
-    const pais = card.querySelector('.ing-pais')?.value || '';
-    if (!pais) return { error: `Seleccioná la variante de idioma para "${nombre}".` };
-    integrantes.push({
-      nombre,
-      email:     card.querySelector('.ing-email')?.value.trim()     || '',
-      rol:       card.querySelector('.ing-rol')?.value               || '',
-      fecha_nac: card.querySelector('.ing-fecha_nac')?.value         || '',
-      es_menor:  card.querySelector('.ing-es_menor')?.checked        || false,
-      pais,
-    });
-  }
-
-  return {
-    payload: {
-      nombre_familia:  nombreFam,
-      email_comprador: emailComp,
-      integrantes,
-      relaciones: [],
-    }
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Enviar al endpoint
-// ─────────────────────────────────────────────────────────────────────
-
-async function enviarOnboarding() {
-  ocultarError();
-
-  const { error, payload } = recolectarDatos();
-  if (error) { mostrarError(error); return; }
-
-  setLoading(true);
+function load() {
   try {
-    const resp = await fetch(`${API_BASE}/onboarding`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!resp.ok) {
-      let detail = `Error ${resp.status}`;
-      try {
-        const body = await resp.json();
-        detail = body.detail || detail;
-      } catch (_) {}
-      throw new Error(detail);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && saved.startedAt && (Date.now() - saved.startedAt) < SESSION_WINDOW_MS) {
+      members         = saved.members         || [];
+      nextId          = saved.nextId          || 1;
+      confirmed       = !!saved.confirmed;
+      familySurname   = saved.familySurname   || '';
+      buyerEmail      = saved.buyerEmail      || '';
+      confirmedTokens = saved.confirmedTokens || [];
+      familiaId       = saved.familiaId       || null;
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
     }
-
-    const data = await resp.json();
-
-    // Si hay foto seleccionada, subirla al endpoint de foto-portada
-    const fotoInput = document.getElementById('foto-portada-input');
-    if (fotoInput && fotoInput.files && fotoInput.files[0] && data.familia_id) {
-      try {
-        const formData = new FormData();
-        formData.append('file', fotoInput.files[0]);
-        const otParam = data.onboarding_token ? `?ot=${encodeURIComponent(data.onboarding_token)}` : '';
-        await fetch(`${API_BASE}/familia/${data.familia_id}/foto-portada${otParam}`, {
-          method: 'POST',
-          body: formData,
-        });
-        // No bloqueamos el flujo aunque falle la foto
-      } catch (_) {
-        // silencioso: el onboarding ya fue exitoso
-      }
-    }
-
-    mostrarResultado(data, payload.nombre_familia);
-
-  } catch (err) {
-    mostrarError('No se pudo conectar con el servidor: ' + err.message);
-  } finally {
-    setLoading(false);
-  }
+  } catch (e) {}
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Mostrar resultado
-// ─────────────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────────────
-// Dashboard de resultado
-// ─────────────────────────────────────────────────────────────────────
-
-let _dashFamiliaId      = null;
-let _dashOnboardingToken = null;
-let _dashTokensInit     = [];
-let _dashInterval       = null;
-
-const WA_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
-
-function _estadoInfo(t) {
-  if (t.estado === 'completado')  return { label: '✓ Completó',      color: '#3B6D11' };
-  if (t.estado === 'en_progreso') return { label: '⏺ Grabando…',     color: '#c8522a' };
-  if (t.usado)                    return { label: '👁 Abrió el link', color: '#c8a96e' };
-  return                                 { label: '○ Pendiente',      color: '#aaa'    };
-}
-
-function _renderDashboard(tokens) {
-  const completados = tokens.filter(t => t.estado === 'completado').length;
-  document.getElementById('dash-progreso-txt').textContent =
-    `${completados} de ${tokens.length} grabaciones completadas`;
-
-  const tabla = document.getElementById('dashboard-tabla');
-  tabla.innerHTML = tokens.map(t => {
-    const link    = t.link;
-    const waText  = encodeURIComponent(`Hola ${t.nombre}, te comparto el link para grabar tu historia para el libro familiar: ${link}`);
-    const ei      = _estadoInfo(t);
-    return `
-      <div class="dash-row">
-        <div class="dash-nombre">${escHtml(t.nombre)}</div>
-        <div class="dash-badge" style="--estado-color:${ei.color}">${ei.label}</div>
-        <div class="dash-acciones">
-          <button class="btn btn-secondary btn-sm" onclick="copiarLink('${escAttr(link)}', this)">Copiar link</button>
-          <a class="btn-whatsapp btn-sm" href="https://wa.me/?text=${encodeURIComponent(`Hola ${t.nombre}, te comparto el link para grabar tu historia para el libro familiar: ${link}`)}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-async function _pollDashboard() {
-  if (!_dashFamiliaId) return;
+function persist() {
   try {
-    const otParam = _dashOnboardingToken ? `?ot=${encodeURIComponent(_dashOnboardingToken)}` : '';
-    const r    = await fetch(`${API_BASE}/familia/${_dashFamiliaId}/tokens-estado${otParam}`);
-    const data = await r.json();
-    _renderDashboard(data.tokens);
-    const now = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('dash-refresh-txt').textContent = `Actualizado ${now}`;
-  } catch(_) {}
-}
-
-function mostrarResultado(data, nombreFamilia) {
-  document.getElementById('formulario').style.display = 'none';
-  document.getElementById('resultado').style.display  = 'block';
-  document.getElementById('resultado-titulo').textContent = `¡${nombreFamilia} lista!`;
-  document.getElementById('resultado-familia-id').textContent = data.familia_id;
-
-  _dashFamiliaId       = data.familia_id;
-  _dashOnboardingToken = data.onboarding_token || null;
-  _dashTokensInit      = data.tokens.map(t => ({ ...t, estado: 'pendiente', usado: false }));
-
-  _renderDashboard(_dashTokensInit);
-
-  if (_dashInterval) clearInterval(_dashInterval);
-  _dashInterval = setInterval(_pollDashboard, 30000);
+    const existingRaw = localStorage.getItem(STORAGE_KEY);
+    const existing    = existingRaw ? JSON.parse(existingRaw) : null;
+    const startedAt   = (existing && existing.startedAt) || Date.now();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      members, nextId, confirmed, familySurname, buyerEmail, confirmedTokens, familiaId, startedAt
+    }));
+  } catch (e) {}
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Copiar al portapapeles
+// Operaciones de integrantes
 // ─────────────────────────────────────────────────────────────────────
+function addMember() {
+  members.push({ id: nextId++, name: '', editing: true, showError: false });
+  persist();
+  render();
+}
 
-function copiarLink(texto, btn) {
-  navigator.clipboard.writeText(texto).then(() => {
-    btn.textContent = '¡Copiado!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Copiar link';
-      btn.classList.remove('copied');
-    }, 2000);
-  }).catch(() => {
-    // Fallback para navegadores sin clipboard API
-    const ta = document.createElement('textarea');
-    ta.value = texto;
-    ta.style.position = 'fixed';
-    ta.style.opacity  = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.textContent = '¡Copiado!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Copiar link';
-      btn.classList.remove('copied');
-    }, 2000);
-  });
+function removeMember(id) {
+  members = members.filter(m => m.id !== id);
+  persist();
+  render();
+}
+
+function editMember(id) {
+  const m = members.find(m => m.id === id);
+  if (m) { m.editing = true; m.showError = false; }
+  persist();
+  render();
+}
+
+function attemptClose(id) {
+  const m = members.find(m => m.id === id);
+  if (!m) return;
+  const ok = m.name && m.name.trim().length > 0;
+  m.editing  = !ok;
+  m.showError = !ok;
+  persist();
+  render();
+}
+
+function onNameInput(id, value) {
+  const m = members.find(m => m.id === id);
+  if (m) m.name = value;
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Foto de portada
+// Portada
 // ─────────────────────────────────────────────────────────────────────
+function onSurnameChange(value) {
+  familySurname = value;
+  persist();
+}
 
-function onFotoSeleccionada(input) {
+function onBuyerEmailChange(value) {
+  buyerEmail = value;
+  persist();
+}
+
+function onCoverPhotoSelected(input) {
   const file = input.files && input.files[0];
   if (!file) return;
-
-  const label = document.getElementById('foto-input-label');
   if (file.size > MAX_FOTO_BYTES) {
     input.value = '';
-    label.textContent = 'La foto es muy grande. Usá una imagen menor a 10 MB.';
-    label.style.color = '#c0392b';
+    alert('La foto es demasiado grande. Usa una imagen menor a 10 MB.');
     return;
   }
-
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const img  = document.getElementById('foto-preview-img');
-    const wrap = document.getElementById('foto-preview-wrap');
+  reader.onload = (e) => {
+    const img = document.getElementById('cover-photo-img');
     img.src = e.target.result;
-    wrap.style.display = 'block';
-    label.textContent = file.name;
-    label.style.color = '';
+    img.classList.remove('hidden');
+    document.getElementById('cover-photo-placeholder').classList.add('hidden');
   };
   reader.readAsDataURL(file);
 }
 
-function quitarFoto() {
-  const input = document.getElementById('foto-portada-input');
-  const wrap  = document.getElementById('foto-preview-wrap');
-  const label = document.getElementById('foto-input-label');
-  const img   = document.getElementById('foto-preview-img');
+// ─────────────────────────────────────────────────────────────────────
+// Modal de confirmación
+// ─────────────────────────────────────────────────────────────────────
+function confirmDisabled() {
+  if (members.length === 0) return true;
+  return !members.every(m => m.name && m.name.trim().length > 0);
+}
 
-  input.value = '';
-  img.src = '';
-  wrap.style.display = 'none';
-  label.textContent = 'Hacé clic para elegir una foto…';
-  label.style.color = '';
+function openConfirmModal() {
+  if (confirmDisabled()) return;
+  if (!document.getElementById('acepta-tyc').checked) {
+    showConfirmError('Debés aceptar los Términos y Condiciones para continuar.');
+    return;
+  }
+  hideConfirmError();
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  setModalLoading(false);
+}
+
+function setModalLoading(on) {
+  const btn    = document.getElementById('modal-confirm-btn');
+  const cancel = document.getElementById('modal-cancel-btn');
+  btn.disabled    = on;
+  cancel.disabled = on;
+  btn.innerHTML   = on ? '<span class="spinner"></span>Generando…' : 'Confirmar';
+}
+
+function showConfirmError(msg) {
+  const el = document.getElementById('confirm-error');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+function hideConfirmError() {
+  document.getElementById('confirm-error').classList.add('hidden');
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Reiniciar
+// Llamada al backend (POST /onboarding)
 // ─────────────────────────────────────────────────────────────────────
+async function confirmFamily() {
+  if (confirmDisabled()) return;
 
-function reiniciar() {
-  if (_dashInterval) { clearInterval(_dashInterval); _dashInterval = null; }
-  _dashFamiliaId = null;
+  const surname = familySurname.trim();
+  if (!surname) {
+    closeConfirmModal();
+    showConfirmError('Completá el apellido de la familia antes de confirmar.');
+    document.getElementById('family-surname').focus();
+    return;
+  }
 
-  // Limpiar campos
-  ['nombre_familia','nombre_comprador','email_comprador'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('lista-integrantes').innerHTML = '';
-  contIntegrantes = 0;
+  setModalLoading(true);
 
-  // Resetear foto de portada
-  quitarFoto();
+  const payload = {
+    nombre_familia:  'Familia ' + surname,
+    email_comprador: buyerEmail.trim(),
+    integrantes: members.map(m => ({
+      nombre:    m.name.trim(),
+      es_menor:  false,
+      email:     '',
+      pais:      'argentina',
+      rol:       '',
+      fecha_nac: '',
+    })),
+    relaciones: [],
+  };
 
-  // Resetear toggle regalo
-  if (esRegalo) toggleRegalo();
+  try {
+    const resp = await fetch(`${API_BASE}/onboarding`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
 
-  // Volver al formulario
-  document.getElementById('formulario').style.display = 'block';
-  document.getElementById('resultado').style.display  = 'none';
-  ocultarError();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!resp.ok) {
+      let detail = `Error ${resp.status}`;
+      try { const body = await resp.json(); detail = body.detail || detail; } catch (_) {}
+      throw new Error(detail);
+    }
 
-  // Inicializar primer integrante
-  agregarIntegrante();
+    const data = await resp.json();
+    familiaId       = data.familia_id;
+    confirmedTokens = data.tokens || [];
+
+    // Subir foto de portada si hay una seleccionada
+    const fotoInput = document.getElementById('cover-photo-input');
+    if (fotoInput && fotoInput.files && fotoInput.files[0] && familiaId) {
+      try {
+        const formData = new FormData();
+        formData.append('file', fotoInput.files[0]);
+        const otParam = data.onboarding_token ? `?ot=${encodeURIComponent(data.onboarding_token)}` : '';
+        await fetch(`${API_BASE}/familia/${familiaId}/foto-portada${otParam}`, {
+          method: 'POST',
+          body:   formData,
+        });
+      } catch (_) {}
+    }
+
+    // Actualizar CTA con familia_id
+    const exitLink = document.getElementById('exit-link');
+    if (exitLink && familiaId) exitLink.href = `mi-familia.html?familia_id=${familiaId}`;
+
+    confirmed = true;
+    persist();
+    closeConfirmModal();
+    render();
+
+  } catch (err) {
+    setModalLoading(false);
+    closeConfirmModal();
+    showConfirmError('No se pudo conectar con el servidor: ' + err.message);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Helpers de seguridad HTML
+// Copiar link / WhatsApp
 // ─────────────────────────────────────────────────────────────────────
+function copyLink(url, btn) {
+  const doFeedback = () => {
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copiar link';
+      btn.classList.remove('copied');
+    }, 1800);
+  };
 
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(doFeedback).catch(() => fallbackCopy(url, doFeedback));
+  } else {
+    fallbackCopy(url, doFeedback);
+  }
+}
+
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  if (cb) cb();
+}
+
+function shareWhatsapp(name, url) {
+  const text = encodeURIComponent('Hola ' + name + ', te comparto tu link para grabar tu historia para el libro de la familia: ' + url);
+  window.open('https://wa.me/?text=' + text, '_blank', 'noopener');
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Render
+// ─────────────────────────────────────────────────────────────────────
 function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-function escAttr(str) {
-  return String(str).replace(/"/g, '&quot;');
+function render() {
+  // Nav pill
+  document.getElementById('plan-pill').textContent = 'Plan ' + plan + ' · hasta ' + cap();
+
+  // Apellido + email comprador
+  document.getElementById('family-surname').value = familySurname;
+  document.getElementById('buyer-email').value    = buyerEmail;
+
+  // Cover photo (si había guardada en sesión no la recuperamos — solo se muestra si está en este load)
+
+  const hasMembers = members.length > 0;
+  const atCap      = members.length >= cap();
+
+  // Progress bar
+  document.getElementById('progress-wrap').classList.toggle('hidden', !hasMembers || confirmed);
+  if (hasMembers && !confirmed) {
+    const word1 = members.length === 1 ? 'integrante agregado' : 'integrantes agregados';
+    document.getElementById('progress-label').textContent =
+      members.length + ' ' + word1 + ' · hasta ' + cap() + ' en tu plan ' + plan;
+    document.getElementById('progress-fill').style.width =
+      Math.min(100, Math.round((members.length / cap()) * 100)) + '%';
+  }
+
+  // Empty-cap labels
+  document.getElementById('empty-cap').textContent  = cap();
+  document.getElementById('empty-plan').textContent = plan;
+
+  // Visibilidad de secciones
+  document.getElementById('empty-state').classList.toggle('hidden', hasMembers || confirmed);
+  document.getElementById('building-section').classList.toggle('hidden', !hasMembers || confirmed);
+  document.getElementById('confirmed-section').classList.toggle('hidden', !confirmed);
+
+  // ── Building section ──
+  if (hasMembers && !confirmed) {
+    const grid = document.getElementById('members-grid');
+    grid.innerHTML = members.map(m => {
+      const trimmed = (m.name || '').trim();
+      const initial = trimmed ? escHtml(trimmed[0].toUpperCase()) : '?';
+      const nameBlock = m.editing
+        ? '<input type="text" placeholder="Nombre y apellido" value="' + escHtml(m.name || '') + '" ' +
+          'oninput="onNameInput(' + m.id + ', this.value)" onblur="attemptClose(' + m.id + ')">' +
+          (m.showError ? '<div class="error">Completa nombre y apellido para continuar.</div>' : '')
+        : '<div class="name" onclick="editMember(' + m.id + ')">' + escHtml(trimmed || 'Sin nombre') + '</div>';
+
+      return '<div class="card-block member-card">' +
+        '<div class="actions">' +
+          '<button onclick="editMember(' + m.id + ')" title="Editar">✎</button>' +
+          '<button class="remove" onclick="removeMember(' + m.id + ')" title="Eliminar">✕</button>' +
+        '</div>' +
+        '<div class="avatar">' + initial + '</div>' +
+        nameBlock +
+        '</div>';
+    }).join('');
+
+    // Botón agregar
+    const addDisabled = atCap ? 'disabled' : '';
+    grid.insertAdjacentHTML('beforeend',
+      '<button class="add-card" onclick="addMember()" ' + addDisabled + '><span>＋</span>Agregar integrante</button>'
+    );
+
+    // Mensaje de tope
+    document.getElementById('cap-msg').classList.toggle('hidden', !atCap);
+    if (atCap) {
+      document.getElementById('cap-msg').textContent =
+        'Llegaste al máximo de tu plan ' + plan + ' (' + cap() + ' integrantes).';
+    }
+
+    // Botón confirmar + hints
+    const disabled = confirmDisabled();
+    document.getElementById('confirm-btn').disabled = disabled;
+
+    const hintEl = document.getElementById('confirm-hint');
+    if (members.length === 0) {
+      hintEl.textContent = 'Agrega al menos un integrante para continuar.';
+      hintEl.classList.remove('hidden');
+    } else if (disabled) {
+      hintEl.textContent = 'Falta completar el nombre de uno o más integrantes.';
+      hintEl.classList.remove('hidden');
+    } else {
+      hintEl.classList.add('hidden');
+    }
+  }
+
+  // ── Confirmed section ──
+  if (confirmed) {
+    document.getElementById('confirmed-grid').innerHTML = confirmedTokens.map(t => {
+      const trimmed = (t.nombre || '').trim();
+      const initial = trimmed ? escHtml(trimmed[0].toUpperCase()) : '?';
+      const url     = escHtml(t.link || '');
+      const name    = escHtml(trimmed);
+      return '<div class="card-block confirmed-card">' +
+        '<div class="avatar">' + initial + '</div>' +
+        '<div class="name">' + name + '</div>' +
+        '<div class="row">' +
+          '<button class="btn-outline" onclick="copyLink(\'' + url + '\', this)">Copiar link</button>' +
+          '<button class="btn-teal" onclick="shareWhatsapp(\'' + name + '\', \'' + url + '\')">WhatsApp</button>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+
+    if (familiaId) {
+      document.getElementById('exit-link').href = 'mi-familia.html?familia_id=' + encodeURIComponent(familiaId);
+    }
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Inicializar
+// Foco automático en inputs de edición
 // ─────────────────────────────────────────────────────────────────────
+function focusLastInput() {
+  const inputs = document.querySelectorAll('#members-grid input[type="text"]');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
 
-// Esta página es solo para uso interno de admin.
-// Sin el parámetro ?admin=1 se redirige a la landing.
+const _origRender = render;
+render = function() { _origRender(); focusLastInput(); };
+
+// ─────────────────────────────────────────────────────────────────────
+// Gating admin + init
+// ─────────────────────────────────────────────────────────────────────
 (function() {
   const p = new URLSearchParams(location.search);
   if (!p.has('admin')) {
     window.location.replace('/');
+    return;
   }
+  // Plan desde URL: ?plan=Recuerdo|Legado|Bios
+  const urlPlan = p.get('plan');
+  if (urlPlan && CAPS[urlPlan]) plan = urlPlan;
 })();
 
-// Listeners para sincronización comprador → primer integrante
-document.getElementById('nombre_comprador').addEventListener('input', onCompradorInput);
-document.getElementById('email_comprador').addEventListener('input', onCompradorInput);
-
-agregarIntegrante();
+load();
+render();
 </script>
-
 </body>
 </html>
