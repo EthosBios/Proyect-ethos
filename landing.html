@@ -754,6 +754,8 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
             <div class="raw-tag">Grabación de voz</div>
             <div class="raw-meta">Federico · Pregunta 3 · 2 min 14 s</div>
           </div>
+          <button id="raw-play-btn" aria-label="Reproducir audio" style="margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.2s;">▶</button>
+          <audio id="raw-audio"></audio>
         </div>
         <div class="raw-waveform">
           <span></span><span></span><span></span><span></span><span></span>
@@ -761,7 +763,7 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
           <span></span><span></span>
         </div>
         <div class="raw-transcript">
-          "...y bueno, mi papá era así, ¿no? Callado. Pero Vito —el perro— ese sí me enseñó cosas que... que él nunca pudo. Me enseñó a llorar, a expresarme. Es que yo no sé cómo explicarlo, fue como que... de golpe aprendí lo que era sentir y no empujar para el costado. [pausa] Es medio loco decirlo de un labrador, ¿no? [risas]"
+          "...y bueno, mi papá era así, ¿no? Callado. Pero Vitto, mi perrito, ese sí me enseñó cosas que... que él nunca pudo. Me enseñó a llorar, a expresarme. Es que yo no sé cómo explicarlo, fue como que... de golpe aprendí lo que era sentir y no empujar las emociones para el costado. Es medio loco decirlo de un labrador, ¿no?"
         </div>
         <div class="raw-footer">🎙 Audio original · sin editar · transcripción automática</div>
       </div>
@@ -1165,6 +1167,31 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
         audio.play().catch(() => {});
         playing = true;
         playBtn.innerHTML = '❚❚';
+      }
+    });
+  }
+
+  /* ── Raw card audio player ── */
+  const rawPlayBtn = document.getElementById('raw-play-btn');
+  const rawAudio = document.getElementById('raw-audio');
+  const RAW_AUDIO_SRC = 'assets/audio-anecdota-vitto.mp3';
+  let rawPlaying = false;
+
+  if (rawPlayBtn && rawAudio) {
+    rawAudio.addEventListener('ended', () => {
+      rawPlaying = false;
+      rawPlayBtn.innerHTML = '▶';
+    });
+    rawPlayBtn.addEventListener('click', () => {
+      if (rawPlaying) {
+        rawAudio.pause();
+        rawPlaying = false;
+        rawPlayBtn.innerHTML = '▶';
+      } else {
+        if (!rawAudio.src || rawAudio.src.indexOf(RAW_AUDIO_SRC) === -1) rawAudio.src = RAW_AUDIO_SRC;
+        rawAudio.play().catch(() => {});
+        rawPlaying = true;
+        rawPlayBtn.innerHTML = '❚❚';
       }
     });
   }
