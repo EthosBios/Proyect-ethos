@@ -577,6 +577,7 @@ class OnboardingIntegranteRequest(BaseModel):
 class OnboardingRequest(BaseModel):
     nombre_familia: str
     email_comprador: str
+    familia_id: str | None = None  # si viene, actualiza doc existente (Hotmart); si no, crea nuevo
     integrantes: list[OnboardingIntegranteRequest]
     relaciones: list = []
 
@@ -589,36 +590,59 @@ def _recording_base() -> str:
 @limiter.limit("5/hour")
 async def onboarding(request: Request, req: OnboardingRequest, _: None = Depends(_admin_auth)):
     """
-    Crea la familia e integrantes en Firestore y devuelve los tokens de grabación.
-    familia_id siempre generado en servidor. Tokens generados en servidor vía add_integrante().
-    Idempotente por nombre de integrante. Rate-limited: 5 req/IP/hora.
+    Crea o actualiza la familia en Firestore y devuelve tokens de grabación.
+    - Sin familia_id: crea familia nueva (flujo admin manual).
+    - Con familia_id: actualiza doc existente de Hotmart, preservando pack y email real.
+    Idempotente por nombre de integrante. Rate-limited: 5 req/hora.
     """
     from google.cloud import firestore as _firestore
     from pipeline.utils import firestore as fs
 
-    familia_id = uuid.uuid4().hex[:16]
     db = fs._db()
 
-    # Upsert familia
-    db.collection("familias").document(familia_id).set(
-        {
+    if req.familia_id:
+        # ── Flujo Hotmart: actualizar documento existente ──────────────────
+        familia_id = req.familia_id
+        doc_ref = db.collection("familias").document(familia_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise HTTPException(status_code=404, detail=f"Familia {familia_id} no encontrada en Firestore")
+
+        existing = doc.to_dict()
+        # Preservar email del comprador: usar el del request solo si no hay uno ya guardado
+        email_existente = (existing.get("comprador") or {}).get("email", "")
+        email_final = email_existente or req.email_comprador.strip()
+
+        # update() con dot-notation toca solo esos campos; pack/origen/hotmart_transaction no se tocan
+        doc_ref.update({
             "nombre": req.nombre_familia,
-            "comprador": {
-                "email": req.email_comprador,
-                "nombre": "",
-                "es_tambien_retratado": False,
-            },
             "estado": "onboarding",
-            "pack": "base",
-            "pais": req.integrantes[0].pais if req.integrantes else "",
-            "integrantes_extra": max(0, len(req.integrantes) - 4),
-            "fecha_compra": _firestore.SERVER_TIMESTAMP,
-            "fecha_entrega": None,
+            "comprador.email": email_final,
             "acepta_tyc": True,
             "acepta_tyc_timestamp": datetime.utcnow().isoformat(),
-        },
-        merge=True,
-    )
+        })
+    else:
+        # ── Flujo admin manual: crear familia nueva ────────────────────────
+        familia_id = uuid.uuid4().hex[:16]
+        db.collection("familias").document(familia_id).set(
+            {
+                "nombre": req.nombre_familia,
+                "comprador": {
+                    "email": req.email_comprador,
+                    "nombre": "",
+                    "es_tambien_retratado": False,
+                },
+                "estado": "onboarding",
+                "pack": "base",
+                "pais": req.integrantes[0].pais if req.integrantes else "",
+                "integrantes_extra": max(0, len(req.integrantes) - 4),
+                "fecha_compra": _firestore.SERVER_TIMESTAMP,
+                "fecha_entrega": None,
+                "acepta_tyc": True,
+                "acepta_tyc_timestamp": datetime.utcnow().isoformat(),
+            },
+            merge=True,
+        )
 
     # Índice de integrantes existentes por nombre para idempotencia
     existentes = {

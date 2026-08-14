@@ -298,6 +298,7 @@ let buyerEmail      = '';
 let confirmedTokens = []; // [{nombre, link, token}] — desde backend
 let copiedId        = null;
 let familiaId       = null;
+let hotmartFamiliaId = null; // familia_id de URL (Hotmart), si viene
 
 function cap() { return CAPS[plan] || CAPS.Legado; }
 
@@ -462,6 +463,7 @@ async function confirmFamily() {
   const payload = {
     nombre_familia:  'Familia ' + surname,
     email_comprador: buyerEmail.trim(),
+    ...(hotmartFamiliaId ? { familia_id: hotmartFamiliaId } : {}),
     integrantes: members.map(m => ({
       nombre:    m.name.trim(),
       es_menor:  false,
@@ -692,6 +694,9 @@ render = function() { _origRender(); focusLastInput(); };
   // Plan desde URL: ?plan=Recuerdo|Legado|Bios
   const urlPlan = p.get('plan');
   if (urlPlan && CAPS[urlPlan]) plan = urlPlan;
+  // familia_id desde URL (Hotmart flow): ?familia_id=xxx
+  const urlFamiliaId = p.get('familia_id');
+  if (urlFamiliaId) hotmartFamiliaId = urlFamiliaId;
 })();
 
 load();
