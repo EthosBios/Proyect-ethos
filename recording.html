@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Libro de Memorias Familiar</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500;1,600&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,6 +18,10 @@
   --error: #c0392b;
   --success: #3B6D11;
   --shadow: 0 2px 14px rgba(139, 94, 60, 0.10);
+  --gold: #C49B18;
+  --teal: #12A594;
+  --ink: #2C2418;
+  --tan: #F3E8D3;
 }
 
 body {
@@ -48,7 +52,7 @@ header .logo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px 120px;
+  padding: 40px 20px 60px;
   min-height: calc(100vh - 57px);
 }
 
@@ -172,50 +176,84 @@ header .logo {
 /* ══════════════════════════════
    SCREEN 2 — PREGUNTAS
 ══════════════════════════════ */
+
+/* Outer card wrapper */
+.preguntas-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 50px -24px rgba(44,36,24,0.25);
+}
+
+/* Progress bar — top of card, teal */
+.progress-bar-wrap {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--tan);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--teal);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* Block header */
 .bloque-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .bloque-meta {
+  font-family: 'Mulish', sans-serif;
   font-size: 11px;
-  font-weight: 600;
-  color: var(--accent-light);
-  letter-spacing: 2px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  color: var(--gold);
+  margin-bottom: 6px;
 }
 
 .bloque-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
 }
 
 .bloque-sub {
   font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 1.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-weight: 500;
+  color: var(--teal);
+  margin-bottom: 0;
 }
 
 .bloque-intro {
-  margin-top: 14px;
-  font-size: 15px;
-  color: var(--text);
+  font-size: 14px;
+  color: rgba(44,36,24,0.65);
   line-height: 1.6;
+  margin-top: 12px;
+  margin-bottom: 0;
 }
 
 /* Question card */
 .pregunta-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--bg);
+  border: 1px solid rgba(44,36,24,0.1);
   border-radius: 12px;
-  padding: 28px;
+  padding: 20px 22px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow);
   transition: border-color 0.3s, background 0.3s;
 }
 
@@ -230,21 +268,22 @@ header .logo {
 }
 
 .pregunta-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-light);
-  margin-bottom: 10px;
+  color: rgba(44,36,24,0.45);
+  margin-bottom: 8px;
 }
 
 .pregunta-texto {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 18px;
-  line-height: 1.55;
-  color: var(--text);
-  margin-bottom: 20px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 14px;
 }
 
 /* Recording controls */
@@ -259,21 +298,21 @@ header .logo {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: transparent;
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  background: #fff;
+  border: 1.5px solid var(--gold);
+  color: var(--ink);
   border-radius: 999px;
-  padding: 9px 20px;
-  font-family: 'Montserrat', sans-serif;
+  padding: 8px 18px;
+  font-family: 'Mulish', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-grabar:hover:not(:disabled) {
-  background: var(--accent);
-  color: white;
+  background: var(--gold);
+  color: #fff;
 }
 
 .btn-grabar.grabando-btn {
@@ -287,16 +326,17 @@ header .logo {
   cursor: not-allowed;
 }
 
-/* Pulsing red dot */
+/* Red dot — always red in rest state, pulses white when recording */
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: currentColor;
+  background: #E24444;
   flex-shrink: 0;
 }
 
 .grabando-btn .dot {
+  background: currentColor;
   animation: pulse-dot 1s ease-in-out infinite;
 }
 
@@ -319,14 +359,14 @@ header .logo {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--text);
+  background: var(--ink);
   color: white;
   border: none;
   border-radius: 999px;
   padding: 9px 20px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Mulish', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: opacity 0.2s;
 }
@@ -348,19 +388,18 @@ header .logo {
 /* Siguiente bloque */
 .siguiente-wrap {
   text-align: right;
-  margin-top: 8px;
-  margin-bottom: 60px;
+  margin-top: 24px;
 }
 
 .btn-siguiente {
-  background: var(--text);
-  color: white;
+  background: var(--ink);
+  color: #FBF7F0;
   border: none;
   border-radius: 999px;
-  padding: 14px 32px;
-  font-family: 'Montserrat', sans-serif;
+  padding: 14px 30px;
+  font-family: 'Mulish', sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
   transition: opacity 0.2s;
   letter-spacing: 0.3px;
@@ -372,54 +411,6 @@ header .logo {
 }
 
 .btn-siguiente:hover:not(:disabled) { opacity: 0.82; }
-
-/* ── Fixed progress bar ── */
-.progress-bar-wrap {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  z-index: 100;
-}
-
-.progress-count {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  white-space: nowrap;
-  min-width: 42px;
-}
-
-.progress-track {
-  flex: 1;
-  height: 6px;
-  background: var(--border);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 999px;
-  transition: width 0.4s ease;
-  width: 0%;
-}
-
-.progress-pct {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  white-space: nowrap;
-  min-width: 36px;
-  text-align: right;
-}
 
 /* ══════════════════════════════
    SCREEN 4 — VOZ PERMANENTE (pregunta 17)
@@ -979,10 +970,11 @@ header .logo {
   .welcome-card { padding: 36px 22px 30px; }
   .saludo { font-size: 24px; }
   .bloque-titulo { font-size: 24px; }
-  .pregunta-texto { font-size: 16px; }
+  .pregunta-texto { font-size: 15px; }
   .gracias-card { padding: 48px 24px; }
   #gracias-nombre { font-size: 28px; }
   .bloques-preview { justify-content: flex-start; flex-wrap: nowrap; }
+  .preguntas-card { padding: 24px 18px; }
 }
 </style>
 </head>
@@ -1105,21 +1097,19 @@ header .logo {
 <div id="screen-preguntas" class="screen hidden">
   <div class="container">
     <div id="banner-progreso" class="banner-progreso hidden"></div>
-    <div id="bloque-container"></div>
-    <div class="siguiente-wrap">
-      <button class="btn-siguiente" id="btn-siguiente" onclick="siguienteBloque()" disabled>
-        Siguiente bloque →
-      </button>
+    <div class="preguntas-card">
+      <div class="progress-bar-wrap">
+        <div class="progress-track">
+          <div class="progress-fill" id="prog-fill"></div>
+        </div>
+      </div>
+      <div id="bloque-container"></div>
+      <div class="siguiente-wrap">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguienteBloque()" disabled>
+          Siguiente bloque →
+        </button>
+      </div>
     </div>
-  </div>
-
-  <!-- Fixed progress bar -->
-  <div class="progress-bar-wrap">
-    <span class="progress-count" id="prog-count">0 / 17</span>
-    <div class="progress-track">
-      <div class="progress-fill" id="prog-fill"></div>
-    </div>
-    <span class="progress-pct" id="prog-pct">0%</span>
   </div>
 </div>
 
@@ -1553,9 +1543,7 @@ function actualizarProgreso() {
   const enviadas = Object.values(state).filter(s => s?.sent).length;
   const total = 17;
   const pct = Math.round((enviadas / total) * 100);
-  document.getElementById('prog-count').textContent = `${enviadas} / ${total}`;
   document.getElementById('prog-fill').style.width = `${pct}%`;
-  document.getElementById('prog-pct').textContent = `${pct}%`;
 }
 
 // ── Modal de regrabar ──
