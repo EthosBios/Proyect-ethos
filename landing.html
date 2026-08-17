@@ -75,20 +75,15 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
 }
 #hero .trust { display: flex; gap: 28px; flex-wrap: wrap; }
 #hero .trust span { font-size: 13px; font-weight: 600; color: rgba(44,36,24,0.6); }
-.hero-book-wrap { position: relative; }
-.hero-book-shadow {
-  position: absolute; inset: 24px -20px -20px 24px;
-  background: var(--lavender); opacity: 0.16; border-radius: 4px;
+.hero-video-card {
+  display: block; max-width: 420px; margin: 0 auto; width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 30px 60px -20px rgba(44,36,24,0.25);
+  transform: rotate(-1.5deg);
 }
-.hero-book {
-  position: relative; background: #fff; border-radius: 4px;
-  box-shadow: 0 30px 60px -20px rgba(44,36,24,0.25); padding: 20px;
-  transform: rotate(-1.5deg); max-width: 420px; margin: 0 auto;
+@media (max-width: 700px) {
+  .hero-video-card { transform: none; max-width: 100%; }
 }
-.hero-book-inner { border: 2px solid var(--gold); padding: 28px 22px; background: #fff; }
-.hero-book-label { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
-.hero-book-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; line-height: 1.4; margin-bottom: 16px; }
-.hero-book-text { font-size: 12px; line-height: 1.75; color: rgba(44,36,24,0.8); }
 
 /* ── QR / VOICE DEMO ── */
 #qr { background: #EAF6F3; padding: clamp(56px,10vw,96px) clamp(20px,5vw,56px); }
@@ -617,16 +612,9 @@ body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(-
       <span>Pago único · desde US$29</span>
     </div>
   </div>
-  <div class="hero-book-wrap">
-    <div class="hero-book-shadow"></div>
-    <div class="hero-book">
-      <div class="hero-book-inner">
-        <div class="hero-book-label">Capítulo · Federico</div>
-        <div class="hero-book-quote">"Él me enseñó las emociones, me enseñó a llorar, me enseñó a poder expresarme. Es un pedacito de mi corazón que siempre voy a extrañar."</div>
-        <div class="hero-book-text">Vitto le enseñó cosas que hasta entonces nadie le había enseñado. O bien que nadie había logrado, le enseñó a llorar, por ejemplo. A reconocer las emociones cuando le pasaban por adentro en vez de empujarlas para el costado. A expresar lo que sentía sin sentirse ridículo. Federico, criado en una casa donde el padre demostraba haciendo y no diciendo, donde lo masculino era seriedad y trabajo, encontró en un labrador la pedagogía afectiva que le faltaba. Su madurez en el amor, repite, la marcaron Vito y Gina juntos. Una novia que se queda once años. Un perro que se mete en el ADN. Una vida que se arma despacio, hasta el día en que uno descubre que eso es una vida.</div>
-      </div>
-    </div>
-  </div>
+  <video class="hero-video-card" autoplay muted loop playsinline>
+    <source src="assets/hero-video.mp4" type="video/mp4">
+  </video>
 </div>
 
 <!-- QR / VOICE DEMO -->
