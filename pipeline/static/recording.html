@@ -69,66 +69,36 @@ header .logo {
 ══════════════════════════════ */
 .welcome-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 48px 40px 40px;
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  padding: 36px 32px;
+  box-shadow: 0 20px 50px -24px rgba(44,36,24,0.25);
   text-align: center;
 }
 
 .saludo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 28px;
-  color: var(--text);
-  margin-bottom: 16px;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 22px;
 }
 
 .welcome-subtitle {
-  font-size: 15px;
-  color: var(--accent);
-  line-height: 1.7;
-  max-width: 480px;
-  margin: 0 auto 32px;
-  font-weight: 400;
-}
-
-/* Video placeholder */
-.video-wrap {
-  background: #f5ede0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 36px 24px;
-  margin-bottom: 28px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.video-wrap:hover { background: #eedfc8; }
-
-.video-play-icon {
-  width: 56px;
-  height: 56px;
-  background: var(--accent);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 14px;
-}
-
-.video-play-icon svg {
-  fill: white;
-  width: 22px;
-  height: 22px;
-  margin-left: 3px;
-}
-
-.video-text {
+  font-family: 'Mulish', sans-serif;
   font-size: 13px;
-  color: var(--accent);
-  line-height: 1.5;
+  color: rgba(44,36,24,0.65);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 20px;
 }
+
+/* Video player — gradiente oscuro + botón play dorado */
+.video-wrap {
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.video-wrap:hover { opacity: 0.9; }
 
 /* Block pills */
 .bloques-preview {
@@ -136,7 +106,7 @@ header .logo {
   gap: 8px;
   overflow-x: auto;
   padding: 4px 0 8px;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
   justify-content: center;
   flex-wrap: wrap;
   scrollbar-width: none;
@@ -147,29 +117,28 @@ header .logo {
 .bloque-pill {
   display: inline-flex;
   align-items: center;
-  background: #f5ede0;
-  border: 1px solid var(--border);
+  background: var(--tan);
   border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
+  padding: 7px 14px 7px 7px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
   white-space: nowrap;
-  letter-spacing: 0.2px;
 }
 
 .bloque-pill .num {
-  background: var(--accent);
+  background: var(--gold);
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  margin-right: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-right: 6px;
   flex-shrink: 0;
 }
 
@@ -705,27 +674,27 @@ header .logo {
 
 /* ── Confirmación / edición de nombre (portado de pipeline/static) ── */
 .nombre-confirm {
-  margin: 20px 0 0;
-  padding: 18px 20px;
-  background: #fdf6f0;
-  border: 1.5px solid var(--accent-light);
+  margin: 0 0 22px;
+  padding: 20px 22px;
+  background: var(--tan);
   border-radius: 12px;
   text-align: center;
 }
 .nombre-confirm-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .15em;
+  font-family: 'Mulish', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-light);
+  color: var(--teal);
   margin: 0 0 6px;
 }
 .nombre-display {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
   font-style: italic;
-  color: var(--text);
-  margin: 0 0 14px;
+  color: var(--ink);
+  margin: 0 0 8px;
 }
 .nombre-checkbox-label {
   display: inline-flex;
@@ -782,14 +751,14 @@ header .logo {
 /* ── Shared button ── */
 .btn-primary {
   display: inline-block;
-  background: var(--text);
-  color: white;
+  background: var(--ink);
+  color: #FBF7F0;
   border: none;
   border-radius: 999px;
-  padding: 15px 32px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 16px 32px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
   cursor: pointer;
   transition: opacity 0.2s;
   width: 100%;
@@ -813,16 +782,17 @@ header .logo {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  border: 1.5px dashed var(--accent-light);
-  border-radius: 99px;
+  padding: 10px 18px;
+  border: 1px dashed rgba(44,36,24,0.25);
+  border-radius: 999px;
+  font-family: 'Mulish', sans-serif;
   font-size: 13px;
-  color: var(--accent);
+  color: rgba(44,36,24,0.6);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.foto-label:hover { border-style: solid; background: #fdf6f0; }
+.foto-label:hover { border-color: rgba(44,36,24,0.5); background: rgba(44,36,24,0.04); }
 
 /* ══════════════════════════════
    SCREEN 0 — CONSENTIMIENTO
@@ -1037,21 +1007,17 @@ header .logo {
         Podés tomarte el tiempo que necesites — no hay apuro.
       </p>
 
-      <!-- Video section: reemplazar VIDEO_ID con el ID de YouTube cuando esté disponible -->
-      <div class="video-wrap" id="video-wrap" style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#1a1a1a">
-        <iframe
-          id="video-intro"
-          src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1"
-          title="Cómo funciona la grabación"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="position:absolute;top:0;left:0;width:100%;height:100%"
-          onerror="this.parentElement.style.display='none'"
-        ></iframe>
-        <noscript>
-          <p class="video-text">Mirá este video antes de empezar — te explica para qué sirve esto.</p>
-        </noscript>
+      <!-- Video player — gradiente oscuro + botón play dorado. Para activar: descomentar <video> y completar src -->
+      <div class="video-wrap" id="video-wrap" style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:2px solid var(--gold);background:linear-gradient(135deg,#3a2f22,#241c14);display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(196,155,24,0.18),transparent 60%);pointer-events:none"></div>
+        <!--
+        <video id="video-intro" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" preload="metadata" playsinline controls>
+          <source src="/static/video-intro.mp4" type="video/mp4">
+        </video>
+        -->
+        <div style="width:60px;height:60px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -6px rgba(0,0,0,0.5);z-index:1;flex-shrink:0">
+          <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 16px;border-color:transparent transparent transparent #fff;margin-left:3px"></div>
+        </div>
       </div>
 
       <!-- Block preview pills -->
@@ -1066,7 +1032,8 @@ header .logo {
       <!-- Foto opcional -->
       <div class="foto-section">
         <label class="foto-label" id="foto-label">
-          📷 Agregar una foto tuya <span style="font-weight:400;opacity:0.6">(opcional)</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 012-2h2l1.2-1.6a1.5 1.5 0 011.2-.6h3.2a1.5 1.5 0 011.2.6L16 6h2a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2V8z"/><circle cx="12" cy="12.5" r="3.4"/></svg>
+          Agregar una foto tuya <span style="color:rgba(44,36,24,0.4)">(opcional)</span>
           <input type="file" id="foto-input" accept="image/*" onchange="onFotoSeleccionada(this)" style="display:none">
         </label>
         <div id="foto-preview-wrap" style="display:none;margin-top:10px;text-align:center">
