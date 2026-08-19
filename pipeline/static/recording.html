@@ -219,7 +219,7 @@ header .logo {
 
 /* Question card */
 .pregunta-card {
-  background: var(--bg);
+  background: var(--cream);
   border: 1px solid rgba(44,36,24,0.1);
   border-radius: 12px;
   padding: 20px 22px;
@@ -228,8 +228,12 @@ header .logo {
 }
 
 .pregunta-card.grabando {
-  border-color: #e74c3c;
-  background: #fff8f8;
+  border-color: #E24444;
+  border-width: 1.5px;
+}
+
+.pregunta-card.grabado {
+  border: 1.5px solid var(--teal);
 }
 
 .pregunta-card.enviada {
@@ -249,7 +253,6 @@ header .logo {
 
 .pregunta-texto {
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
   font-size: 17px;
   line-height: 1.5;
   color: var(--ink);
@@ -259,22 +262,61 @@ header .logo {
 /* Recording controls */
 .controls {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
+}
+
+/* Timer block (state 2: centered above stop button) */
+.timer-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.timer-block.hidden { display: none; }
+
+.timer {
+  font-family: 'Mulish', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* Red dot */
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #E24444;
+  flex-shrink: 0;
+}
+
+/* Timer dot: ring glow */
+.timer-dot {
+  width: 10px;
+  height: 10px;
+  animation: pulse-ring 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(226,68,68,0.18); }
+  50%       { box-shadow: 0 0 0 3px rgba(226,68,68,0.06); }
 }
 
 .btn-grabar {
-  display: inline-flex;
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: #fff;
   border: 1.5px solid var(--gold);
   color: var(--ink);
   border-radius: 999px;
-  padding: 8px 18px;
+  padding: 12px 18px;
   font-family: 'Mulish', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -286,9 +328,19 @@ header .logo {
 }
 
 .btn-grabar.grabando-btn {
-  background: #e74c3c;
-  border-color: #e74c3c;
+  background: #E24444;
+  border-color: #E24444;
   color: white;
+}
+
+/* Stop icon: square (replaces dot in grabando-btn) */
+.grabando-btn .dot {
+  background: currentColor;
+  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  animation: none;
+  box-shadow: none;
 }
 
 .btn-grabar:disabled {
@@ -296,54 +348,88 @@ header .logo {
   cursor: not-allowed;
 }
 
-/* Red dot — always red in rest state, pulses white when recording */
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #E24444;
+/* State 3 — post-grab */
+.post-grab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.post-grab.hidden { display: none; }
+
+.btn-escuchar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fff;
+  border: 2px solid var(--teal);
+  color: var(--teal);
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-escuchar:hover { background: var(--teal); color: #fff; }
+.btn-escuchar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.play-tri {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent currentColor;
+  margin-left: 2px;
   flex-shrink: 0;
 }
 
-.grabando-btn .dot {
+.stop-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
   background: currentColor;
-  animation: pulse-dot 1s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.7); }
-}
-
-.timer {
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: #e74c3c;
-  min-width: 40px;
-}
-
-.timer.hidden { display: none; }
-
-.btn-enviar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.btn-confirmar {
+  width: 100%;
   background: var(--ink);
-  color: white;
+  color: var(--cream);
   border: none;
   border-radius: 999px;
-  padding: 9px 20px;
+  padding: 16px;
   font-family: 'Mulish', sans-serif;
-  font-size: 13px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-confirmar:hover:not(:disabled) { opacity: 0.85; }
+.btn-confirmar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-regrabar-3 {
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid rgba(44,36,24,0.2);
+  color: rgba(44,36,24,0.7);
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.2s;
 }
+.btn-regrabar-3:hover { opacity: 0.7; }
+.btn-regrabar-3:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-enviar:hover:not(:disabled) { opacity: 0.85; }
-.btn-enviar:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-enviar.hidden { display: none; }
+/* kept for compat — no longer rendered but avoids dead-rule errors */
+.btn-enviar { display: none; }
 
 .status-line {
   margin-top: 12px;
@@ -1367,15 +1453,31 @@ function renderBloque(idx) {
       <div class="pregunta-card ${yaSent ? 'enviada' : ''}" id="card-${pid}">
         <p class="pregunta-label">Pregunta ${pid}</p>
         <p class="pregunta-texto">${PREGUNTAS[pid]}</p>
-        <div class="controls">
+
+        <div class="controls" id="controls-${pid}">
+          <div class="timer-block hidden" id="timer-block-${pid}">
+            <span class="dot timer-dot"></span>
+            <span class="timer" id="timer-${pid}">0:00</span>
+          </div>
           <button class="btn-grabar" id="btn-grabar-${pid}" onclick="toggleGrabar(${pid})">
-            <span class="dot"></span> ${yaSent ? '✓ Regrabar' : '⏺ Grabar respuesta'}
-          </button>
-          <span class="timer hidden" id="timer-${pid}">00:00</span>
-          <button class="btn-enviar hidden" id="btn-enviar-${pid}" onclick="enviarAudio(${pid})">
-            Enviar ✓
+            <span class="dot"></span> ${yaSent ? '✓ Regrabar' : 'Grabar respuesta'}
           </button>
         </div>
+
+        <div class="post-grab hidden" id="post-grab-${pid}">
+          <audio id="audio-${pid}" preload="none"></audio>
+          <button class="btn-escuchar" id="btn-escuchar-${pid}" onclick="escucharAudio(${pid})">
+            <span class="play-tri"></span>
+            Escuchar mi respuesta
+          </button>
+          <button class="btn-confirmar" id="btn-confirmar-${pid}" onclick="enviarAudio(${pid})">
+            ✓ Confirmar y enviar
+          </button>
+          <button class="btn-regrabar-3" id="btn-regrabar-3-${pid}" onclick="regrabarDesdeEstado3(${pid})">
+            🔄 Volver a grabar
+          </button>
+        </div>
+
         <p class="status-line ${yaSent ? 'ok' : ''}" id="status-${pid}">${yaSent ? '✓ Respuesta guardada' : ''}</p>
       </div>
     `;
@@ -1415,42 +1517,45 @@ async function startGrabar(pid) {
       stream.getTracks().forEach(t => t.stop());
       const blob = new Blob(chunks, { type: 'audio/webm' });
       state[pid] = { ...state[pid], grabando: false, blob };
-      // Show enviar button
-      const btnEnviar = document.getElementById(`btn-enviar-${pid}`);
-      btnEnviar.classList.remove('hidden');
-      // Reset grabar button
+      clearInterval(state[pid]?.timerInterval);
+      // Bind audio player
+      const audioEl = document.getElementById(`audio-${pid}`);
+      if (audioEl) audioEl.src = URL.createObjectURL(blob);
+      // Reset grabar btn for next use
       const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
       btnGrabar.classList.remove('grabando-btn');
-      btnGrabar.innerHTML = '<span class="dot"></span> ⏺ Grabar de nuevo';
-      // Stop timer
-      clearInterval(state[pid]?.timerInterval);
-      document.getElementById(`timer-${pid}`).classList.add('hidden');
-      // Un-mark card
+      btnGrabar.innerHTML = '<span class="dot"></span> Grabar respuesta';
+      // Transition: state 2 → state 3
       document.getElementById(`card-${pid}`).classList.remove('grabando');
+      document.getElementById(`card-${pid}`).classList.add('grabado');
+      document.getElementById(`timer-block-${pid}`).classList.add('hidden');
+      document.getElementById(`controls-${pid}`).classList.add('hidden');
+      document.getElementById(`post-grab-${pid}`).classList.remove('hidden');
     };
 
     mr.start();
     state[pid] = { grabando: true, blob: null, mr };
 
-    // UI
+    // Transition: state 1/3 → state 2
     const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
     btnGrabar.classList.add('grabando-btn');
-    btnGrabar.innerHTML = '<span class="dot"></span> ⏹ Grabando… (tocá para parar)';
+    btnGrabar.innerHTML = '<span class="dot"></span> Detener grabación';
     document.getElementById(`card-${pid}`).classList.add('grabando');
-
-    // Hide enviar while re-recording
-    document.getElementById(`btn-enviar-${pid}`).classList.add('hidden');
+    document.getElementById(`card-${pid}`).classList.remove('grabado');
+    document.getElementById(`post-grab-${pid}`).classList.add('hidden');
+    document.getElementById(`controls-${pid}`).classList.remove('hidden');
     document.getElementById(`status-${pid}`).textContent = '';
     document.getElementById(`status-${pid}`).className = 'status-line';
 
     // Timer
     let secs = 0;
+    const timerBlock = document.getElementById(`timer-block-${pid}`);
     const timerEl = document.getElementById(`timer-${pid}`);
-    timerEl.classList.remove('hidden');
-    timerEl.textContent = '00:00';
+    timerBlock.classList.remove('hidden');
+    timerEl.textContent = '0:00';
     const interval = setInterval(() => {
       secs++;
-      const m = String(Math.floor(secs / 60)).padStart(2, '0');
+      const m = Math.floor(secs / 60);
       const s = String(secs % 60).padStart(2, '0');
       timerEl.textContent = `${m}:${s}`;
     }, 1000);
@@ -1472,11 +1577,13 @@ async function enviarAudio(pid) {
   const blob = state[pid]?.blob;
   if (!blob) return;
 
-  const btnEnviar = document.getElementById(`btn-enviar-${pid}`);
-  const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
-  btnEnviar.disabled = true;
-  btnEnviar.textContent = 'Enviando…';
-  btnGrabar.disabled = true;
+  const btnConfirmar = document.getElementById(`btn-confirmar-${pid}`);
+  const btnEscuchar  = document.getElementById(`btn-escuchar-${pid}`);
+  const btnRegrabar3 = document.getElementById(`btn-regrabar-3-${pid}`);
+  btnConfirmar.disabled = true;
+  btnConfirmar.textContent = 'Enviando…';
+  if (btnEscuchar)  btnEscuchar.disabled = true;
+  if (btnRegrabar3) btnRegrabar3.disabled = true;
   setStatus(pid, 'Subiendo tu respuesta…', '');
 
   try {
@@ -1491,21 +1598,61 @@ async function enviarAudio(pid) {
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    // Mark as sent
+    // Mark as sent → state enviada
     state[pid] = { ...state[pid], sent: true };
+    document.getElementById(`card-${pid}`).classList.remove('grabado');
     document.getElementById(`card-${pid}`).classList.add('enviada');
-    btnEnviar.classList.add('hidden');
-    btnGrabar.disabled = true;
+    document.getElementById(`post-grab-${pid}`).classList.add('hidden');
+    document.getElementById(`controls-${pid}`).classList.remove('hidden');
+    const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
+    btnGrabar.innerHTML = '<span class="dot"></span> ✓ Regrabar';
+    // Free audio blob URL
+    const audioEl = document.getElementById(`audio-${pid}`);
+    if (audioEl?.src) { URL.revokeObjectURL(audioEl.src); audioEl.src = ''; }
     setStatus(pid, '✓ Respuesta guardada', 'ok');
     actualizarProgreso();
     checkBloqueCompleto();
 
   } catch (err) {
     setStatus(pid, 'Hubo un error al enviar. Intentá de nuevo.', 'err');
-    btnEnviar.disabled = false;
-    btnEnviar.textContent = 'Enviar ✓';
-    btnGrabar.disabled = false;
+    btnConfirmar.disabled = false;
+    btnConfirmar.textContent = '✓ Confirmar y enviar';
+    if (btnEscuchar)  btnEscuchar.disabled = false;
+    if (btnRegrabar3) btnRegrabar3.disabled = false;
   }
+}
+
+// ── Escuchar grabación (estado 3) ──
+function escucharAudio(pid) {
+  const audio = document.getElementById(`audio-${pid}`);
+  const btn   = document.getElementById(`btn-escuchar-${pid}`);
+  if (!audio) return;
+  if (audio.paused) {
+    audio.play();
+    btn.innerHTML = '<span class="stop-icon"></span> Pausar';
+    audio.onended = () => {
+      btn.innerHTML = '<span class="play-tri"></span> Escuchar mi respuesta';
+    };
+  } else {
+    audio.pause();
+    audio.currentTime = 0;
+    btn.innerHTML = '<span class="play-tri"></span> Escuchar mi respuesta';
+  }
+}
+
+// ── Volver a grabar desde estado 3 ──
+async function regrabarDesdeEstado3(pid) {
+  const audioEl = document.getElementById(`audio-${pid}`);
+  if (audioEl?.src) { URL.revokeObjectURL(audioEl.src); audioEl.src = ''; }
+  // Reset escuchar btn
+  const btnEscuchar = document.getElementById(`btn-escuchar-${pid}`);
+  if (btnEscuchar) btnEscuchar.innerHTML = '<span class="play-tri"></span> Escuchar mi respuesta';
+  state[pid] = { ...state[pid], blob: null };
+  document.getElementById(`post-grab-${pid}`).classList.add('hidden');
+  document.getElementById(`card-${pid}`).classList.remove('grabado');
+  document.getElementById(`controls-${pid}`).classList.remove('hidden');
+  document.getElementById(`btn-grabar-${pid}`).innerHTML = '<span class="dot"></span> Grabar respuesta';
+  await startGrabar(pid);
 }
 
 // ── Block completion check ──
@@ -1545,10 +1692,12 @@ async function confirmarRegrabar() {
   pidPendienteRegrabar = null;
   state[pid] = { sent: false };
   document.getElementById(`card-${pid}`).classList.remove('enviada');
+  document.getElementById(`card-${pid}`).classList.remove('grabado');
   document.getElementById(`status-${pid}`).textContent = '';
   document.getElementById(`status-${pid}`).className = 'status-line';
-  const btnGrabar = document.getElementById(`btn-grabar-${pid}`);
-  btnGrabar.innerHTML = '<span class="dot"></span> ⏺ Grabar respuesta';
+  document.getElementById(`controls-${pid}`).classList.remove('hidden');
+  document.getElementById(`post-grab-${pid}`).classList.add('hidden');
+  document.getElementById(`btn-grabar-${pid}`).innerHTML = '<span class="dot"></span> Grabar respuesta';
   await startGrabar(pid);
 }
 
