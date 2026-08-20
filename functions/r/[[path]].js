@@ -1,15 +1,16 @@
-// Cloudflare Pages Function: proxy /r/* -> Cloud Run (southamerica-east1).
-// Cloud Run /r/{token} returns a 307 to /recording?token=..., so we must
-// follow redirects server-side to avoid sending the browser to the CR domain.
-const ORIGIN = "https://familia-pipeline-rxvtynuftq-rj.a.run.app";
-
+// Cloudflare Pages Function: /r/{token} → redirect to /recording?token={token}
+// on the same CF Pages domain so the browser URL has ?token= and the JS can read it.
+// Cloud Run's own /r/{token} endpoint does the same redirect but to the CR domain,
+// so we short-circuit here instead of proxying through CR.
 export async function onRequest(context) {
   const { request } = context;
   const url = new URL(request.url);
-  const target = ORIGIN + url.pathname + url.search;
-  return fetch(target, {
-    method: request.method,
-    headers: request.headers,
-    redirect: "follow",
-  });
+  // pathname is /r/{token}; split off the token segment
+  const token = url.pathname.replace(/^\/r\//, '').split('/')[0];
+  if (!token) {
+    return new Response('Token requerido', { status: 400 });
+  }
+  const dest = new URL('/recording', url.origin);
+  dest.searchParams.set('token', token);
+  return Response.redirect(dest.toString(), 307);
 }
