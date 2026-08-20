@@ -36,17 +36,6 @@ input::placeholder { color: rgba(44,36,24,0.35); }
 /* ── Layout ── */
 .wrap { max-width: 860px; margin: 0 auto; padding: 0 clamp(20px,5vw,56px); }
 
-/* ── Video slot ── */
-.video-slot {
-  border: 1px dashed rgba(44,36,24,0.25); border-radius: 6px;
-  background: repeating-linear-gradient(135deg, rgba(44,36,24,0.035) 0px, rgba(44,36,24,0.035) 10px, transparent 10px, transparent 20px);
-  aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-  margin-top: clamp(32px,6vw,56px);
-}
-.video-slot .play { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid rgba(44,36,24,0.15); display: flex; align-items: center; justify-content: center; }
-.video-slot .play i { width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 14px solid var(--ink); margin-left: 3px; display: block; }
-.video-slot .caption { font-family: monospace; font-size: 12px; color: rgba(44,36,24,0.55); }
-
 /* ── Header ── */
 .header { padding-top: clamp(32px,6vw,56px); }
 .eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
@@ -181,10 +170,11 @@ h1 em { font-style: italic; color: var(--lavender); }
 </div>
 
 <div class="wrap">
-  <!-- Video instructivo (espacio reservado) -->
-  <div class="video-slot">
-    <div class="play"><i></i></div>
-    <div class="caption">video instructivo — cómo armar tu familia (pendiente de embeber)</div>
+  <!-- Video bienvenida -->
+  <div style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:2px solid var(--gold);background:#241c14;margin-top:clamp(32px,6vw,56px)">
+    <video style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" preload="metadata" playsinline controls>
+      <source src="/assets/onboarding-bienvenida.mp4" type="video/mp4">
+    </video>
   </div>
 
   <!-- Header -->
