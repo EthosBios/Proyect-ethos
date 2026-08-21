@@ -129,7 +129,7 @@ def generar_capitulo(client: anthropic.Anthropic, persona: dict, costos=None) ->
     capitulo = "\n".join(b.text for b in message.content if b.type == "text").strip()
 
     MIN_WORDS = 3200
-    MAX_ATTEMPTS = 3
+    MAX_ATTEMPTS = 2  # Briefing #51: bajado de 3 a 2 = 1 reintento (control de costo)
     attempt = 1
 
     while len(capitulo.split()) < MIN_WORDS and attempt < MAX_ATTEMPTS:
